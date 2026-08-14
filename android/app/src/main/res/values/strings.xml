@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SimpleSpeak</string>
+    <string name="title_activity_main">SimpleSpeak</string>
+    <string name="package_name">com.simplespeak.app</string>
+    <string name="custom_url_scheme">com.simplespeak.app</string>
+</resources>
