@@ -321,7 +321,6 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
           <div className="board-canvas" role="application" aria-label="Interactive vocabulary board">
             <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} />
           </div>
-          <div className="board-help"><span>Drag to move</span><span>Scroll or pinch to zoom</span><span>{runSession ? 'Focused Card is the prompt' : 'Tap a Card to open it'}</span></div>
         </div>
         {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label="Focus current card" title="Focus current card"><Focus size={15} /></button>}
         {runSession ? <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onExitRun={onExitRun} /> : <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} onOpenRun={onOpenRun} />}

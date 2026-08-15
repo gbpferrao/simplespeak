@@ -127,9 +127,6 @@ h3 { font-size: 16px; }
 .board-canvas { position: absolute; inset: 0; overflow: hidden; }
 .board-canvas > div { width: 100% !important; height: 100% !important; }
 .board-canvas canvas { display: block; }
-.board-frame.is-run-active .board-help { opacity: .6; }
-.board-help { position: absolute; left: 16px; bottom: 108px; display: flex; gap: 14px; color: var(--ink-muted); font-size: 9px; pointer-events: none; }
-.board-help span + span::before { content: "/"; margin-right: 14px; color: var(--line-strong); }
 .run-focus-button { position: absolute; top: 16px; right: 16px; z-index: 10; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }
 .run-focus-button:hover { border-color: #bcb0eb; background: var(--violet-soft); transform: translateY(-1px); }
 
@@ -460,9 +457,6 @@ h3 { font-size: 16px; }
   .icon-button { width: 34px; height: 34px; }
   .main-content { min-height: 0; }
   .board-page { height: 100%; min-height: 0; padding: 0; }
-  .board-help { left: 10px; bottom: 185px; gap: 7px; font-size: 8px; }
-  .board-help span + span::before { margin-right: 7px; }
-  .board-frame.is-run-active .board-help { bottom: 290px; }
   .run-focus-button { top: 10px; right: 10px; width: 30px; height: 30px; }
   .run-bar { left: 10px; right: 10px; bottom: 10px; max-height: calc(100% - 145px); overflow: auto; padding: 10px; gap: 10px; }
   .run-bar-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
