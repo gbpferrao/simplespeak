@@ -1,5 +1,5 @@
 import { Play, SlidersHorizontal, Timer } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { PersistedState } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
 import { starterPack } from '../../language-packs/data/starterPack'
@@ -8,20 +8,14 @@ import type { RunConfig } from '../../study/domain/runSession'
 interface BoardRunBarProps {
   state: PersistedState
   stats: ProgressStats
-  selectedSceneId: string | null
   onStartRun: (config: RunConfig) => void
   onOpenRun: () => void
 }
 
-export function BoardRunBar({ state, stats, selectedSceneId, onStartRun, onOpenRun }: BoardRunBarProps) {
-  const [preset, setPreset] = useState<RunConfig['preset']>(selectedSceneId ? 'scene' : 'due-nearby')
-  const [sceneId, setSceneId] = useState<string | null>(selectedSceneId)
+export function BoardRunBar({ state, stats, onStartRun, onOpenRun }: BoardRunBarProps) {
+  const [preset, setPreset] = useState<RunConfig['preset']>('due-nearby')
+  const [sceneId, setSceneId] = useState<string | null>(null)
   const [limit, setLimit] = useState(Math.min(12, Math.max(4, state.settings.dailyTarget)))
-
-  useEffect(() => {
-    setSceneId(selectedSceneId)
-    if (selectedSceneId) setPreset('scene')
-  }, [selectedSceneId])
 
   function startRun(): void {
     const selectedPreset = preset === 'scene' && !sceneId ? 'due-nearby' : preset

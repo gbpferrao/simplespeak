@@ -22,8 +22,6 @@ export interface SimpleSpeakController {
   setView: (view: View) => void
   search: string
   setSearch: (value: string) => void
-  selectedSceneId: string | null
-  setSelectedSceneId: (sceneId: string | null) => void
   selectedCardId: string | null
   setSelectedCardId: (cardId: string | null) => void
   stabilityCardId: string | null
@@ -61,7 +59,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   const [hydrated, setHydrated] = useState(false)
   const [view, setView] = useState<View>('board')
   const [search, setSearch] = useState('')
-  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null)
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [stabilityCardId, setStabilityCardId] = useState<string | null>(null)
   const [boardFocusId, setBoardFocusId] = useState<string | null>(null)
@@ -239,8 +236,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setView,
     search,
     setSearch,
-    selectedSceneId,
-    setSelectedSceneId,
     selectedCardId,
     setSelectedCardId,
     stabilityCardId,
