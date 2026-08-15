@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { Layer, Line, Stage } from 'react-konva/lib/ReactKonvaCore'
-import 'konva/lib/shapes/Line'
+import { Circle, Layer, Stage } from 'react-konva/lib/ReactKonvaCore'
+import 'konva/lib/shapes/Circle'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
 import { starterPack } from '../../language-packs/data/starterPack'
 import { BoardCardNode } from './BoardCardNode'
@@ -23,13 +23,13 @@ interface BoardCanvasProps {
 }
 
 export function BoardCanvas({ width, height, camera, state, cards, focusedCardId, activeCardId, runActive, revealed, sceneCardCounts, sceneAnchoredCounts, onCardActivate }: BoardCanvasProps) {
-  const pathLines = useMemo(() => starterPathData().map(({ id, points }) => <Line key={id} points={points} stroke="#cbd8e7" strokeWidth={3} dash={[10, 16]} lineCap="round" listening={false} />), [])
+  const gridDots = useMemo(() => createGridDots(width, height, camera), [width, height, camera])
   const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} anchoredCount={sceneAnchoredCounts.get(scene.id) ?? 0} cardCount={sceneCardCounts.get(scene.id) ?? 0} />), [sceneAnchoredCounts, sceneCardCounts])
 
   return (
     <Stage width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom}>
       <Layer listening={false}>
-        {pathLines}
+        {gridDots.map(({ x, y, radius }) => <Circle key={`${x}-${y}`} x={x} y={y} radius={radius} fill="#c9ced6" opacity={0.72} />)}
         {sceneLabelNodes}
       </Layer>
       <Layer>
@@ -39,12 +39,25 @@ export function BoardCanvas({ width, height, camera, state, cards, focusedCardId
   )
 }
 
-function starterPathData() {
-  return starterPack.scenes.slice(0, -1).map((scene, index) => {
-    const next = starterPack.scenes[index + 1]
-    return {
-      id: `${scene.id}-${next.id}`,
-      points: [scene.x + scene.width / 2, scene.y + scene.height / 2, next.x + next.width / 2, next.y + next.height / 2],
+function createGridDots(width: number, height: number, camera: BoardCamera) {
+  if (width <= 0 || height <= 0) return []
+
+  // Every zoom-out octave doubles world spacing, keeping the grid legible
+  // without flooding a small screen with thousands of tiny points.
+  const octave = Math.max(0, Math.min(4, Math.floor(Math.log2(1 / camera.zoom))))
+  const spacing = 48 * 2 ** octave
+  const radius = 1.35 / camera.zoom
+  const left = Math.floor((-camera.x / camera.zoom) / spacing) - 1
+  const right = Math.ceil(((width - camera.x) / camera.zoom) / spacing) + 1
+  const top = Math.floor((-camera.y / camera.zoom) / spacing) - 1
+  const bottom = Math.ceil(((height - camera.y) / camera.zoom) / spacing) + 1
+  const dots: Array<{ x: number; y: number; radius: number }> = []
+
+  for (let column = left; column <= right; column += 1) {
+    for (let row = top; row <= bottom; row += 1) {
+      dots.push({ x: column * spacing, y: row * spacing, radius })
     }
-  })
+  }
+
+  return dots
 }
