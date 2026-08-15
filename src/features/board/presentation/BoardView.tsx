@@ -12,7 +12,7 @@ import { BoardRunOverlay } from '../../study/presentation/BoardRunOverlay'
 const BOARD_WIDTH = 2600
 const BOARD_HEIGHT = 1520
 const CARD_WIDTH = 148
-const CARD_HEIGHT = 170
+const CARD_HEIGHT = 148
 const SCENE_CARD_COUNTS = new Map(starterPack.scenes.map((scene) => [scene.id, starterPack.cards.filter((card) => card.sceneId === scene.id).length]))
 
 interface BoardPointer {

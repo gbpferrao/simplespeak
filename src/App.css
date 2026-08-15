@@ -135,28 +135,23 @@ h3 { font-size: 16px; }
 .scene-label-copy small { overflow: hidden; color: var(--ink-muted); font-size: 8px; font-weight: 800; letter-spacing: .06em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .scene-label-copy strong { font-size: 14px; }
 .scene-label-count { margin-left: auto; color: var(--ink-soft); font-size: 10px; font-weight: 800; }
-.card-node { position: absolute; width: 148px; height: 170px; padding: 0; border: 0; background: transparent; cursor: pointer; transform: rotate(-1deg); z-index: 4; }
+.card-node { position: absolute; width: 148px; height: 148px; padding: 0; border: 0; background: transparent; cursor: pointer; transform: rotate(-1deg); z-index: 4; }
 .card-node:nth-of-type(3n) { transform: rotate(1deg); }
 .card-node:hover, .card-node.focused { z-index: 6; }
-.card-node-paper { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: visible; border: 2px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease; }
+.card-node-paper { width: 100%; height: 100%; display: block; overflow: visible; border: 2px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease; }
 .card-node:hover .card-node-paper, .card-node.focused .card-node-paper { transform: translateY(-4px) rotate(1deg); box-shadow: var(--shadow-raised); }
 .card-node.focused .card-node-paper { border-color: var(--violet); }
 .card-node.card-state-emerging .card-node-paper { border-color: #e8c15e; }
 .card-node.card-state-familiar .card-node-paper { border-color: #8fb7ed; }
 .card-node.card-state-anchored .card-node-paper { border-color: #86cda7; }
-.card-node-art { min-height: 0; flex: 1; display: grid; place-items: center; overflow: hidden; border-radius: 12px 12px 0 0; background: var(--violet-soft); }
-.card-node.word-only .card-node-art { background: #f1edff; }
+.card-node-art { width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden; border-radius: 12px; background: var(--violet-soft); }
+.card-node.word-only .card-node-art { background: #e9e6ef; }
 .card-node img { width: 100%; height: 100%; object-fit: cover; }
 .card-node-word { max-width: 132px; padding: 10px; color: var(--ink); font-size: 22px; font-weight: 850; letter-spacing: -.055em; text-align: center; overflow-wrap: anywhere; }
-.card-node-footer { min-height: 42px; padding: 7px 9px; display: flex; align-items: baseline; justify-content: space-between; gap: 6px; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; background: var(--surface); text-align: left; }
-.card-node-footer strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.card-node-footer span { color: var(--ink-muted); font-size: 9px; white-space: nowrap; }
-.card-node-state { position: absolute; left: 12px; bottom: -10px; min-height: 20px; padding: 3px 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line-strong); border-radius: 7px; color: var(--ink-soft); background: var(--surface); box-shadow: 0 2px 0 rgba(38,52,74,.08); font-size: 8px; font-weight: 800; text-transform: capitalize; }
 .board-frame.is-run-active .board-stage.is-camera-animating { transition-duration: .42s; }
 .board-frame.is-run-active .board-help { opacity: .6; }
 .card-node.run-active-card { z-index: 9; animation: run-card-settle 2.8s ease-in-out infinite; }
 .card-node.run-active-card .card-node-paper { transform: translateY(-7px) rotate(1deg) scale(1.08); border-color: var(--violet); box-shadow: 0 8px 0 rgba(118,87,217,.18), 0 13px 23px rgba(38,52,74,.13); }
-.card-node.run-active-card .card-node-state { color: var(--violet-dark); border-color: #bcb0eb; box-shadow: 0 3px 0 rgba(118,87,217,.12); }
 .card-node.run-active-card.revealed .card-node-paper { border-color: var(--green); box-shadow: 0 8px 0 rgba(61,166,111,.16), 0 13px 23px rgba(38,52,74,.13); }
 .card-node.revealed .card-node-art { background: var(--surface-soft); }
 .card-node-reveal { width: 100%; height: 100%; padding: 11px 10px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; color: var(--ink); text-align: left; }
