@@ -13,6 +13,8 @@ const BOARD_WIDTH = 2600
 const BOARD_HEIGHT = 1520
 const CARD_WIDTH = 148
 const CARD_HEIGHT = 148
+const MIN_ZOOM = 0.12
+const MAX_ZOOM = 1.25
 const SCENE_CARD_COUNTS = new Map(starterPack.scenes.map((scene) => [scene.id, starterPack.cards.filter((card) => card.sceneId === scene.id).length]))
 
 interface BoardPointer {
@@ -159,7 +161,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     const factor = event.deltaY > 0 ? 0.92 : 1.08
     const currentZoom = cameraRef.current.zoom
     const currentOffset = cameraRef.current
-    const nextZoom = Math.max(0.38, Math.min(1.25, currentZoom * factor))
+    const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom * factor))
     const cursorX = event.clientX - bounds.left
     const cursorY = event.clientY - bounds.top
     updateCamera(nextZoom, { x: cursorX - (cursorX - currentOffset.x) * (nextZoom / currentZoom), y: cursorY - (cursorY - currentOffset.y) * (nextZoom / currentZoom) })
@@ -196,7 +198,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
       const pair = pointerPair()
       if (!pair || !viewportRef.current) return
       const center = pointerCenter(pair)
-      const nextZoom = Math.max(0.38, Math.min(1.25, pinchRef.current.startZoom * (pointerDistance(pair) / pinchRef.current.startDistance)))
+      const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchRef.current.startZoom * (pointerDistance(pair) / pinchRef.current.startDistance)))
       updateCamera(nextZoom, { x: center.x - pinchRef.current.anchorX * nextZoom, y: center.y - pinchRef.current.anchorY * nextZoom })
       movedRef.current = true
       return
