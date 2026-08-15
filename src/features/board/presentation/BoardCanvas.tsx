@@ -35,7 +35,7 @@ export function BoardCanvas({ width, height, camera, stageRef, state, cards, foc
         <Shape
           listening={false}
           sceneFunc={(context) => {
-            context.fillStyle = '#c9ced6'
+            context.fillStyle = '#d5d9de'
             context.beginPath()
             for (const dot of gridDots) {
               context.moveTo(dot.x + dot.radius, dot.y)
@@ -43,7 +43,7 @@ export function BoardCanvas({ width, height, camera, stageRef, state, cards, foc
             }
             context.fill()
           }}
-          opacity={0.72}
+          opacity={0.54}
         />
         {sceneLabelNodes}
       </Layer>
