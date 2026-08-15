@@ -16,6 +16,7 @@ export function CanvasToolbar({ selectedSceneId, setSelectedSceneId, visibleCoun
   return (
     <div className="board-toolbar">
       <div className="board-toolbar-context">
+        <strong className="board-toolbar-name">Board</strong>
         <Filter size={15} />
         <label>
           <span className="sr-only">Scene filter</span>
@@ -32,7 +33,7 @@ export function CanvasToolbar({ selectedSceneId, setSelectedSceneId, visibleCoun
         <button type="button" onClick={onZoomIn} aria-label="Zoom in"><Plus size={16} /></button>
         <span className="control-divider" />
         <button type="button" onClick={onFocus} aria-label="Focus selected card"><Focus size={16} /></button>
-        <button type="button" onClick={onOverview} aria-label="Fit atlas overview"><Maximize2 size={16} /></button>
+        <button type="button" onClick={onOverview} aria-label="Fit board overview"><Maximize2 size={16} /></button>
       </div>
     </div>
   )

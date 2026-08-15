@@ -226,7 +226,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setData((current) => ({ ...fresh, settings: current.settings }))
     setRunSession(null)
     setView('board')
-    notify('The atlas is fresh again. Your image settings stayed saved.')
+    notify('The board is fresh again. Your image settings stayed saved.')
   }
 
   return {

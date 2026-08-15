@@ -1,5 +1,5 @@
 import { Sparkles } from 'lucide-react'
-import { Header, MobileNav } from './presentation/Navigation'
+import { AppNav, Header } from './presentation/Navigation'
 import { useSimpleSpeakController } from './useSimpleSpeakController'
 import { learningFor } from '../core/presentation/selectors'
 import { BoardView } from '../features/board/presentation/BoardView'
@@ -13,7 +13,7 @@ export function AppShell() {
   const controller = useSimpleSpeakController()
 
   if (!controller.hydrated) {
-    return <div className="loading-screen"><div className="brand-mark"><Sparkles size={18} /></div><span>Opening your atlas...</span></div>
+    return <div className="loading-screen"><div className="brand-mark"><Sparkles size={18} /></div><span>Opening your board...</span></div>
   }
 
   const { data, view, setView, stats, selectedCard, stabilityCard } = controller
@@ -27,7 +27,7 @@ export function AppShell() {
         {view === 'history' && <HistoryView state={data} stats={stats} onOpenCard={controller.setSelectedCardId} />}
         {view === 'settings' && <SettingsView state={data} apiKey={controller.apiKey} setApiKey={controller.setApiKey} onSaveApiKey={controller.persistApiKey} onUpdateSettings={controller.updateSettings} onResetLearning={controller.resetLearning} />}
       </main>
-      <MobileNav view={view} setView={setView} stats={stats} />
+      <AppNav view={view} setView={setView} stats={stats} />
       {selectedCard && <CardDetail card={selectedCard} state={data} generating={controller.generatingCardId === selectedCard.id} onClose={() => controller.setSelectedCardId(null)} onGenerate={(description) => { void controller.generateCardImage(selectedCard, description) }} onOpenStability={() => controller.setStabilityCardId(selectedCard.id)} onSaveNote={(note) => controller.saveNote(selectedCard.id, note)} />}
       {stabilityCard && <StabilityPanel card={stabilityCard} learning={learningFor(data, stabilityCard.id)} onClose={() => controller.setStabilityCardId(null)} />}
       {controller.toast && <div className="toast" role="status"><Sparkles size={15} />{controller.toast}</div>}
