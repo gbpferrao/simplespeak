@@ -120,8 +120,8 @@ h3 { font-size: 16px; }
 .feedback-miss .study-card { animation: shake .18s ease-in-out 2; border-color: var(--coral); }
 
 /* Board main view */
-.board-page { width: 100%; max-width: none; height: 100%; min-height: 0; flex: 1 1 auto; padding: 14px 16px; display: flex; flex-direction: column; }
-.board-frame { position: relative; width: 100%; height: auto; min-height: 0; flex: 1 1 auto; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--canvas); box-shadow: var(--shadow-card); }
+.board-page { width: 100%; max-width: none; height: 100%; min-height: 0; flex: 1 1 auto; padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+.board-frame { position: relative; width: 100%; height: 100%; min-height: 0; flex: 1 1 auto; overflow: hidden; border: 0; border-radius: 0; background: var(--canvas); box-shadow: none; }
 .board-toolbar { position: absolute; top: 14px; left: 16px; right: 16px; z-index: 10; min-height: 50px; padding: 0 14px 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-card); }
 .board-toolbar-context, .board-controls { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); }
 .board-toolbar-context > svg { color: var(--violet); }
@@ -462,7 +462,7 @@ h3 { font-size: 16px; }
   .due-chip span + * { display: none; }
   .icon-button { width: 34px; height: 34px; }
   .main-content { min-height: 0; }
-  .board-page { height: 100%; min-height: 0; padding: 8px 10px; }
+  .board-page { height: 100%; min-height: 0; padding: 0; }
   .board-toolbar { top: 10px; left: 10px; right: 10px; padding-inline: 9px; }
   .toolbar-count { display: none; }
   .board-controls { gap: 3px; }
@@ -475,6 +475,7 @@ h3 { font-size: 16px; }
   .run-bar-due { display: none; }
   .quiet-button, .run-bar-start { width: 100%; }
   .view { padding: 22px 16px 30px; }
+  .board-page { padding: 0; }
   .view-heading, .run-header { display: grid; gap: 10px; }
   .view-heading h1, .run-header h1 { font-size: 31px; }
   .heading-actions, .summary-actions { width: 100%; padding-top: 3px; }
