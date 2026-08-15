@@ -1,4 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo, type RefObject } from 'react'
+import Konva from 'konva/lib/Core'
+import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import { Layer, Shape, Stage } from 'react-konva/lib/ReactKonvaCore'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
 import { starterPack } from '../../language-packs/data/starterPack'
@@ -6,42 +8,47 @@ import { BoardCardNode } from './BoardCardNode'
 import { BoardSceneLabel } from './BoardSceneLabel'
 import type { BoardCamera } from './boardGeometry'
 
+// Keep the mobile board at one backing pixel per CSS pixel. The board is a
+// large, mostly flat-color surface, so a 2x/3x canvas costs more than it adds.
+Konva.pixelRatio = 1
+
 interface BoardCanvasProps {
   width: number
   height: number
   camera: BoardCamera
+  stageRef: RefObject<KonvaStage | null>
   state: PersistedState
   cards: WordCard[]
   focusedCardId: string | null
   activeCardId: string | null
   runActive: boolean
   revealed: boolean
-  onCardActivate: (cardId: string) => void
 }
 
-export function BoardCanvas({ width, height, camera, state, cards, focusedCardId, activeCardId, runActive, revealed, onCardActivate }: BoardCanvasProps) {
+export function BoardCanvas({ width, height, camera, stageRef, state, cards, focusedCardId, activeCardId, runActive, revealed }: BoardCanvasProps) {
   const gridDots = useMemo(() => createGridDots(width, height, camera), [width, height, camera])
   const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} />), [])
 
   return (
-    <Stage width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom}>
+    <Stage ref={stageRef} width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom} pixelRatio={1} listening={false}>
       <Layer listening={false}>
         <Shape
           listening={false}
-          sceneFunc={(context, shape) => {
+          sceneFunc={(context) => {
             context.fillStyle = '#c9ced6'
+            context.beginPath()
             for (const dot of gridDots) {
-              context.beginPath()
+              context.moveTo(dot.x + dot.radius, dot.y)
               context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
-              context.fillStrokeShape(shape)
             }
+            context.fill()
           }}
           opacity={0.72}
         />
         {sceneLabelNodes}
       </Layer>
-      <Layer>
-        {cards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} revealed={revealed && activeCardId === card.id} onActivate={onCardActivate} />)}
+      <Layer listening={false}>
+        {cards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} revealed={revealed && activeCardId === card.id} />)}
       </Layer>
     </Stage>
   )

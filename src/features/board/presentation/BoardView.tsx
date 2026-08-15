@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent } from 'react'
+import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import { Focus } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
@@ -54,11 +55,12 @@ interface BoardViewProps {
 export function BoardView({ state, stats, search, focusId, setFocusId, onSelectCard, onStartRun, onOpenRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
   const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
+  const stageRef = useRef<KonvaStage | null>(null)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   const viewportRef = useRef<HTMLDivElement>(null)
   const animationFrameRef = useRef<number | null>(null)
-  const cameraCommitFrameRef = useRef<number | null>(null)
-  const pendingCameraRef = useRef<BoardCamera | null>(null)
+  const stageCameraFrameRef = useRef<number | null>(null)
+  const cameraCommitTimeoutRef = useRef<number | null>(null)
   const dragRef = useRef<PanGesture | null>(null)
   const pointersRef = useRef(new Map<number, BoardPointer>())
   const pinchRef = useRef<PinchGesture | null>(null)
@@ -110,26 +112,48 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     }
   }
 
-  function commitCamera(nextCamera: BoardCamera): void {
-    cameraRef.current = nextCamera
-    setCamera(nextCamera)
+  function applyCameraToStage(): void {
+    const stage = stageRef.current
+    if (!stage) return
+    const nextCamera = cameraRef.current
+    stage.position({ x: nextCamera.x, y: nextCamera.y })
+    stage.scale({ x: nextCamera.zoom, y: nextCamera.zoom })
+    stage.batchDraw()
   }
 
-  function scheduleCameraCommit(nextCamera: BoardCamera): void {
-    cameraRef.current = nextCamera
-    pendingCameraRef.current = nextCamera
-    if (cameraCommitFrameRef.current !== null) return
-    cameraCommitFrameRef.current = window.requestAnimationFrame(() => {
-      cameraCommitFrameRef.current = null
-      const pending = pendingCameraRef.current
-      pendingCameraRef.current = null
-      if (pending) setCamera(pending)
+  function scheduleStageCameraFrame(): void {
+    if (stageCameraFrameRef.current !== null) return
+    stageCameraFrameRef.current = window.requestAnimationFrame(() => {
+      stageCameraFrameRef.current = null
+      applyCameraToStage()
     })
+  }
+
+  function cancelCameraCommit(): void {
+    if (cameraCommitTimeoutRef.current === null) return
+    window.clearTimeout(cameraCommitTimeoutRef.current)
+    cameraCommitTimeoutRef.current = null
+  }
+
+  function commitCameraState(): void {
+    cancelCameraCommit()
+    const nextCamera = { ...cameraRef.current }
+    setCamera((previous) => previous.zoom === nextCamera.zoom && previous.x === nextCamera.x && previous.y === nextCamera.y ? previous : nextCamera)
+  }
+
+  function scheduleCameraCommit(): void {
+    if (cameraCommitTimeoutRef.current !== null) return
+    cameraCommitTimeoutRef.current = window.setTimeout(() => {
+      cameraCommitTimeoutRef.current = null
+      commitCameraState()
+    }, 120)
   }
 
   function updateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
     cancelCameraAnimation()
-    scheduleCameraCommit({ zoom: nextZoom, x: nextOffset.x, y: nextOffset.y })
+    cameraRef.current = { zoom: nextZoom, x: nextOffset.x, y: nextOffset.y }
+    scheduleStageCameraFrame()
+    scheduleCameraCommit()
   }
 
   function animateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
@@ -141,13 +165,17 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     function frame(now: number): void {
       const progress = Math.min(1, (now - startedAt) / duration)
       const eased = 1 - Math.pow(1 - progress, 3)
-      commitCamera({
+      cameraRef.current = {
         zoom: from.zoom + (nextZoom - from.zoom) * eased,
         x: from.x + (nextOffset.x - from.x) * eased,
         y: from.y + (nextOffset.y - from.y) * eased,
-      })
+      }
+      scheduleStageCameraFrame()
       if (progress < 1) animationFrameRef.current = window.requestAnimationFrame(frame)
-      else animationFrameRef.current = null
+      else {
+        animationFrameRef.current = null
+        commitCameraState()
+      }
     }
 
     animationFrameRef.current = window.requestAnimationFrame(frame)
@@ -193,7 +221,8 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
 
   useEffect(() => () => {
     cancelCameraAnimation()
-    if (cameraCommitFrameRef.current !== null) window.cancelAnimationFrame(cameraCommitFrameRef.current)
+    cancelCameraCommit()
+    if (stageCameraFrameRef.current !== null) window.cancelAnimationFrame(stageCameraFrameRef.current)
   }, [])
 
   function handleWheel(event: WheelEvent<HTMLDivElement>): void {
@@ -266,6 +295,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
       dragRef.current = pointer.panEligible ? { pointerId, startX: pointer.x, startY: pointer.y, originX: cameraRef.current.x, originY: cameraRef.current.y } : null
     } else {
       dragRef.current = null
+      commitCameraState()
     }
     if (shouldActivate && activatedCardId) handleCardActivate(activatedCardId)
   }
@@ -289,7 +319,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
           <div className="board-canvas" role="application" aria-label="Interactive vocabulary board">
-            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} onCardActivate={handleCardActivate} />
+            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} />
           </div>
           <div className="board-help"><span>Drag to move</span><span>Scroll or pinch to zoom</span><span>{runSession ? 'Focused Card is the prompt' : 'Tap a Card to open it'}</span></div>
         </div>

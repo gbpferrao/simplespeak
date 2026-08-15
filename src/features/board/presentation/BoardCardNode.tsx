@@ -15,7 +15,6 @@ interface BoardCardNodeProps {
   runMode?: boolean
   runActive?: boolean
   revealed?: boolean
-  onActivate: (cardId: string) => void
 }
 
 const CARD_RADIUS = 14
@@ -78,7 +77,7 @@ function trimImageCache(): void {
   }
 }
 
-function BoardCardNodeBase({ card, state, focused, runActive = false, revealed = false, onActivate }: BoardCardNodeProps) {
+function BoardCardNodeBase({ card, state, focused, runActive = false, revealed = false }: BoardCardNodeProps) {
   const learning = learningFor(state, card.id)
   const imageSource = state.images[card.id]
   const image = useCardImage(imageSource)
@@ -92,12 +91,8 @@ function BoardCardNodeBase({ card, state, focused, runActive = false, revealed =
   const shadowOffsetY = runActive ? 6 : focused ? 3 : 0
   const shadowOpacity = hasEmphasis ? 0.16 : 0
 
-  function activate(): void {
-    onActivate(card.id)
-  }
-
   return (
-    <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 1 : rotation} name={`card-${card.id}`} onClick={activate} onTap={activate}>
+    <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 1 : rotation} name={`card-${card.id}`}>
       <Rect x={-CARD_HALF} y={-CARD_HALF} width={CARD_SIZE} height={CARD_SIZE} fill={fillColor} stroke={borderColor} strokeWidth={hasEmphasis ? 3 : 1.5} cornerRadius={CARD_RADIUS} shadowColor="#26344a" shadowBlur={shadowBlur} shadowOffsetY={shadowOffsetY} shadowOpacity={shadowOpacity} />
       {revealed ? <CardReveal card={card} state={state} /> : image ? <KonvaImage image={image} x={-CARD_HALF + CARD_INSET} y={-CARD_HALF + CARD_INSET} width={CARD_IMAGE_SIZE} height={CARD_IMAGE_SIZE} cornerRadius={CARD_RADIUS - 2} /> : <Text x={-CARD_HALF + 10} y={-24} width={CARD_SIZE - 20} height={48} text={card.target} fill="#26344a" fontFamily="Inter, system-ui, sans-serif" fontSize={22} fontStyle="bold" letterSpacing={-0.5} align="center" verticalAlign="middle" wrap="word" />}
       {scene && <Rect x={-CARD_HALF + 8} y={CARD_HALF - 10} width={8} height={3} fill={scene.accent} cornerRadius={2} opacity={0.75} listening={false} />}
