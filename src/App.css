@@ -438,7 +438,7 @@ h3 { font-size: 16px; }
   .topbar-search { margin-left: auto; max-width: 190px; }
   .progress-chip { display: none; }
   .view { padding: 26px 22px 80px; }
-  .board-page { height: 100%; min-height: 0; padding: 10px 12px; }
+  .board-page { height: 100%; min-height: 0; padding: 0; }
   .settings-grid, .setup-grid { grid-template-columns: 1fr; }
   .settings-aside { grid-template-columns: 1fr 1fr; align-items: start; }
   .danger-card { grid-column: 1 / -1; }
