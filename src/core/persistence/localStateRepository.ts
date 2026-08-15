@@ -1,15 +1,44 @@
-import type { LearningState, PersistedState, Settings, WordCard } from '../contracts/types'
+import type { ImageEffort, ImageResolution, LearningState, PersistedState, Settings, WordCard } from '../contracts/types'
 
 const STATE_KEY = 'simplespeak_state_v1'
 
 export const defaultSettings: Settings = {
-  modelId: 'gemini-2.5-flash-image',
-  effort: 'medium',
-  resolution: '1024',
+  modelId: 'gemini-3.1-flash-image',
+  effort: 'minimal',
+  resolution: '1K',
   aspectRatio: '1:1',
   innerPrompt: 'Create a single memorable visual for this vocabulary card. Use one clear subject, a simple scene, strong silhouette, warm editorial lighting, no written words, no labels, no watermark, and no collage. Make the meaning immediately recognizable and suitable for a square card.',
   timeframeDays: 90,
   dailyTarget: 12,
+}
+
+function normalizeImageResolution(value: unknown): ImageResolution {
+  if (value === '512') return '512'
+  if (value === '1K' || value === '1024') return '1K'
+  if (value === '2K' || value === '2048') return '2K'
+  return defaultSettings.resolution
+}
+
+function normalizeImageEffort(value: unknown): ImageEffort {
+  if (value === 'high') return 'high'
+  return defaultSettings.effort
+}
+
+function normalizeModelId(value: unknown): string {
+  if (typeof value !== 'string' || !value.trim() || value === 'gemini-2.5-flash-image') return defaultSettings.modelId
+  return value.trim()
+}
+
+function normalizeSettings(value: Partial<Settings> | undefined): Settings {
+  const candidate = value ?? {}
+  return {
+    ...defaultSettings,
+    ...candidate,
+    modelId: normalizeModelId(candidate.modelId),
+    effort: normalizeImageEffort(candidate.effort),
+    resolution: normalizeImageResolution(candidate.resolution),
+    aspectRatio: '1:1',
+  }
 }
 
 export function createEmptyLearning(): LearningState {
@@ -58,7 +87,7 @@ export async function loadPersistedState(cards: WordCard[]): Promise<PersistedSt
       images: parsed.images ?? {},
       runs: Array.isArray(parsed.runs) ? parsed.runs : [],
       generations: Array.isArray(parsed.generations) ? parsed.generations : [],
-      settings: { ...defaultSettings, ...(parsed.settings ?? {}) },
+      settings: normalizeSettings(parsed.settings),
     }
   } catch {
     return makeInitialState(cards)

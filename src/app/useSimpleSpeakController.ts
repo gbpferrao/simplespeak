@@ -128,6 +128,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
         modelId: settings.modelId,
         systemInstruction: prompt.systemInstruction,
         userPrompt: prompt.userPrompt,
+        effort: settings.effort,
         resolution: settings.resolution,
         aspectRatio: settings.aspectRatio,
       })

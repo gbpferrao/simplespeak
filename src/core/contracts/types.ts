@@ -3,8 +3,8 @@ export type View = 'board' | 'run' | 'history' | 'settings'
 export type CardStatus = 'new' | 'emerging' | 'familiar' | 'anchored'
 export type ReviewOutcome = 'hit' | 'miss' | 'reveal' | 'typed'
 export type RunPreset = 'scene' | 'due-nearby' | 'all' | 'custom'
-export type ImageResolution = '512' | '1024' | '2048'
-export type ImageEffort = 'low' | 'medium' | 'high'
+export type ImageResolution = '512' | '1K' | '2K'
+export type ImageEffort = 'minimal' | 'high'
 
 export interface Scene {
   id: string

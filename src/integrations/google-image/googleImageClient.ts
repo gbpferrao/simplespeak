@@ -1,10 +1,11 @@
-import type { ImageResolution } from '../../core/contracts/types'
+import type { ImageEffort, ImageResolution } from '../../core/contracts/types'
 
 export interface GoogleImageRequest {
   apiKey: string
   modelId: string
   systemInstruction: string
   userPrompt: string
+  effort: ImageEffort
   resolution: ImageResolution
   aspectRatio: '1:1'
 }
@@ -41,6 +42,7 @@ export async function generateGoogleImage(request: GoogleImageRequest): Promise<
       contents: [{ role: 'user', parts: [{ text: request.userPrompt }] }],
       generationConfig: {
         responseModalities: ['IMAGE'],
+        thinkingConfig: { thinkingLevel: request.effort },
         imageConfig: { aspectRatio: request.aspectRatio, imageSize: request.resolution },
       },
     }),
