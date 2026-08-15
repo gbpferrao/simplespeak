@@ -9,7 +9,6 @@ import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry
 import { BoardRunBar } from './BoardRunBar'
 import { BoardRunOverlay } from '../../study/presentation/BoardRunOverlay'
 
-const SCENE_CARD_COUNTS = new Map(starterPack.scenes.map((scene) => [scene.id, starterPack.cards.filter((card) => card.sceneId === scene.id).length]))
 const INITIAL_CAMERA: BoardCamera = { zoom: 0.63, x: -18, y: -10 }
 
 interface BoardPointer {
@@ -67,16 +66,6 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
   const cameraFocusId = runSession ? activeCardId : focusId
   const runCards = runSession?.cards ?? null
   const runCardIds = useMemo(() => new Set(runCards?.map((card) => card.id) ?? []), [runCards])
-  const learningState = state.learning
-
-  const sceneAnchoredCounts = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const card of starterPack.cards) {
-      if (learningState[card.id]?.status !== 'anchored') continue
-      counts.set(card.sceneId, (counts.get(card.sceneId) ?? 0) + 1)
-    }
-    return counts
-  }, [learningState])
 
   const filteredCards = useMemo(() => starterPack.cards.filter((card) => {
     const query = search.trim().toLocaleLowerCase()
@@ -283,7 +272,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
           <div className="board-canvas" role="application" aria-label="Interactive vocabulary board">
-            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} sceneCardCounts={SCENE_CARD_COUNTS} sceneAnchoredCounts={sceneAnchoredCounts} onCardActivate={handleCardActivate} />
+            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} onCardActivate={handleCardActivate} />
           </div>
           <div className="board-help"><span>Drag to move</span><span>Scroll or pinch to zoom</span><span>{runSession ? 'Focused Card is the prompt' : 'Tap a Card to open it'}</span></div>
         </div>

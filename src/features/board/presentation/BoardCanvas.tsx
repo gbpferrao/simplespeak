@@ -17,14 +17,12 @@ interface BoardCanvasProps {
   activeCardId: string | null
   runActive: boolean
   revealed: boolean
-  sceneCardCounts: Map<string, number>
-  sceneAnchoredCounts: Map<string, number>
   onCardActivate: (cardId: string) => void
 }
 
-export function BoardCanvas({ width, height, camera, state, cards, focusedCardId, activeCardId, runActive, revealed, sceneCardCounts, sceneAnchoredCounts, onCardActivate }: BoardCanvasProps) {
+export function BoardCanvas({ width, height, camera, state, cards, focusedCardId, activeCardId, runActive, revealed, onCardActivate }: BoardCanvasProps) {
   const gridDots = useMemo(() => createGridDots(width, height, camera), [width, height, camera])
-  const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} anchoredCount={sceneAnchoredCounts.get(scene.id) ?? 0} cardCount={sceneCardCounts.get(scene.id) ?? 0} />), [sceneAnchoredCounts, sceneCardCounts])
+  const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} />), [])
 
   return (
     <Stage width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom}>
