@@ -30,7 +30,7 @@ const statusColors: Record<ReturnType<typeof learningFor>['status'], string> = {
 }
 
 function useCardImage(source: string | undefined): HTMLImageElement | null {
-  const [image, setImage] = useState<HTMLImageElement | null>(null)
+  const [image, setImage] = useState<HTMLImageElement | null>(() => source ? imageCache.get(source) ?? null : null)
 
   useEffect(() => {
     if (!source) {
@@ -38,10 +38,18 @@ function useCardImage(source: string | undefined): HTMLImageElement | null {
       return
     }
 
+    const cached = imageCache.get(source)
+    if (cached) {
+      setImage(cached)
+      return
+    }
+
     let active = true
     const loadedImage = new window.Image()
     loadedImage.decoding = 'async'
     loadedImage.onload = () => {
+      imageCache.set(source, loadedImage)
+      trimImageCache()
       if (active) setImage(loadedImage)
     }
     loadedImage.onerror = () => {
@@ -59,6 +67,17 @@ function useCardImage(source: string | undefined): HTMLImageElement | null {
   return image
 }
 
+const MAX_IMAGE_CACHE = 64
+const imageCache = new Map<string, HTMLImageElement>()
+
+function trimImageCache(): void {
+  while (imageCache.size > MAX_IMAGE_CACHE) {
+    const oldest = imageCache.keys().next().value
+    if (!oldest) return
+    imageCache.delete(oldest)
+  }
+}
+
 function BoardCardNodeBase({ card, state, focused, runActive = false, revealed = false, onActivate }: BoardCardNodeProps) {
   const learning = learningFor(state, card.id)
   const imageSource = state.images[card.id]
@@ -68,9 +87,10 @@ function BoardCardNodeBase({ card, state, focused, runActive = false, revealed =
   const visualScale = runActive ? 1.08 : 1
   const borderColor = focused || runActive ? '#7657d9' : statusColors[learning.status]
   const fillColor = image ? '#ffffff' : '#e9e6ef'
-  const shadowBlur = runActive ? 16 : 8
-  const shadowOffsetY = runActive ? 8 : 4
-  const shadowOpacity = runActive ? 0.18 : 0.12
+  const hasEmphasis = focused || runActive
+  const shadowBlur = runActive ? 12 : focused ? 8 : 0
+  const shadowOffsetY = runActive ? 6 : focused ? 3 : 0
+  const shadowOpacity = hasEmphasis ? 0.16 : 0
 
   function activate(): void {
     onActivate(card.id)
@@ -78,7 +98,7 @@ function BoardCardNodeBase({ card, state, focused, runActive = false, revealed =
 
   return (
     <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 1 : rotation} name={`card-${card.id}`} onClick={activate} onTap={activate}>
-      <Rect x={-CARD_HALF} y={-CARD_HALF} width={CARD_SIZE} height={CARD_SIZE} fill={fillColor} stroke={borderColor} strokeWidth={focused || runActive ? 3 : 2} cornerRadius={CARD_RADIUS} shadowColor="#26344a" shadowBlur={shadowBlur} shadowOffsetY={shadowOffsetY} shadowOpacity={shadowOpacity} />
+      <Rect x={-CARD_HALF} y={-CARD_HALF} width={CARD_SIZE} height={CARD_SIZE} fill={fillColor} stroke={borderColor} strokeWidth={hasEmphasis ? 3 : 1.5} cornerRadius={CARD_RADIUS} shadowColor="#26344a" shadowBlur={shadowBlur} shadowOffsetY={shadowOffsetY} shadowOpacity={shadowOpacity} />
       {revealed ? <CardReveal card={card} state={state} /> : image ? <KonvaImage image={image} x={-CARD_HALF + CARD_INSET} y={-CARD_HALF + CARD_INSET} width={CARD_IMAGE_SIZE} height={CARD_IMAGE_SIZE} cornerRadius={CARD_RADIUS - 2} /> : <Text x={-CARD_HALF + 10} y={-24} width={CARD_SIZE - 20} height={48} text={card.target} fill="#26344a" fontFamily="Inter, system-ui, sans-serif" fontSize={22} fontStyle="bold" letterSpacing={-0.5} align="center" verticalAlign="middle" wrap="word" />}
       {scene && <Rect x={-CARD_HALF + 8} y={CARD_HALF - 10} width={8} height={3} fill={scene.accent} cornerRadius={2} opacity={0.75} listening={false} />}
     </Group>

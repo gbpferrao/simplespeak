@@ -57,6 +57,8 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   const viewportRef = useRef<HTMLDivElement>(null)
   const animationFrameRef = useRef<number | null>(null)
+  const cameraCommitFrameRef = useRef<number | null>(null)
+  const pendingCameraRef = useRef<BoardCamera | null>(null)
   const dragRef = useRef<PanGesture | null>(null)
   const pointersRef = useRef(new Map<number, BoardPointer>())
   const pinchRef = useRef<PinchGesture | null>(null)
@@ -78,7 +80,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
   // this just avoids decoding and hit-testing distant cards on small phones.
   const canvasCards = useMemo(() => {
     if (!viewportSize.width || !viewportSize.height) return filteredCards
-    const padding = 320
+    const padding = Math.max(180, Math.min(280, Math.max(viewportSize.width, viewportSize.height) / camera.zoom * 0.18))
     const left = -camera.x / camera.zoom - padding
     const top = -camera.y / camera.zoom - padding
     const right = (viewportSize.width - camera.x) / camera.zoom + padding
@@ -113,9 +115,21 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     setCamera(nextCamera)
   }
 
+  function scheduleCameraCommit(nextCamera: BoardCamera): void {
+    cameraRef.current = nextCamera
+    pendingCameraRef.current = nextCamera
+    if (cameraCommitFrameRef.current !== null) return
+    cameraCommitFrameRef.current = window.requestAnimationFrame(() => {
+      cameraCommitFrameRef.current = null
+      const pending = pendingCameraRef.current
+      pendingCameraRef.current = null
+      if (pending) setCamera(pending)
+    })
+  }
+
   function updateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
     cancelCameraAnimation()
-    commitCamera({ zoom: nextZoom, x: nextOffset.x, y: nextOffset.y })
+    scheduleCameraCommit({ zoom: nextZoom, x: nextOffset.x, y: nextOffset.y })
   }
 
   function animateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
@@ -177,7 +191,10 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cameraFocusId, runSession?.id])
 
-  useEffect(() => () => cancelCameraAnimation(), [])
+  useEffect(() => () => {
+    cancelCameraAnimation()
+    if (cameraCommitFrameRef.current !== null) window.cancelAnimationFrame(cameraCommitFrameRef.current)
+  }, [])
 
   function handleWheel(event: WheelEvent<HTMLDivElement>): void {
     event.preventDefault()

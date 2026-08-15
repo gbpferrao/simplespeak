@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
-import { Circle, Layer, Stage } from 'react-konva/lib/ReactKonvaCore'
-import 'konva/lib/shapes/Circle'
+import { Layer, Shape, Stage } from 'react-konva/lib/ReactKonvaCore'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
 import { starterPack } from '../../language-packs/data/starterPack'
 import { BoardCardNode } from './BoardCardNode'
@@ -27,7 +26,18 @@ export function BoardCanvas({ width, height, camera, state, cards, focusedCardId
   return (
     <Stage width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom}>
       <Layer listening={false}>
-        {gridDots.map(({ x, y, radius }) => <Circle key={`${x}-${y}`} x={x} y={y} radius={radius} fill="#c9ced6" opacity={0.72} />)}
+        <Shape
+          listening={false}
+          sceneFunc={(context, shape) => {
+            context.fillStyle = '#c9ced6'
+            for (const dot of gridDots) {
+              context.beginPath()
+              context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
+              context.fillStrokeShape(shape)
+            }
+          }}
+          opacity={0.72}
+        />
         {sceneLabelNodes}
       </Layer>
       <Layer>
