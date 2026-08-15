@@ -4,18 +4,13 @@ import type { PersistedState, ReviewOutcome } from '../../../core/contracts/type
 import type { ProgressStats } from '../../history/domain/progressStats'
 import { starterPack } from '../../language-packs/data/starterPack'
 import type { RunConfig, RunSession } from '../../study/domain/runSession'
-import { BoardCardNode } from './BoardCardNode'
+import { BoardCanvas } from './BoardCanvas'
+import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
 import { BoardRunBar } from './BoardRunBar'
-import { BoardSceneLabel } from './BoardSceneLabel'
 import { BoardRunOverlay } from '../../study/presentation/BoardRunOverlay'
 
-const BOARD_WIDTH = 2600
-const BOARD_HEIGHT = 1520
-const CARD_WIDTH = 148
-const CARD_HEIGHT = 148
-const MIN_ZOOM = 0.12
-const MAX_ZOOM = 1.25
 const SCENE_CARD_COUNTS = new Map(starterPack.scenes.map((scene) => [scene.id, starterPack.cards.filter((card) => card.sceneId === scene.id).length]))
+const INITIAL_CAMERA: BoardCamera = { zoom: 0.63, x: -18, y: -10 }
 
 interface BoardPointer {
   x: number
@@ -23,6 +18,7 @@ interface BoardPointer {
   startX: number
   startY: number
   panEligible: boolean
+  cardId: string | null
 }
 
 interface PanGesture {
@@ -38,12 +34,6 @@ interface PinchGesture {
   startZoom: number
   anchorX: number
   anchorY: number
-}
-
-interface BoardCamera {
-  zoom: number
-  x: number
-  y: number
 }
 
 interface BoardViewProps {
@@ -63,21 +53,22 @@ interface BoardViewProps {
 }
 
 export function BoardView({ state, stats, search, focusId, setFocusId, onSelectCard, onStartRun, onOpenRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
-  const [camera, setCamera] = useState<BoardCamera>({ zoom: 0.63, x: -18, y: -10 })
-  const cameraRef = useRef<BoardCamera>({ zoom: 0.63, x: -18, y: -10 })
-  const [cameraAnimating, setCameraAnimating] = useState(false)
-  const cameraAnimatingRef = useRef(false)
-  const cameraAnimationRef = useRef<number | null>(null)
+  const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
+  const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   const viewportRef = useRef<HTMLDivElement>(null)
+  const animationFrameRef = useRef<number | null>(null)
   const dragRef = useRef<PanGesture | null>(null)
   const pointersRef = useRef(new Map<number, BoardPointer>())
   const pinchRef = useRef<PinchGesture | null>(null)
   const movedRef = useRef(false)
+  const lastActivationRef = useRef<{ cardId: string; at: number } | null>(null)
   const activeCardId = runSession?.cards[runSession.currentIndex]?.id ?? null
   const cameraFocusId = runSession ? activeCardId : focusId
   const runCards = runSession?.cards ?? null
   const runCardIds = useMemo(() => new Set(runCards?.map((card) => card.id) ?? []), [runCards])
   const learningState = state.learning
+
   const sceneAnchoredCounts = useMemo(() => {
     const counts = new Map<string, number>()
     for (const card of starterPack.cards) {
@@ -87,35 +78,76 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     return counts
   }, [learningState])
 
-  const visibleCards = useMemo(() => starterPack.cards.filter((card) => {
+  const filteredCards = useMemo(() => starterPack.cards.filter((card) => {
     const query = search.trim().toLocaleLowerCase()
     if (runCardIds.has(card.id)) return true
     if (!query) return true
     return `${card.target} ${card.origin} ${card.exampleTarget}`.toLocaleLowerCase().includes(query)
   }), [runCardIds, search])
 
-  function updateCamera(nextZoom: number, nextOffset: { x: number; y: number }, animate = false): void {
-    if (cameraAnimationRef.current !== null) {
-      window.clearTimeout(cameraAnimationRef.current)
-      cameraAnimationRef.current = null
+  // Only mount cards near the viewport. The Stage remains one unified board;
+  // this just avoids decoding and hit-testing distant cards on small phones.
+  const canvasCards = useMemo(() => {
+    if (!viewportSize.width || !viewportSize.height) return filteredCards
+    const padding = 320
+    const left = -camera.x / camera.zoom - padding
+    const top = -camera.y / camera.zoom - padding
+    const right = (viewportSize.width - camera.x) / camera.zoom + padding
+    const bottom = (viewportSize.height - camera.y) / camera.zoom + padding
+    return filteredCards.filter((card) => card.id === cameraFocusId || (card.x + CARD_SIZE >= left && card.x <= right && card.y + CARD_SIZE >= top && card.y <= bottom))
+  }, [camera, cameraFocusId, filteredCards, viewportSize])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return
+    const viewportElement = viewport
+
+    function measure(): void {
+      setViewportSize({ width: viewportElement.clientWidth, height: viewportElement.clientHeight })
     }
-    if (animate) {
-      if (!cameraAnimatingRef.current) {
-        cameraAnimatingRef.current = true
-        setCameraAnimating(true)
-      }
-      cameraAnimationRef.current = window.setTimeout(() => {
-        cameraAnimationRef.current = null
-        cameraAnimatingRef.current = false
-        setCameraAnimating(false)
-      }, 420)
-    } else if (cameraAnimatingRef.current) {
-      cameraAnimatingRef.current = false
-      setCameraAnimating(false)
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(viewportElement)
+    return () => observer.disconnect()
+  }, [])
+
+  function cancelCameraAnimation(): void {
+    if (animationFrameRef.current !== null) {
+      window.cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
     }
-    const nextCamera = { zoom: nextZoom, x: nextOffset.x, y: nextOffset.y }
+  }
+
+  function commitCamera(nextCamera: BoardCamera): void {
     cameraRef.current = nextCamera
     setCamera(nextCamera)
+  }
+
+  function updateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
+    cancelCameraAnimation()
+    commitCamera({ zoom: nextZoom, x: nextOffset.x, y: nextOffset.y })
+  }
+
+  function animateCamera(nextZoom: number, nextOffset: { x: number; y: number }): void {
+    cancelCameraAnimation()
+    const from = cameraRef.current
+    const startedAt = performance.now()
+    const duration = 420
+
+    function frame(now: number): void {
+      const progress = Math.min(1, (now - startedAt) / duration)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      commitCamera({
+        zoom: from.zoom + (nextZoom - from.zoom) * eased,
+        x: from.x + (nextOffset.x - from.x) * eased,
+        y: from.y + (nextOffset.y - from.y) * eased,
+      })
+      if (progress < 1) animationFrameRef.current = window.requestAnimationFrame(frame)
+      else animationFrameRef.current = null
+    }
+
+    animationFrameRef.current = window.requestAnimationFrame(frame)
   }
 
   function pointerPair(): [BoardPointer, BoardPointer] | null {
@@ -133,49 +165,50 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     return { x: (first.x + second.x) / 2 - bounds.left, y: (first.y + second.y) / 2 - bounds.top }
   }
 
+  function cardAtPoint(clientX: number, clientY: number): string | null {
+    const bounds = viewportRef.current?.getBoundingClientRect()
+    if (!bounds) return null
+    const worldX = (clientX - bounds.left - cameraRef.current.x) / cameraRef.current.zoom
+    const worldY = (clientY - bounds.top - cameraRef.current.y) / cameraRef.current.zoom
+    return filteredCards.find((card) => worldX >= card.x && worldX <= card.x + CARD_SIZE && worldY >= card.y && worldY <= card.y + CARD_SIZE)?.id ?? null
+  }
+
   function focusCard(cardId: string | null): void {
     if (!cardId) return
     const card = starterPack.cards.find((candidate) => candidate.id === cardId)
     const bounds = viewportRef.current?.getBoundingClientRect()
     if (!card || !bounds) return
     const nextZoom = Math.max(0.72, cameraRef.current.zoom)
-    updateCamera(nextZoom, { x: bounds.width / 2 - (card.x + CARD_WIDTH / 2) * nextZoom, y: bounds.height / 2 - (card.y + CARD_HEIGHT / 2) * nextZoom }, true)
+    animateCamera(nextZoom, { x: bounds.width / 2 - (card.x + CARD_SIZE / 2) * nextZoom, y: bounds.height / 2 - (card.y + CARD_SIZE / 2) * nextZoom })
   }
 
   useEffect(() => {
     if (cameraFocusId) focusCard(cameraFocusId)
-    // This effect is an imperative camera command. Zoom is intentionally captured
-    // when the focus target changes.
+    // This is an imperative camera command. Its current camera is read from a ref.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cameraFocusId, runSession?.id])
 
-  useEffect(() => () => {
-    if (cameraAnimationRef.current !== null) window.clearTimeout(cameraAnimationRef.current)
-    cameraAnimatingRef.current = false
-  }, [])
+  useEffect(() => () => cancelCameraAnimation(), [])
 
   function handleWheel(event: WheelEvent<HTMLDivElement>): void {
     event.preventDefault()
     const bounds = viewportRef.current?.getBoundingClientRect()
     if (!bounds) return
     const factor = event.deltaY > 0 ? 0.92 : 1.08
-    const currentZoom = cameraRef.current.zoom
-    const currentOffset = cameraRef.current
-    const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom * factor))
+    const currentCamera = cameraRef.current
+    const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentCamera.zoom * factor))
     const cursorX = event.clientX - bounds.left
     const cursorY = event.clientY - bounds.top
-    updateCamera(nextZoom, { x: cursorX - (cursorX - currentOffset.x) * (nextZoom / currentZoom), y: cursorY - (cursorY - currentOffset.y) * (nextZoom / currentZoom) })
+    updateCamera(nextZoom, { x: cursorX - (cursorX - currentCamera.x) * (nextZoom / currentCamera.zoom), y: cursorY - (cursorY - currentCamera.y) * (nextZoom / currentCamera.zoom) })
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
-    const target = event.target as HTMLElement
-    const isInteractive = Boolean(target.closest('button, input, select, textarea'))
-    if (isInteractive && event.pointerType !== 'touch') return
-    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, panEligible: !isInteractive })
+    const cardId = cardAtPoint(event.clientX, event.clientY)
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, panEligible: !cardId, cardId })
     event.currentTarget.setPointerCapture(event.pointerId)
     movedRef.current = false
     if (pointersRef.current.size === 1) {
-      dragRef.current = isInteractive ? null : { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cameraRef.current.x, originY: cameraRef.current.y }
+      dragRef.current = cardId ? null : { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cameraRef.current.x, originY: cameraRef.current.y }
       return
     }
     if (pointersRef.current.size >= 2) {
@@ -215,6 +248,9 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
   }
 
   function handlePointerUp(event: ReactPointerEvent<HTMLDivElement>): void {
+    const pointer = pointersRef.current.get(event.pointerId)
+    const shouldActivate = Boolean(pointer?.cardId && !movedRef.current && pointersRef.current.size === 1)
+    const activatedCardId = pointer?.cardId ?? null
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
     pointersRef.current.delete(event.pointerId)
     if (pointersRef.current.size < 2) pinchRef.current = null
@@ -225,17 +261,30 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
     } else {
       dragRef.current = null
     }
+    if (shouldActivate && activatedCardId) handleCardActivate(activatedCardId)
+  }
+
+  function handlePointerCancel(event: ReactPointerEvent<HTMLDivElement>): void {
+    movedRef.current = true
+    handlePointerUp(event)
+  }
+
+  function handleCardActivate(cardId: string): void {
+    if (movedRef.current) return
+    const now = performance.now()
+    if (lastActivationRef.current?.cardId === cardId && now - lastActivationRef.current.at < 300) return
+    lastActivationRef.current = { cardId, at: now }
+    if (!runSession) setFocusId(cardId)
+    onSelectCard(cardId)
   }
 
   return (
     <section className="view board-view board-page" aria-label="SimpleSpeak board">
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
-        <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}>
-            <div className={`board-stage ${cameraAnimating ? 'is-camera-animating' : ''}`} style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT, transform: `translate3d(${camera.x}px, ${camera.y}px, 0) scale(${camera.zoom})` }}>
-              <svg className="board-paths" width={BOARD_WIDTH} height={BOARD_HEIGHT} viewBox={`0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`} aria-hidden="true">{starterPack.scenes.slice(0, -1).map((scene, index) => { const next = starterPack.scenes[index + 1]; return <line key={`${scene.id}-${next.id}`} x1={scene.x + scene.width / 2} y1={scene.y + scene.height / 2} x2={next.x + next.width / 2} y2={next.y + next.height / 2} /> })}</svg>
-              {starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} anchoredCount={sceneAnchoredCounts.get(scene.id) ?? 0} cardCount={SCENE_CARD_COUNTS.get(scene.id) ?? 0} />)}
-              {visibleCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={cameraFocusId === card.id} runMode={Boolean(runSession)} runActive={runSession ? activeCardId === card.id : false} revealed={runSession?.revealed === true && activeCardId === card.id} onClick={() => { if (movedRef.current) { movedRef.current = false; return } if (!runSession) setFocusId(card.id); onSelectCard(card.id) }} />)}
-            </div>
+        <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
+          <div className="board-canvas" role="application" aria-label="Interactive vocabulary board">
+            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} sceneCardCounts={SCENE_CARD_COUNTS} sceneAnchoredCounts={sceneAnchoredCounts} onCardActivate={handleCardActivate} />
+          </div>
           <div className="board-help"><span>Drag to move</span><span>Scroll or pinch to zoom</span><span>{runSession ? 'Focused Card is the prompt' : 'Tap a Card to open it'}</span></div>
         </div>
         {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label="Focus current card" title="Focus current card"><Focus size={15} /></button>}
