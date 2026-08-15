@@ -1,5 +1,5 @@
 import { Play, SlidersHorizontal, Timer } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import type { PersistedState } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
 import { starterPack } from '../../language-packs/data/starterPack'
@@ -12,7 +12,7 @@ interface BoardRunBarProps {
   onOpenRun: () => void
 }
 
-export function BoardRunBar({ state, stats, onStartRun, onOpenRun }: BoardRunBarProps) {
+export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun, onOpenRun }: BoardRunBarProps) {
   const [preset, setPreset] = useState<RunConfig['preset']>('due-nearby')
   const [sceneId, setSceneId] = useState<string | null>(null)
   const [limit, setLimit] = useState(Math.min(12, Math.max(4, state.settings.dailyTarget)))
@@ -35,4 +35,4 @@ export function BoardRunBar({ state, stats, onStartRun, onOpenRun }: BoardRunBar
       </div>
     </section>
   )
-}
+})

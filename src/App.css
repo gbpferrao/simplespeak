@@ -124,7 +124,8 @@ h3 { font-size: 16px; }
 .board-frame { position: relative; width: 100%; height: 100%; min-height: 0; flex: 1 1 auto; overflow: hidden; border: 0; border-radius: 0; background: var(--canvas); box-shadow: none; }
 .board-viewport { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; background: var(--canvas); }
 .board-viewport:active { cursor: grabbing; }
-.board-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; transition: transform .26s cubic-bezier(.22,.8,.3,1); }
+.board-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.board-stage.is-camera-animating { transition: transform .32s cubic-bezier(.22,.8,.3,1); }
 .board-paths { position: absolute; left: 0; top: 0; pointer-events: none; }
 .board-paths line { stroke: #cbd8e7; stroke-width: 3; stroke-dasharray: 10 16; }
 .scene-boundary { position: absolute; border: 2px dashed var(--scene-accent); border-radius: 24px; opacity: .28; pointer-events: none; }
@@ -151,7 +152,7 @@ h3 { font-size: 16px; }
 .card-node-footer strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .card-node-footer span { color: var(--ink-muted); font-size: 9px; white-space: nowrap; }
 .card-node-state { position: absolute; left: 12px; bottom: -10px; min-height: 20px; padding: 3px 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line-strong); border-radius: 7px; color: var(--ink-soft); background: var(--surface); box-shadow: 0 2px 0 rgba(38,52,74,.08); font-size: 8px; font-weight: 800; text-transform: capitalize; }
-.board-frame.is-run-active .board-stage { transition-duration: .42s; }
+.board-frame.is-run-active .board-stage.is-camera-animating { transition-duration: .42s; }
 .board-frame.is-run-active .board-help { opacity: .6; }
 .card-node.run-active-card { z-index: 9; animation: run-card-settle 2.8s ease-in-out infinite; }
 .card-node.run-active-card .card-node-paper { transform: translateY(-7px) rotate(1deg) scale(1.08); border-color: var(--violet); box-shadow: 0 8px 0 rgba(118,87,217,.18), 0 13px 23px rgba(38,52,74,.13); }

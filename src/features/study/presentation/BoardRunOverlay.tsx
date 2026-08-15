@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import { memo, type FormEvent } from 'react'
 import { Check, Eye, EyeOff, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import { statusLabel } from '../../../core/presentation/formatters'
@@ -23,7 +23,7 @@ interface BoardRunOverlayProps {
  * the thing being studied; this component only supplies the small amount of
  * interaction needed to produce a retrieval signal.
  */
-export function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedChange, onOpenCard, onExitRun }: BoardRunOverlayProps) {
+export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedChange, onOpenCard, onExitRun }: BoardRunOverlayProps) {
   const card = session.cards[session.currentIndex]
   if (!card) return null
 
@@ -75,4 +75,4 @@ export function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedCha
       </div>
     </section>
   )
-}
+})
