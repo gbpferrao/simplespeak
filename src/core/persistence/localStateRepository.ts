@@ -57,8 +57,12 @@ export function createEmptyLearning(): LearningState {
 
 export function makeInitialState(cards: WordCard[]): PersistedState {
   const learning: Record<string, LearningState> = {}
-  cards.forEach((card) => { learning[card.id] = createEmptyLearning() })
-  return { version: 1, learning, notes: {}, images: {}, runs: [], generations: [], settings: { ...defaultSettings } }
+  const images: Record<string, string> = {}
+  cards.forEach((card) => {
+    learning[card.id] = createEmptyLearning()
+    if (card.imagePath) images[card.id] = card.imagePath
+  })
+  return { version: 1, learning, notes: {}, images, runs: [], generations: [], settings: { ...defaultSettings } }
 }
 
 function isBrowserStorageAvailable(): boolean {
@@ -84,7 +88,7 @@ export async function loadPersistedState(cards: WordCard[]): Promise<PersistedSt
       ...parsed,
       learning,
       notes: parsed.notes ?? {},
-      images: parsed.images ?? {},
+      images: { ...initial.images, ...(parsed.images ?? {}) },
       runs: Array.isArray(parsed.runs) ? parsed.runs : [],
       generations: Array.isArray(parsed.generations) ? parsed.generations : [],
       settings: normalizeSettings(parsed.settings),

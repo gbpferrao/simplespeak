@@ -1,5 +1,5 @@
 import type { PersistedState } from '../../../core/contracts/types'
-import { starterPack } from '../../language-packs/data/starterPack'
+import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { isDue } from '../../study/domain/scheduler'
 import { createEmptyLearning } from '../../../core/persistence/localStateRepository'
 

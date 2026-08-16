@@ -3,14 +3,17 @@ import Konva from 'konva/lib/Core'
 import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import { Layer, Shape, Stage } from 'react-konva/lib/ReactKonvaCore'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
-import { starterPack } from '../../language-packs/data/starterPack'
+import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { BoardCardNode } from './BoardCardNode'
+import { BoardCardOverviewLayer } from './BoardCardOverview'
 import { BoardSceneLabel } from './BoardSceneLabel'
-import type { BoardCamera } from './boardGeometry'
+import { boardImageResolution, CARD_OVERVIEW_ZOOM, CARD_SIZE, GROUP_LABEL_FADE_END, GROUP_LABEL_FADE_START, type BoardCamera } from './boardGeometry'
 
-// Keep the mobile board at one backing pixel per CSS pixel. The board is a
-// large, mostly flat-color surface, so a 2x/3x canvas costs more than it adds.
-Konva.pixelRatio = 1
+// Render the board at a denser backing resolution so the illustrations stay
+// smooth while the camera downsamples them. Cap this at 2x: it is enough for
+// the phone display without multiplying the large board's memory cost by 3x.
+const BOARD_PIXEL_RATIO = Math.min(2, Math.max(1, window.devicePixelRatio || 1))
+Konva.pixelRatio = BOARD_PIXEL_RATIO
 
 interface BoardCanvasProps {
   width: number
@@ -26,16 +29,23 @@ interface BoardCanvasProps {
 }
 
 export function BoardCanvas({ width, height, camera, stageRef, state, cards, focusedCardId, activeCardId, runActive, revealed }: BoardCanvasProps) {
-  const gridDots = useMemo(() => createGridDots(width, height, camera), [width, height, camera])
+  const gridDots = useMemo(() => createGridDots(width, height, camera, cards), [width, height, camera, cards])
+  const groupLabelOpacity = Math.max(0, Math.min(1, (GROUP_LABEL_FADE_START - camera.zoom) / (GROUP_LABEL_FADE_START - GROUP_LABEL_FADE_END)))
   const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} />), [])
+  const sceneTitleNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} showBackground={false} titleOpacity={groupLabelOpacity * 0.58} />), [groupLabelOpacity])
+  const detailLevel = camera.zoom < CARD_OVERVIEW_ZOOM ? 'overview' : 'full'
+  const cardOpacity = 0.94 - (groupLabelOpacity * 0.2)
+  const importantCards = useMemo(() => cards.filter((card) => card.id === focusedCardId || card.id === activeCardId), [activeCardId, cards, focusedCardId])
+  const backgroundCards = useMemo(() => cards.filter((card) => card.id !== focusedCardId && card.id !== activeCardId), [activeCardId, cards, focusedCardId])
+  const backgroundImageResolution = boardImageResolution(camera.zoom, false)
 
   return (
-    <Stage ref={stageRef} width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom} pixelRatio={1} listening={false}>
-      <Layer listening={false}>
+    <Stage ref={stageRef} width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom} pixelRatio={BOARD_PIXEL_RATIO} listening={false}>
+      <Layer listening={false} imageSmoothingEnabled>
         <Shape
           listening={false}
           sceneFunc={(context) => {
-            context.fillStyle = '#d5d9de'
+            context.fillStyle = '#aeb1b3'
             context.beginPath()
             for (const dot of gridDots) {
               context.moveTo(dot.x + dot.radius, dot.y)
@@ -43,24 +53,36 @@ export function BoardCanvas({ width, height, camera, stageRef, state, cards, foc
             }
             context.fill()
           }}
-          opacity={0.54}
+          opacity={0.3}
         />
         {sceneLabelNodes}
       </Layer>
-      <Layer listening={false}>
-        {cards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} revealed={revealed && activeCardId === card.id} />)}
+      <Layer listening={false} imageSmoothingEnabled>
+        {detailLevel === 'overview' && <BoardCardOverviewLayer cards={backgroundCards} state={state} />}
+        {detailLevel === 'full' && backgroundCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={false} runMode={runActive} runActive={false} revealed={false} cardOpacity={cardOpacity} imageResolution={backgroundImageResolution} />)}
+      </Layer>
+      {/*
+       * Keep emphasized Cards in their own top layer at every zoom level.
+       * In particular, a Run normally focuses at >= 0.72, so rendering these
+       * only in the overview branch makes the current Card disappear.
+       */}
+      <Layer listening={false} imageSmoothingEnabled>
+        {importantCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} revealed={revealed && activeCardId === card.id} cardOpacity={1} imageResolution={boardImageResolution(camera.zoom, true)} />)}
+      </Layer>
+      <Layer listening={false} imageSmoothingEnabled>
+        {sceneTitleNodes}
       </Layer>
     </Stage>
   )
 }
 
-function createGridDots(width: number, height: number, camera: BoardCamera) {
+function createGridDots(width: number, height: number, camera: BoardCamera, cards: WordCard[]) {
   if (width <= 0 || height <= 0) return []
 
   // Every zoom-out octave doubles world spacing, keeping the grid legible
   // without flooding a small screen with thousands of tiny points.
-  const octave = Math.max(0, Math.min(4, Math.floor(Math.log2(1 / camera.zoom))))
-  const spacing = 48 * 2 ** octave
+  const octave = Math.max(0, Math.min(6, Math.floor(Math.log2(1 / camera.zoom))))
+  const spacing = 44 * 2 ** octave
   const radius = 1.35 / camera.zoom
   const left = Math.floor((-camera.x / camera.zoom) / spacing) - 1
   const right = Math.ceil(((width - camera.x) / camera.zoom) / spacing) + 1
@@ -74,5 +96,11 @@ function createGridDots(width: number, height: number, camera: BoardCamera) {
     }
   }
 
-  return dots
+  return dots.filter((dot) => !cards.some((card) => {
+    const padding = dot.radius
+    return dot.x + padding >= card.x
+      && dot.x - padding <= card.x + CARD_SIZE
+      && dot.y + padding >= card.y
+      && dot.y - padding <= card.y + CARD_SIZE
+  }))
 }

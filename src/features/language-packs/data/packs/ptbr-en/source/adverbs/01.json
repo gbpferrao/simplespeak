@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "not",
+      "origin": "não"
+    },
+    {
+      "target": "so",
+      "origin": "tão"
+    },
+    {
+      "target": "very",
+      "origin": "muito"
+    },
+    {
+      "target": "also",
+      "origin": "também"
+    },
+    {
+      "target": "well",
+      "origin": "bem"
+    },
+    {
+      "target": "only",
+      "origin": "apenas"
+    },
+    {
+      "target": "just",
+      "origin": "apenas"
+    },
+    {
+      "target": "now",
+      "origin": "agora"
+    },
+    {
+      "target": "then",
+      "origin": "então"
+    },
+    {
+      "target": "more",
+      "origin": "mais"
+    },
+    {
+      "target": "most",
+      "origin": "mais"
+    },
+    {
+      "target": "here",
+      "origin": "aqui"
+    },
+    {
+      "target": "there",
+      "origin": "ali"
+    },
+    {
+      "target": "up",
+      "origin": "acima"
+    },
+    {
+      "target": "down",
+      "origin": "abaixo"
+    },
+    {
+      "target": "out",
+      "origin": "fora"
+    },
+    {
+      "target": "about",
+      "origin": "aproximadamente"
+    },
+    {
+      "target": "back",
+      "origin": "de volta"
+    },
+    {
+      "target": "even",
+      "origin": "até"
+    },
+    {
+      "target": "still",
+      "origin": "ainda"
+    },
+    {
+      "target": "too",
+      "origin": "também"
+    },
+    {
+      "target": "again",
+      "origin": "novamente"
+    },
+    {
+      "target": "never",
+      "origin": "nunca"
+    },
+    {
+      "target": "always",
+      "origin": "sempre"
+    },
+    {
+      "target": "often",
+      "origin": "frequentemente"
+    },
+    {
+      "target": "sometimes",
+      "origin": "às vezes"
+    },
+    {
+      "target": "usually",
+      "origin": "geralmente"
+    },
+    {
+      "target": "already",
+      "origin": "já"
+    },
+    {
+      "target": "almost",
+      "origin": "quase"
+    },
+    {
+      "target": "together",
+      "origin": "juntos"
+    },
+    {
+      "target": "maybe",
+      "origin": "talvez"
+    },
+    {
+      "target": "perhaps",
+      "origin": "talvez"
+    },
+    {
+      "target": "really",
+      "origin": "realmente"
+    },
+    {
+      "target": "actually",
+      "origin": "na verdade"
+    },
+    {
+      "target": "probably",
+      "origin": "provavelmente"
+    },
+    {
+      "target": "especially",
+      "origin": "especialmente"
+    },
+    {
+      "target": "finally",
+      "origin": "finalmente"
+    },
+    {
+      "target": "soon",
+      "origin": "logo"
+    },
+    {
+      "target": "later",
+      "origin": "mais tarde"
+    },
+    {
+      "target": "today",
+      "origin": "hoje"
+    },
+    {
+      "target": "tomorrow",
+      "origin": "amanhã"
+    },
+    {
+      "target": "yesterday",
+      "origin": "ontem"
+    },
+    {
+      "target": "away",
+      "origin": "longe"
+    },
+    {
+      "target": "around",
+      "origin": "ao redor"
+    },
+    {
+      "target": "ahead",
+      "origin": "adiante"
+    },
+    {
+      "target": "behind",
+      "origin": "atrás"
+    },
+    {
+      "target": "inside",
+      "origin": "dentro"
+    },
+    {
+      "target": "outside",
+      "origin": "fora"
+    },
+    {
+      "target": "near",
+      "origin": "perto"
+    },
+    {
+      "target": "far",
+      "origin": "longe"
+    },
+    {
+      "target": "however",
+      "origin": "porém"
+    },
+    {
+      "target": "therefore",
+      "origin": "portanto"
+    },
+    {
+      "target": "instead",
+      "origin": "em vez disso"
+    },
+    {
+      "target": "rather",
+      "origin": "preferencialmente"
+    },
+    {
+      "target": "quite",
+      "origin": "bastante"
+    },
+    {
+      "target": "enough",
+      "origin": "suficientemente"
+    },
+    {
+      "target": "once",
+      "origin": "uma vez"
+    },
+    {
+      "target": "twice",
+      "origin": "duas vezes"
+    },
+    {
+      "target": "yet",
+      "origin": "ainda"
+    },
+    {
+      "target": "ever",
+      "origin": "sempre"
+    },
+    {
+      "target": "otherwise",
+      "origin": "caso contrário"
+    },
+    {
+      "target": "clearly",
+      "origin": "claramente"
+    },
+    {
+      "target": "easily",
+      "origin": "facilmente"
+    },
+    {
+      "target": "simply",
+      "origin": "simplesmente"
+    },
+    {
+      "target": "quickly",
+      "origin": "rapidamente"
+    },
+    {
+      "target": "slowly",
+      "origin": "lentamente"
+    },
+    {
+      "target": "carefully",
+      "origin": "cuidadosamente"
+    },
+    {
+      "target": "directly",
+      "origin": "diretamente"
+    },
+    {
+      "target": "exactly",
+      "origin": "exatamente"
+    },
+    {
+      "target": "nearly",
+      "origin": "quase"
+    },
+    {
+      "target": "recently",
+      "origin": "recentemente"
+    },
+    {
+      "target": "currently",
+      "origin": "atualmente"
+    },
+    {
+      "target": "immediately",
+      "origin": "imediatamente"
+    },
+    {
+      "target": "suddenly",
+      "origin": "de repente"
+    },
+    {
+      "target": "generally",
+      "origin": "geralmente"
+    },
+    {
+      "target": "mostly",
+      "origin": "principalmente"
+    },
+    {
+      "target": "mainly",
+      "origin": "principalmente"
+    },
+    {
+      "target": "truly",
+      "origin": "verdadeiramente"
+    },
+    {
+      "target": "certainly",
+      "origin": "certamente"
+    },
+    {
+      "target": "definitely",
+      "origin": "definitivamente"
+    },
+    {
+      "target": "likely",
+      "origin": "provavelmente"
+    },
+    {
+      "target": "apart",
+      "origin": "separados"
+    },
+    {
+      "target": "alone",
+      "origin": "sozinho"
+    },
+    {
+      "target": "anywhere",
+      "origin": "em qualquer lugar"
+    },
+    {
+      "target": "everywhere",
+      "origin": "em todo lugar"
+    },
+    {
+      "target": "nowhere",
+      "origin": "em nenhum lugar"
+    },
+    {
+      "target": "somehow",
+      "origin": "de algum modo"
+    },
+    {
+      "target": "somewhere",
+      "origin": "em algum lugar"
+    },
+    {
+      "target": "seriously",
+      "origin": "seriamente"
+    },
+    {
+      "target": "indeed",
+      "origin": "de fato"
+    },
+    {
+      "target": "less",
+      "origin": "menos"
+    },
+    {
+      "target": "least",
+      "origin": "menos"
+    },
+    {
+      "target": "either",
+      "origin": "também"
+    },
+    {
+      "target": "neither",
+      "origin": "nenhum dos dois"
+    },
+    {
+      "target": "forward",
+      "origin": "para frente"
+    },
+    {
+      "target": "backward",
+      "origin": "para trás"
+    },
+    {
+      "target": "nearby",
+      "origin": "por perto"
+    },
+    {
+      "target": "aloud",
+      "origin": "em voz alta"
+    },
+    {
+      "target": "online",
+      "origin": "online"
+    },
+    {
+      "target": "offline",
+      "origin": "offline"
+    }
+  ]
+}

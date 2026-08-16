@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "good",
+      "origin": "bom"
+    },
+    {
+      "target": "new",
+      "origin": "novo"
+    },
+    {
+      "target": "first",
+      "origin": "primeiro"
+    },
+    {
+      "target": "last",
+      "origin": "último"
+    },
+    {
+      "target": "long",
+      "origin": "longo"
+    },
+    {
+      "target": "great",
+      "origin": "ótimo"
+    },
+    {
+      "target": "little",
+      "origin": "pequeno"
+    },
+    {
+      "target": "own",
+      "origin": "próprio"
+    },
+    {
+      "target": "other",
+      "origin": "outro"
+    },
+    {
+      "target": "old",
+      "origin": "velho"
+    },
+    {
+      "target": "right",
+      "origin": "certo"
+    },
+    {
+      "target": "big",
+      "origin": "grande"
+    },
+    {
+      "target": "high",
+      "origin": "alto"
+    },
+    {
+      "target": "different",
+      "origin": "diferente"
+    },
+    {
+      "target": "small",
+      "origin": "pequeno"
+    },
+    {
+      "target": "large",
+      "origin": "grande"
+    },
+    {
+      "target": "next",
+      "origin": "próximo"
+    },
+    {
+      "target": "early",
+      "origin": "cedo"
+    },
+    {
+      "target": "young",
+      "origin": "jovem"
+    },
+    {
+      "target": "important",
+      "origin": "importante"
+    },
+    {
+      "target": "few",
+      "origin": "poucos"
+    },
+    {
+      "target": "public",
+      "origin": "público"
+    },
+    {
+      "target": "bad",
+      "origin": "ruim"
+    },
+    {
+      "target": "same",
+      "origin": "mesmo"
+    },
+    {
+      "target": "able",
+      "origin": "capaz"
+    },
+    {
+      "target": "free",
+      "origin": "livre"
+    },
+    {
+      "target": "sure",
+      "origin": "certo"
+    },
+    {
+      "target": "true",
+      "origin": "verdadeiro"
+    },
+    {
+      "target": "best",
+      "origin": "melhor"
+    },
+    {
+      "target": "better",
+      "origin": "melhor"
+    },
+    {
+      "target": "low",
+      "origin": "baixo"
+    },
+    {
+      "target": "clear",
+      "origin": "claro"
+    },
+    {
+      "target": "easy",
+      "origin": "fácil"
+    },
+    {
+      "target": "hard",
+      "origin": "difícil"
+    },
+    {
+      "target": "full",
+      "origin": "cheio"
+    },
+    {
+      "target": "strong",
+      "origin": "forte"
+    },
+    {
+      "target": "real",
+      "origin": "real"
+    },
+    {
+      "target": "possible",
+      "origin": "possível"
+    },
+    {
+      "target": "whole",
+      "origin": "inteiro"
+    },
+    {
+      "target": "special",
+      "origin": "especial"
+    },
+    {
+      "target": "general",
+      "origin": "geral"
+    },
+    {
+      "target": "open",
+      "origin": "aberto"
+    },
+    {
+      "target": "short",
+      "origin": "curto"
+    },
+    {
+      "target": "close",
+      "origin": "próximo"
+    },
+    {
+      "target": "human",
+      "origin": "humano"
+    },
+    {
+      "target": "local",
+      "origin": "local"
+    },
+    {
+      "target": "late",
+      "origin": "atrasado"
+    },
+    {
+      "target": "major",
+      "origin": "principal"
+    },
+    {
+      "target": "simple",
+      "origin": "simples"
+    },
+    {
+      "target": "common",
+      "origin": "comum"
+    },
+    {
+      "target": "poor",
+      "origin": "pobre"
+    },
+    {
+      "target": "private",
+      "origin": "privado"
+    },
+    {
+      "target": "recent",
+      "origin": "recente"
+    },
+    {
+      "target": "certain",
+      "origin": "certo"
+    },
+    {
+      "target": "personal",
+      "origin": "pessoal"
+    },
+    {
+      "target": "available",
+      "origin": "disponível"
+    },
+    {
+      "target": "likely",
+      "origin": "provável"
+    },
+    {
+      "target": "national",
+      "origin": "nacional"
+    },
+    {
+      "target": "social",
+      "origin": "social"
+    },
+    {
+      "target": "political",
+      "origin": "político"
+    },
+    {
+      "target": "happy",
+      "origin": "feliz"
+    },
+    {
+      "target": "serious",
+      "origin": "sério"
+    },
+    {
+      "target": "ready",
+      "origin": "pronto"
+    },
+    {
+      "target": "green",
+      "origin": "verde"
+    },
+    {
+      "target": "black",
+      "origin": "preto"
+    },
+    {
+      "target": "white",
+      "origin": "branco"
+    },
+    {
+      "target": "red",
+      "origin": "vermelho"
+    },
+    {
+      "target": "blue",
+      "origin": "azul"
+    },
+    {
+      "target": "dark",
+      "origin": "escuro"
+    },
+    {
+      "target": "light",
+      "origin": "leve"
+    },
+    {
+      "target": "hot",
+      "origin": "quente"
+    },
+    {
+      "target": "cold",
+      "origin": "frio"
+    },
+    {
+      "target": "warm",
+      "origin": "quente"
+    },
+    {
+      "target": "cool",
+      "origin": "fresco"
+    },
+    {
+      "target": "clean",
+      "origin": "limpo"
+    },
+    {
+      "target": "dirty",
+      "origin": "sujo"
+    },
+    {
+      "target": "fast",
+      "origin": "rápido"
+    },
+    {
+      "target": "slow",
+      "origin": "lento"
+    },
+    {
+      "target": "safe",
+      "origin": "seguro"
+    },
+    {
+      "target": "dangerous",
+      "origin": "perigoso"
+    },
+    {
+      "target": "beautiful",
+      "origin": "bonito"
+    },
+    {
+      "target": "ugly",
+      "origin": "feio"
+    },
+    {
+      "target": "kind",
+      "origin": "gentil"
+    },
+    {
+      "target": "wrong",
+      "origin": "errado"
+    },
+    {
+      "target": "useful",
+      "origin": "útil"
+    },
+    {
+      "target": "necessary",
+      "origin": "necessário"
+    },
+    {
+      "target": "difficult",
+      "origin": "difícil"
+    },
+    {
+      "target": "quiet",
+      "origin": "quieto"
+    },
+    {
+      "target": "loud",
+      "origin": "alto"
+    },
+    {
+      "target": "rich",
+      "origin": "rico"
+    },
+    {
+      "target": "natural",
+      "origin": "natural"
+    },
+    {
+      "target": "central",
+      "origin": "central"
+    },
+    {
+      "target": "final",
+      "origin": "final"
+    },
+    {
+      "target": "current",
+      "origin": "atual"
+    },
+    {
+      "target": "false",
+      "origin": "falso"
+    },
+    {
+      "target": "single",
+      "origin": "único"
+    },
+    {
+      "target": "enough",
+      "origin": "suficiente"
+    },
+    {
+      "target": "thin",
+      "origin": "magro"
+    },
+    {
+      "target": "thick",
+      "origin": "grosso"
+    },
+    {
+      "target": "deep",
+      "origin": "profundo"
+    }
+  ]
+}

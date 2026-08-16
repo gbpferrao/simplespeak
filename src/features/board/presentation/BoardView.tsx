@@ -3,7 +3,7 @@ import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import { Focus } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
-import { starterPack } from '../../language-packs/data/starterPack'
+import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import type { RunConfig, RunSession } from '../../study/domain/runSession'
 import { BoardCanvas } from './BoardCanvas'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
@@ -39,12 +39,10 @@ interface PinchGesture {
 interface BoardViewProps {
   state: PersistedState
   stats: ProgressStats
-  search: string
   focusId: string | null
   setFocusId: (cardId: string | null) => void
   onSelectCard: (cardId: string) => void
   onStartRun: (config: RunConfig) => void
-  onOpenRun: () => void
   runSession: RunSession | null
   onReveal: () => void
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
@@ -52,7 +50,7 @@ interface BoardViewProps {
   onExitRun: () => void
 }
 
-export function BoardView({ state, stats, search, focusId, setFocusId, onSelectCard, onStartRun, onOpenRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
+export function BoardView({ state, stats, focusId, setFocusId, onSelectCard, onStartRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
   const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
   const stageRef = useRef<KonvaStage | null>(null)
@@ -68,15 +66,7 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
   const lastActivationRef = useRef<{ cardId: string; at: number } | null>(null)
   const activeCardId = runSession?.cards[runSession.currentIndex]?.id ?? null
   const cameraFocusId = runSession ? activeCardId : focusId
-  const runCards = runSession?.cards ?? null
-  const runCardIds = useMemo(() => new Set(runCards?.map((card) => card.id) ?? []), [runCards])
-
-  const filteredCards = useMemo(() => starterPack.cards.filter((card) => {
-    const query = search.trim().toLocaleLowerCase()
-    if (runCardIds.has(card.id)) return true
-    if (!query) return true
-    return `${card.target} ${card.origin} ${card.exampleTarget}`.toLocaleLowerCase().includes(query)
-  }), [runCardIds, search])
+  const filteredCards = starterPack.cards
 
   // Only mount cards near the viewport. The Stage remains one unified board;
   // this just avoids decoding and hit-testing distant cards on small phones.
@@ -239,11 +229,13 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
 
   function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
     const cardId = cardAtPoint(event.clientX, event.clientY)
-    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, panEligible: !cardId, cardId })
+    // A pointer-down on an illustration is still a pan candidate. We decide
+    // between pan and activation only after movement crosses the threshold.
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, panEligible: true, cardId })
     event.currentTarget.setPointerCapture(event.pointerId)
     movedRef.current = false
     if (pointersRef.current.size === 1) {
-      dragRef.current = cardId ? null : { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cameraRef.current.x, originY: cameraRef.current.y }
+      dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cameraRef.current.x, originY: cameraRef.current.y }
       return
     }
     if (pointersRef.current.size >= 2) {
@@ -323,7 +315,8 @@ export function BoardView({ state, stats, search, focusId, setFocusId, onSelectC
           </div>
         </div>
         {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label="Focus current card" title="Focus current card"><Focus size={15} /></button>}
-        {runSession ? <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onExitRun={onExitRun} /> : <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} onOpenRun={onOpenRun} />}
+        {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
+        {runSession && <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onExitRun={onExitRun} />}
       </div>
     </section>
   )

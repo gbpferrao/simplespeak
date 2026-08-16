@@ -4,7 +4,7 @@ import type { PersistedState, ReviewOutcome } from '../../../core/contracts/type
 import { statusLabel } from '../../../core/presentation/formatters'
 import { learningFor, sceneFor } from '../../../core/presentation/selectors'
 import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
-import { starterPack } from '../../language-packs/data/starterPack'
+import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { retrievability } from '../domain/scheduler'
 import type { RunSession } from '../domain/runSession'
 

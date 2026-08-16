@@ -1,10 +1,10 @@
 import { Sparkles } from 'lucide-react'
-import { AppNav, Header } from './presentation/Navigation'
+import { Header } from './presentation/Navigation'
 import { useSimpleSpeakController } from './useSimpleSpeakController'
 import { learningFor } from '../core/presentation/selectors'
+import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { BoardView } from '../features/board/presentation/BoardView'
 import { HistoryView } from '../features/history/presentation/HistoryView'
-import { RunView } from '../features/study/presentation/RunView'
 import { SettingsView } from '../features/settings/presentation/SettingsView'
 import { CardDetail } from '../features/vocabulary/presentation/CardDetail'
 import { StabilityPanel } from '../features/vocabulary/presentation/StabilityPanel'
@@ -13,22 +13,21 @@ export function AppShell() {
   const controller = useSimpleSpeakController()
 
   if (!controller.hydrated) {
-    return <div className="loading-screen"><div className="brand-mark"><Sparkles size={18} /></div><span>Opening your board...</span></div>
+    return <div className="loading-screen"><div className="brand-mark"><Sparkles size={18} /></div><span>Opening SimpleSpeak...</span></div>
   }
 
   const { data, view, setView, stats, selectedCard, stabilityCard } = controller
-  const activeRun = view === 'run' && controller.runSession && !controller.runSession.finished ? controller.runSession : null
+  const activeRun = controller.runSession && !controller.runSession.finished ? controller.runSession : null
+  const boardVisible = view === 'board' || Boolean(activeRun)
 
   return (
-    <div className={`app-shell ${controller.feedback ? `feedback-${controller.feedback}` : ''}`}>
-      <Header view={view} setView={setView} search={controller.search} setSearch={controller.setSearch} stats={stats} />
+    <div className={`app-shell ${boardVisible ? 'board-shell' : ''} ${controller.feedback ? `feedback-${controller.feedback}` : ''}`}>
+      <Header view={view} setView={setView} searchCards={starterPack.cards} onSearchSelect={(cardId) => { controller.setSelectedCardId(null); controller.setStabilityCardId(null); controller.setBoardFocusId(cardId); controller.setView('board') }} />
       <main className="main-content">
-        {(view === 'board' || activeRun) && <BoardView state={data} stats={stats} search={controller.search} focusId={controller.boardFocusId} setFocusId={controller.setBoardFocusId} onSelectCard={controller.setSelectedCardId} onStartRun={(config) => { controller.setRunConfig(config); controller.startRun(config) }} onOpenRun={() => setView('run')} runSession={activeRun} onReveal={controller.revealRunCard} onAnswer={controller.answerRun} onTypedChange={controller.setTypedAnswer} onExitRun={() => setView('board')} />}
-        {view === 'run' && !activeRun && <RunView session={controller.runSession} state={data} config={controller.runConfig} setConfig={controller.setRunConfig} onStart={controller.startRun} onReveal={controller.revealRunCard} onAnswer={controller.answerRun} onTypedChange={controller.setTypedAnswer} onOpenCard={controller.setSelectedCardId} onOpenBoard={() => setView('board')} />}
-        {view === 'history' && <HistoryView state={data} stats={stats} onOpenCard={controller.setSelectedCardId} />}
-        {view === 'settings' && <SettingsView state={data} apiKey={controller.apiKey} setApiKey={controller.setApiKey} onSaveApiKey={controller.persistApiKey} onUpdateSettings={controller.updateSettings} onResetLearning={controller.resetLearning} />}
+        {boardVisible && <BoardView state={data} stats={stats} focusId={controller.boardFocusId} setFocusId={controller.setBoardFocusId} onSelectCard={controller.setSelectedCardId} onStartRun={(config) => { controller.setRunConfig(config); controller.startRun(config) }} runSession={activeRun} onReveal={controller.revealRunCard} onAnswer={controller.answerRun} onTypedChange={controller.setTypedAnswer} onExitRun={controller.exitRun} />}
+        {view === 'history' && !activeRun && <HistoryView state={data} stats={stats} onOpenCard={controller.setSelectedCardId} />}
+        {view === 'settings' && !activeRun && <SettingsView state={data} apiKey={controller.apiKey} setApiKey={controller.setApiKey} onSaveApiKey={controller.persistApiKey} onUpdateSettings={controller.updateSettings} onResetLearning={controller.resetLearning} />}
       </main>
-      <AppNav view={view} setView={setView} stats={stats} />
       {selectedCard && <CardDetail card={selectedCard} state={data} generating={controller.generatingCardId === selectedCard.id} onClose={() => controller.setSelectedCardId(null)} onGenerate={(description) => { void controller.generateCardImage(selectedCard, description) }} onOpenStability={() => controller.setStabilityCardId(selectedCard.id)} onSaveNote={(note) => controller.saveNote(selectedCard.id, note)} />}
       {stabilityCard && <StabilityPanel card={stabilityCard} learning={learningFor(data, stabilityCard.id)} onClose={() => controller.setStabilityCardId(null)} />}
       {controller.toast && <div className="toast" role="status"><Sparkles size={15} />{controller.toast}</div>}

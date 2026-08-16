@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "connect",
+      "origin": "conectar"
+    },
+    {
+      "target": "separate",
+      "origin": "separar"
+    },
+    {
+      "target": "mark",
+      "origin": "marcar"
+    },
+    {
+      "target": "count",
+      "origin": "contar"
+    },
+    {
+      "target": "measure",
+      "origin": "medir"
+    },
+    {
+      "target": "solve",
+      "origin": "resolver"
+    },
+    {
+      "target": "protect",
+      "origin": "proteger"
+    },
+    {
+      "target": "attack",
+      "origin": "atacar"
+    },
+    {
+      "target": "fight",
+      "origin": "lutar"
+    },
+    {
+      "target": "dance",
+      "origin": "dançar"
+    },
+    {
+      "target": "sing",
+      "origin": "cantar"
+    },
+    {
+      "target": "laugh",
+      "origin": "rir"
+    },
+    {
+      "target": "smile",
+      "origin": "sorrir"
+    },
+    {
+      "target": "cry",
+      "origin": "chorar"
+    },
+    {
+      "target": "relax",
+      "origin": "relaxar"
+    },
+    {
+      "target": "rest",
+      "origin": "descansar"
+    },
+    {
+      "target": "wake",
+      "origin": "acordar"
+    },
+    {
+      "target": "dress",
+      "origin": "vestir"
+    },
+    {
+      "target": "feed",
+      "origin": "alimentar"
+    },
+    {
+      "target": "plant",
+      "origin": "plantar"
+    },
+    {
+      "target": "gather",
+      "origin": "reunir"
+    },
+    {
+      "target": "lift",
+      "origin": "levantar"
+    },
+    {
+      "target": "drop",
+      "origin": "derrubar"
+    },
+    {
+      "target": "kick",
+      "origin": "chutar"
+    },
+    {
+      "target": "borrow",
+      "origin": "pegar emprestado"
+    },
+    {
+      "target": "lend",
+      "origin": "emprestar"
+    },
+    {
+      "target": "earn",
+      "origin": "ganhar"
+    },
+    {
+      "target": "matter",
+      "origin": "importar"
+    },
+    {
+      "target": "own",
+      "origin": "possuir"
+    },
+    {
+      "target": "belong",
+      "origin": "pertencer"
+    },
+    {
+      "target": "depend",
+      "origin": "depender"
+    },
+    {
+      "target": "contain",
+      "origin": "conter"
+    },
+    {
+      "target": "avoid",
+      "origin": "evitar"
+    },
+    {
+      "target": "accept",
+      "origin": "aceitar"
+    },
+    {
+      "target": "admit",
+      "origin": "admitir"
+    },
+    {
+      "target": "affect",
+      "origin": "afetar"
+    },
+    {
+      "target": "apply",
+      "origin": "aplicar"
+    },
+    {
+      "target": "argue",
+      "origin": "discutir"
+    },
+    {
+      "target": "assume",
+      "origin": "presumir"
+    },
+    {
+      "target": "attend",
+      "origin": "participar"
+    },
+    {
+      "target": "complete",
+      "origin": "completar"
+    },
+    {
+      "target": "complain",
+      "origin": "reclamar"
+    },
+    {
+      "target": "concern",
+      "origin": "preocupar"
+    },
+    {
+      "target": "confirm",
+      "origin": "confirmar"
+    },
+    {
+      "target": "contact",
+      "origin": "contatar"
+    },
+    {
+      "target": "contribute",
+      "origin": "contribuir"
+    },
+    {
+      "target": "correct",
+      "origin": "corrigir"
+    },
+    {
+      "target": "cross",
+      "origin": "atravessar"
+    },
+    {
+      "target": "damage",
+      "origin": "danificar"
+    },
+    {
+      "target": "define",
+      "origin": "definir"
+    },
+    {
+      "target": "demand",
+      "origin": "exigir"
+    },
+    {
+      "target": "determine",
+      "origin": "determinar"
+    },
+    {
+      "target": "discuss",
+      "origin": "discutir"
+    },
+    {
+      "target": "enter",
+      "origin": "entrar"
+    },
+    {
+      "target": "escape",
+      "origin": "escapar"
+    },
+    {
+      "target": "examine",
+      "origin": "examinar"
+    },
+    {
+      "target": "exist",
+      "origin": "existir"
+    },
+    {
+      "target": "express",
+      "origin": "expressar"
+    },
+    {
+      "target": "extend",
+      "origin": "estender"
+    },
+    {
+      "target": "force",
+      "origin": "forçar"
+    },
+    {
+      "target": "gain",
+      "origin": "ganhar"
+    },
+    {
+      "target": "handle",
+      "origin": "lidar"
+    },
+    {
+      "target": "identify",
+      "origin": "identificar"
+    },
+    {
+      "target": "indicate",
+      "origin": "indicar"
+    },
+    {
+      "target": "influence",
+      "origin": "influenciar"
+    },
+    {
+      "target": "introduce",
+      "origin": "apresentar"
+    },
+    {
+      "target": "judge",
+      "origin": "julgar"
+    },
+    {
+      "target": "maintain",
+      "origin": "manter"
+    },
+    {
+      "target": "mention",
+      "origin": "mencionar"
+    },
+    {
+      "target": "perform",
+      "origin": "realizar"
+    },
+    {
+      "target": "prevent",
+      "origin": "prevenir"
+    },
+    {
+      "target": "prove",
+      "origin": "provar"
+    },
+    {
+      "target": "recognize",
+      "origin": "reconhecer"
+    },
+    {
+      "target": "recommend",
+      "origin": "recomendar"
+    },
+    {
+      "target": "reflect",
+      "origin": "refletir"
+    },
+    {
+      "target": "relate",
+      "origin": "relacionar"
+    },
+    {
+      "target": "replace",
+      "origin": "substituir"
+    },
+    {
+      "target": "respond",
+      "origin": "responder"
+    },
+    {
+      "target": "sign",
+      "origin": "assinar"
+    },
+    {
+      "target": "suffer",
+      "origin": "sofrer"
+    },
+    {
+      "target": "supply",
+      "origin": "fornecer"
+    },
+    {
+      "target": "treat",
+      "origin": "tratar"
+    },
+    {
+      "target": "vary",
+      "origin": "variar"
+    },
+    {
+      "target": "vote",
+      "origin": "votar"
+    },
+    {
+      "target": "wonder",
+      "origin": "perguntar-se"
+    },
+    {
+      "target": "celebrate",
+      "origin": "celebrar"
+    },
+    {
+      "target": "fly",
+      "origin": "voar"
+    },
+    {
+      "target": "swim",
+      "origin": "nadar"
+    },
+    {
+      "target": "climb",
+      "origin": "subir"
+    },
+    {
+      "target": "ride",
+      "origin": "andar"
+    },
+    {
+      "target": "arrive",
+      "origin": "chegar"
+    },
+    {
+      "target": "depart",
+      "origin": "partir"
+    },
+    {
+      "target": "hurry",
+      "origin": "apressar-se"
+    },
+    {
+      "target": "promise",
+      "origin": "prometer"
+    },
+    {
+      "target": "invite",
+      "origin": "convidar"
+    },
+    {
+      "target": "marry",
+      "origin": "casar"
+    },
+    {
+      "target": "trust",
+      "origin": "confiar"
+    },
+    {
+      "target": "forgive",
+      "origin": "perdoar"
+    },
+    {
+      "target": "thank",
+      "origin": "agradecer"
+    },
+    {
+      "target": "whisper",
+      "origin": "sussurrar"
+    }
+  ]
+}

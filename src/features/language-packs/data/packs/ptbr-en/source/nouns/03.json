@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "area",
+      "origin": "área"
+    },
+    {
+      "target": "article",
+      "origin": "artigo"
+    },
+    {
+      "target": "activity",
+      "origin": "atividade"
+    },
+    {
+      "target": "action",
+      "origin": "ação"
+    },
+    {
+      "target": "age",
+      "origin": "idade"
+    },
+    {
+      "target": "agency",
+      "origin": "agência"
+    },
+    {
+      "target": "agent",
+      "origin": "agente"
+    },
+    {
+      "target": "amount",
+      "origin": "quantidade"
+    },
+    {
+      "target": "analysis",
+      "origin": "análise"
+    },
+    {
+      "target": "approach",
+      "origin": "abordagem"
+    },
+    {
+      "target": "argument",
+      "origin": "argumento"
+    },
+    {
+      "target": "army",
+      "origin": "exército"
+    },
+    {
+      "target": "art",
+      "origin": "arte"
+    },
+    {
+      "target": "artist",
+      "origin": "artista"
+    },
+    {
+      "target": "attention",
+      "origin": "atenção"
+    },
+    {
+      "target": "audience",
+      "origin": "público"
+    },
+    {
+      "target": "authority",
+      "origin": "autoridade"
+    },
+    {
+      "target": "bank",
+      "origin": "banco"
+    },
+    {
+      "target": "bar",
+      "origin": "bar"
+    },
+    {
+      "target": "base",
+      "origin": "base"
+    },
+    {
+      "target": "behavior",
+      "origin": "comportamento"
+    },
+    {
+      "target": "benefit",
+      "origin": "benefício"
+    },
+    {
+      "target": "bill",
+      "origin": "conta"
+    },
+    {
+      "target": "board",
+      "origin": "quadro"
+    },
+    {
+      "target": "brain",
+      "origin": "cérebro"
+    },
+    {
+      "target": "box",
+      "origin": "caixa"
+    },
+    {
+      "target": "building",
+      "origin": "prédio"
+    },
+    {
+      "target": "budget",
+      "origin": "orçamento"
+    },
+    {
+      "target": "campaign",
+      "origin": "campanha"
+    },
+    {
+      "target": "capital",
+      "origin": "capital"
+    },
+    {
+      "target": "career",
+      "origin": "carreira"
+    },
+    {
+      "target": "cause",
+      "origin": "causa"
+    },
+    {
+      "target": "center",
+      "origin": "centro"
+    },
+    {
+      "target": "century",
+      "origin": "século"
+    },
+    {
+      "target": "chance",
+      "origin": "chance"
+    },
+    {
+      "target": "change",
+      "origin": "mudança"
+    },
+    {
+      "target": "choice",
+      "origin": "escolha"
+    },
+    {
+      "target": "church",
+      "origin": "igreja"
+    },
+    {
+      "target": "class",
+      "origin": "aula"
+    },
+    {
+      "target": "college",
+      "origin": "faculdade"
+    },
+    {
+      "target": "community",
+      "origin": "comunidade"
+    },
+    {
+      "target": "conference",
+      "origin": "conferência"
+    },
+    {
+      "target": "condition",
+      "origin": "condição"
+    },
+    {
+      "target": "control",
+      "origin": "controle"
+    },
+    {
+      "target": "cost",
+      "origin": "custo"
+    },
+    {
+      "target": "culture",
+      "origin": "cultura"
+    },
+    {
+      "target": "customer",
+      "origin": "cliente"
+    },
+    {
+      "target": "data",
+      "origin": "dados"
+    },
+    {
+      "target": "decision",
+      "origin": "decisão"
+    },
+    {
+      "target": "degree",
+      "origin": "grau"
+    },
+    {
+      "target": "design",
+      "origin": "design"
+    },
+    {
+      "target": "difference",
+      "origin": "diferença"
+    },
+    {
+      "target": "direction",
+      "origin": "direção"
+    },
+    {
+      "target": "education",
+      "origin": "educação"
+    },
+    {
+      "target": "effect",
+      "origin": "efeito"
+    },
+    {
+      "target": "effort",
+      "origin": "esforço"
+    },
+    {
+      "target": "event",
+      "origin": "evento"
+    },
+    {
+      "target": "experience",
+      "origin": "experiência"
+    },
+    {
+      "target": "fear",
+      "origin": "medo"
+    },
+    {
+      "target": "figure",
+      "origin": "figura"
+    },
+    {
+      "target": "form",
+      "origin": "forma"
+    },
+    {
+      "target": "decade",
+      "origin": "década"
+    },
+    {
+      "target": "goal",
+      "origin": "objetivo"
+    },
+    {
+      "target": "history",
+      "origin": "história"
+    },
+    {
+      "target": "hour",
+      "origin": "hora"
+    },
+    {
+      "target": "industry",
+      "origin": "indústria"
+    },
+    {
+      "target": "interest",
+      "origin": "interesse"
+    },
+    {
+      "target": "level",
+      "origin": "nível"
+    },
+    {
+      "target": "list",
+      "origin": "lista"
+    },
+    {
+      "target": "market",
+      "origin": "mercado"
+    },
+    {
+      "target": "meeting",
+      "origin": "reunião"
+    },
+    {
+      "target": "member",
+      "origin": "membro"
+    },
+    {
+      "target": "message",
+      "origin": "mensagem"
+    },
+    {
+      "target": "model",
+      "origin": "modelo"
+    },
+    {
+      "target": "moment",
+      "origin": "momento"
+    },
+    {
+      "target": "month",
+      "origin": "mês"
+    },
+    {
+      "target": "morning",
+      "origin": "manhã"
+    },
+    {
+      "target": "night",
+      "origin": "noite"
+    },
+    {
+      "target": "office",
+      "origin": "escritório"
+    },
+    {
+      "target": "order",
+      "origin": "ordem"
+    },
+    {
+      "target": "party",
+      "origin": "festa"
+    },
+    {
+      "target": "period",
+      "origin": "período"
+    },
+    {
+      "target": "purpose",
+      "origin": "propósito"
+    },
+    {
+      "target": "price",
+      "origin": "preço"
+    },
+    {
+      "target": "process",
+      "origin": "processo"
+    },
+    {
+      "target": "program",
+      "origin": "programa"
+    },
+    {
+      "target": "project",
+      "origin": "projeto"
+    },
+    {
+      "target": "response",
+      "origin": "resposta"
+    },
+    {
+      "target": "role",
+      "origin": "função"
+    },
+    {
+      "target": "service",
+      "origin": "serviço"
+    },
+    {
+      "target": "society",
+      "origin": "sociedade"
+    },
+    {
+      "target": "state",
+      "origin": "estado"
+    },
+    {
+      "target": "subject",
+      "origin": "assunto"
+    },
+    {
+      "target": "support",
+      "origin": "apoio"
+    },
+    {
+      "target": "task",
+      "origin": "tarefa"
+    },
+    {
+      "target": "technology",
+      "origin": "tecnologia"
+    },
+    {
+      "target": "test",
+      "origin": "teste"
+    },
+    {
+      "target": "thought",
+      "origin": "pensamento"
+    },
+    {
+      "target": "topic",
+      "origin": "tópico"
+    },
+    {
+      "target": "value",
+      "origin": "valor"
+    }
+  ]
+}

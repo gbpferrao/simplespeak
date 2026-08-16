@@ -1,0 +1,504 @@
+{
+  "words": [
+    {
+      "target": "to",
+      "origin": "para",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "of",
+      "origin": "de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "in",
+      "origin": "em",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "on",
+      "origin": "sobre",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "at",
+      "origin": "em",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "by",
+      "origin": "por",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "for",
+      "origin": "para",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "from",
+      "origin": "de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "with",
+      "origin": "com",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "against",
+      "origin": "contra",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "between",
+      "origin": "entre",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "into",
+      "origin": "para dentro de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "through",
+      "origin": "através de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "during",
+      "origin": "durante",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "without",
+      "origin": "sem",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "under",
+      "origin": "sob",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "over",
+      "origin": "sobre",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "around",
+      "origin": "ao redor de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "among",
+      "origin": "entre",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "across",
+      "origin": "através de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "behind",
+      "origin": "atrás de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "beyond",
+      "origin": "além de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "toward",
+      "origin": "em direção a",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "upon",
+      "origin": "sobre",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "within",
+      "origin": "dentro de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "despite",
+      "origin": "apesar de",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "per",
+      "origin": "por",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "via",
+      "origin": "via",
+      "partOfSpeech": "preposition"
+    },
+    {
+      "target": "can",
+      "origin": "poder",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "could",
+      "origin": "poderia",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "may",
+      "origin": "poder",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "might",
+      "origin": "poderia",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "must",
+      "origin": "dever",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "shall",
+      "origin": "deverá",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "should",
+      "origin": "deveria",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "will",
+      "origin": "irá",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "would",
+      "origin": "iria",
+      "partOfSpeech": "modal"
+    },
+    {
+      "target": "do",
+      "origin": "fazer",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "does",
+      "origin": "faz",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "did",
+      "origin": "fez",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "am",
+      "origin": "sou, estou",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "is",
+      "origin": "é, está",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "are",
+      "origin": "são, estão",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "was",
+      "origin": "era, estava",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "were",
+      "origin": "eram, estavam",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "be",
+      "origin": "ser, estar",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "been",
+      "origin": "sido, estado",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "being",
+      "origin": "sendo",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "have",
+      "origin": "ter",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "has",
+      "origin": "tem",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "had",
+      "origin": "tinha",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "having",
+      "origin": "tendo",
+      "partOfSpeech": "auxiliary"
+    },
+    {
+      "target": "not",
+      "origin": "não",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "never",
+      "origin": "nunca",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "ever",
+      "origin": "alguma vez",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "just",
+      "origin": "apenas",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "already",
+      "origin": "já",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "still",
+      "origin": "ainda",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "even",
+      "origin": "até mesmo",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "only",
+      "origin": "somente",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "very",
+      "origin": "muito",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "really",
+      "origin": "realmente",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "almost",
+      "origin": "quase",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "again",
+      "origin": "novamente",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "here",
+      "origin": "aqui",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "there",
+      "origin": "ali",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "away",
+      "origin": "para longe",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "back",
+      "origin": "de volta",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "up",
+      "origin": "para cima",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "down",
+      "origin": "para baixo",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "out",
+      "origin": "para fora",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "together",
+      "origin": "juntos",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "apart",
+      "origin": "separados",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "maybe",
+      "origin": "talvez",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "perhaps",
+      "origin": "talvez",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "indeed",
+      "origin": "de fato",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "rather",
+      "origin": "em vez disso",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "quite",
+      "origin": "bastante",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "too",
+      "origin": "também",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "more",
+      "origin": "mais",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "most",
+      "origin": "a maioria",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "less",
+      "origin": "menos",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "least",
+      "origin": "menos",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "enough",
+      "origin": "suficiente",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "once",
+      "origin": "uma vez",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "twice",
+      "origin": "duas vezes",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "first",
+      "origin": "primeiro",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "next",
+      "origin": "próximo",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "then",
+      "origin": "então",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "now",
+      "origin": "agora",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "soon",
+      "origin": "em breve",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "later",
+      "origin": "mais tarde",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "today",
+      "origin": "hoje",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "tomorrow",
+      "origin": "amanhã",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "yesterday",
+      "origin": "ontem",
+      "partOfSpeech": "particle"
+    },
+    {
+      "target": "oh",
+      "origin": "oh",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "hey",
+      "origin": "ei",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "wow",
+      "origin": "uau",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "sorry",
+      "origin": "desculpa",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "bye",
+      "origin": "tchau",
+      "partOfSpeech": "interjection"
+    }
+  ]
+}

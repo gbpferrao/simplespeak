@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "food",
+      "origin": "comida"
+    },
+    {
+      "target": "meal",
+      "origin": "refeição"
+    },
+    {
+      "target": "bread",
+      "origin": "pão"
+    },
+    {
+      "target": "rice",
+      "origin": "arroz"
+    },
+    {
+      "target": "meat",
+      "origin": "carne"
+    },
+    {
+      "target": "fish",
+      "origin": "peixe"
+    },
+    {
+      "target": "egg",
+      "origin": "ovo"
+    },
+    {
+      "target": "milk",
+      "origin": "leite"
+    },
+    {
+      "target": "coffee",
+      "origin": "café"
+    },
+    {
+      "target": "tea",
+      "origin": "chá"
+    },
+    {
+      "target": "fruit",
+      "origin": "fruta"
+    },
+    {
+      "target": "apple",
+      "origin": "maçã"
+    },
+    {
+      "target": "orange",
+      "origin": "laranja"
+    },
+    {
+      "target": "banana",
+      "origin": "banana"
+    },
+    {
+      "target": "vegetable",
+      "origin": "vegetal"
+    },
+    {
+      "target": "potato",
+      "origin": "batata"
+    },
+    {
+      "target": "sugar",
+      "origin": "açúcar"
+    },
+    {
+      "target": "salt",
+      "origin": "sal"
+    },
+    {
+      "target": "breakfast",
+      "origin": "café da manhã"
+    },
+    {
+      "target": "lunch",
+      "origin": "almoço"
+    },
+    {
+      "target": "dinner",
+      "origin": "jantar"
+    },
+    {
+      "target": "body",
+      "origin": "corpo"
+    },
+    {
+      "target": "head",
+      "origin": "cabeça"
+    },
+    {
+      "target": "face",
+      "origin": "rosto"
+    },
+    {
+      "target": "eye",
+      "origin": "olho"
+    },
+    {
+      "target": "ear",
+      "origin": "ouvido"
+    },
+    {
+      "target": "mouth",
+      "origin": "boca"
+    },
+    {
+      "target": "tooth",
+      "origin": "dente"
+    },
+    {
+      "target": "hair",
+      "origin": "cabelo"
+    },
+    {
+      "target": "neck",
+      "origin": "pescoço"
+    },
+    {
+      "target": "shoulder",
+      "origin": "ombro"
+    },
+    {
+      "target": "arm",
+      "origin": "braço"
+    },
+    {
+      "target": "leg",
+      "origin": "perna"
+    },
+    {
+      "target": "foot",
+      "origin": "pé"
+    },
+    {
+      "target": "heart",
+      "origin": "coração"
+    },
+    {
+      "target": "blood",
+      "origin": "sangue"
+    },
+    {
+      "target": "health",
+      "origin": "saúde"
+    },
+    {
+      "target": "doctor",
+      "origin": "médico"
+    },
+    {
+      "target": "hospital",
+      "origin": "hospital"
+    },
+    {
+      "target": "medicine",
+      "origin": "remédio"
+    },
+    {
+      "target": "pain",
+      "origin": "dor"
+    },
+    {
+      "target": "sleep",
+      "origin": "sono"
+    },
+    {
+      "target": "dream",
+      "origin": "sonho"
+    },
+    {
+      "target": "weather",
+      "origin": "clima"
+    },
+    {
+      "target": "rain",
+      "origin": "chuva"
+    },
+    {
+      "target": "snow",
+      "origin": "neve"
+    },
+    {
+      "target": "wind",
+      "origin": "vento"
+    },
+    {
+      "target": "sun",
+      "origin": "sol"
+    },
+    {
+      "target": "sky",
+      "origin": "céu"
+    },
+    {
+      "target": "cloud",
+      "origin": "nuvem"
+    },
+    {
+      "target": "season",
+      "origin": "estação"
+    },
+    {
+      "target": "spring",
+      "origin": "primavera"
+    },
+    {
+      "target": "summer",
+      "origin": "verão"
+    },
+    {
+      "target": "autumn",
+      "origin": "outono"
+    },
+    {
+      "target": "winter",
+      "origin": "inverno"
+    },
+    {
+      "target": "tree",
+      "origin": "árvore"
+    },
+    {
+      "target": "flower",
+      "origin": "flor"
+    },
+    {
+      "target": "plant",
+      "origin": "planta"
+    },
+    {
+      "target": "animal",
+      "origin": "animal"
+    },
+    {
+      "target": "dog",
+      "origin": "cachorro"
+    },
+    {
+      "target": "cat",
+      "origin": "gato"
+    },
+    {
+      "target": "bird",
+      "origin": "pássaro"
+    },
+    {
+      "target": "horse",
+      "origin": "cavalo"
+    },
+    {
+      "target": "cow",
+      "origin": "vaca"
+    },
+    {
+      "target": "farm",
+      "origin": "fazenda"
+    },
+    {
+      "target": "river",
+      "origin": "rio"
+    },
+    {
+      "target": "sea",
+      "origin": "mar"
+    },
+    {
+      "target": "mountain",
+      "origin": "montanha"
+    },
+    {
+      "target": "forest",
+      "origin": "floresta"
+    },
+    {
+      "target": "beach",
+      "origin": "praia"
+    },
+    {
+      "target": "earth",
+      "origin": "terra"
+    },
+    {
+      "target": "star",
+      "origin": "estrela"
+    },
+    {
+      "target": "moon",
+      "origin": "lua"
+    },
+    {
+      "target": "space",
+      "origin": "espaço"
+    },
+    {
+      "target": "island",
+      "origin": "ilha"
+    },
+    {
+      "target": "field",
+      "origin": "campo"
+    },
+    {
+      "target": "rock",
+      "origin": "rocha"
+    },
+    {
+      "target": "sand",
+      "origin": "areia"
+    },
+    {
+      "target": "soil",
+      "origin": "solo"
+    },
+    {
+      "target": "lake",
+      "origin": "lago"
+    },
+    {
+      "target": "ice",
+      "origin": "gelo"
+    },
+    {
+      "target": "energy",
+      "origin": "energia"
+    },
+    {
+      "target": "smoke",
+      "origin": "fumaça"
+    },
+    {
+      "target": "leaf",
+      "origin": "folha"
+    },
+    {
+      "target": "insect",
+      "origin": "inseto"
+    },
+    {
+      "target": "storm",
+      "origin": "tempestade"
+    },
+    {
+      "target": "rainbow",
+      "origin": "arco-íris"
+    },
+    {
+      "target": "heat",
+      "origin": "calor"
+    },
+    {
+      "target": "shadow",
+      "origin": "sombra"
+    },
+    {
+      "target": "noise",
+      "origin": "ruído"
+    },
+    {
+      "target": "smell",
+      "origin": "cheiro"
+    },
+    {
+      "target": "taste",
+      "origin": "sabor"
+    },
+    {
+      "target": "piece",
+      "origin": "pedaço"
+    },
+    {
+      "target": "cup",
+      "origin": "xícara"
+    },
+    {
+      "target": "bottle",
+      "origin": "garrafa"
+    },
+    {
+      "target": "plate",
+      "origin": "prato"
+    },
+    {
+      "target": "knife",
+      "origin": "faca"
+    },
+    {
+      "target": "spoon",
+      "origin": "colher"
+    },
+    {
+      "target": "recipe",
+      "origin": "receita"
+    },
+    {
+      "target": "dessert",
+      "origin": "sobremesa"
+    }
+  ]
+}

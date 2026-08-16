@@ -1,4 +1,4 @@
-export type View = 'board' | 'run' | 'history' | 'settings'
+export type View = 'board' | 'history' | 'settings'
 
 export type CardStatus = 'new' | 'emerging' | 'familiar' | 'anchored'
 export type ReviewOutcome = 'hit' | 'miss' | 'reveal' | 'typed'
@@ -20,19 +20,21 @@ export interface Scene {
 
 export interface WordCard {
   id: string
-  lexemeKey: string
-  senseKey: string
   target: string
   origin: string
   partOfSpeech: string
   sceneId: string
   x: number
   y: number
-  exampleTarget: string
-  exampleOrigin: string
-  noteSeed: string
-  imagePromptSeed: string
-  acceptedAnswers: string[]
+  imagePath?: string
+  sense?: string
+  answers?: string[]
+  example?: {
+    target?: string
+    origin?: string
+  }
+  note?: string
+  imagePrompt?: string
 }
 
 export interface ReviewEvent {
@@ -103,14 +105,4 @@ export interface PersistedState {
   runs: RunRecord[]
   generations: GenerationRecord[]
   settings: Settings
-}
-
-export interface LanguagePack {
-  id: string
-  name: string
-  targetLanguage: string
-  originLanguage: string
-  version: string
-  scenes: Scene[]
-  cards: WordCard[]
 }

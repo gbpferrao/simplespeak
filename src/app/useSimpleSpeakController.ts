@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { starterPack } from '../features/language-packs/data/starterPack'
+import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { composeImagePrompt } from '../features/image-generation/domain/promptComposer'
 import { generateGoogleImage } from '../integrations/google-image/googleImageClient'
 import { loadApiKey, saveApiKey } from '../features/settings/data/settingsRepository'
@@ -20,8 +20,6 @@ export interface SimpleSpeakController {
   hydrated: boolean
   view: View
   setView: (view: View) => void
-  search: string
-  setSearch: (value: string) => void
   selectedCardId: string | null
   setSelectedCardId: (cardId: string | null) => void
   stabilityCardId: string | null
@@ -42,6 +40,7 @@ export interface SimpleSpeakController {
   updateSettings: (patch: Partial<Settings>) => void
   generateCardImage: (card: WordCard, description: string) => Promise<void>
   startRun: (config?: RunConfig) => void
+  exitRun: () => void
   revealRunCard: () => void
   answerRun: (outcome: ReviewOutcome, revealed: boolean) => void
   setTypedAnswer: (value: string) => void
@@ -58,7 +57,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   const [apiKey, setApiKey] = useState('')
   const [hydrated, setHydrated] = useState(false)
   const [view, setView] = useState<View>('board')
-  const [search, setSearch] = useState('')
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [stabilityCardId, setStabilityCardId] = useState<string | null>(null)
   const [boardFocusId, setBoardFocusId] = useState<string | null>(null)
@@ -169,8 +167,13 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
-    setView('run')
     notify(`${session.label} ready. One card at a time.`)
+  }
+
+  function exitRun(): void {
+    setRunSession(null)
+    setBoardFocusId(null)
+    setView('board')
   }
 
   function revealRunCard(): void {
@@ -234,8 +237,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     hydrated,
     view,
     setView,
-    search,
-    setSearch,
     selectedCardId,
     setSelectedCardId,
     stabilityCardId,
@@ -256,6 +257,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     updateSettings,
     generateCardImage,
     startRun,
+    exitRun,
     revealRunCard,
     answerRun,
     setTypedAnswer,

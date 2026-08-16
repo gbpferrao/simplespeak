@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "be",
+      "origin": "ser, estar"
+    },
+    {
+      "target": "have",
+      "origin": "ter"
+    },
+    {
+      "target": "do",
+      "origin": "fazer"
+    },
+    {
+      "target": "say",
+      "origin": "dizer"
+    },
+    {
+      "target": "get",
+      "origin": "obter"
+    },
+    {
+      "target": "make",
+      "origin": "fazer"
+    },
+    {
+      "target": "go",
+      "origin": "ir"
+    },
+    {
+      "target": "know",
+      "origin": "saber"
+    },
+    {
+      "target": "take",
+      "origin": "pegar"
+    },
+    {
+      "target": "see",
+      "origin": "ver"
+    },
+    {
+      "target": "come",
+      "origin": "vir"
+    },
+    {
+      "target": "think",
+      "origin": "pensar"
+    },
+    {
+      "target": "look",
+      "origin": "olhar"
+    },
+    {
+      "target": "want",
+      "origin": "querer"
+    },
+    {
+      "target": "give",
+      "origin": "dar"
+    },
+    {
+      "target": "use",
+      "origin": "usar"
+    },
+    {
+      "target": "find",
+      "origin": "encontrar"
+    },
+    {
+      "target": "tell",
+      "origin": "contar"
+    },
+    {
+      "target": "ask",
+      "origin": "perguntar"
+    },
+    {
+      "target": "work",
+      "origin": "trabalhar"
+    },
+    {
+      "target": "seem",
+      "origin": "parecer"
+    },
+    {
+      "target": "feel",
+      "origin": "sentir"
+    },
+    {
+      "target": "try",
+      "origin": "tentar"
+    },
+    {
+      "target": "leave",
+      "origin": "sair"
+    },
+    {
+      "target": "call",
+      "origin": "chamar"
+    },
+    {
+      "target": "need",
+      "origin": "precisar"
+    },
+    {
+      "target": "become",
+      "origin": "tornar-se"
+    },
+    {
+      "target": "mean",
+      "origin": "significar"
+    },
+    {
+      "target": "keep",
+      "origin": "manter"
+    },
+    {
+      "target": "let",
+      "origin": "deixar"
+    },
+    {
+      "target": "begin",
+      "origin": "começar"
+    },
+    {
+      "target": "help",
+      "origin": "ajudar"
+    },
+    {
+      "target": "talk",
+      "origin": "conversar"
+    },
+    {
+      "target": "turn",
+      "origin": "virar"
+    },
+    {
+      "target": "start",
+      "origin": "iniciar"
+    },
+    {
+      "target": "show",
+      "origin": "mostrar"
+    },
+    {
+      "target": "hear",
+      "origin": "ouvir"
+    },
+    {
+      "target": "play",
+      "origin": "jogar"
+    },
+    {
+      "target": "run",
+      "origin": "correr"
+    },
+    {
+      "target": "move",
+      "origin": "mover"
+    },
+    {
+      "target": "like",
+      "origin": "gostar"
+    },
+    {
+      "target": "live",
+      "origin": "viver"
+    },
+    {
+      "target": "believe",
+      "origin": "acreditar"
+    },
+    {
+      "target": "hold",
+      "origin": "segurar"
+    },
+    {
+      "target": "bring",
+      "origin": "trazer"
+    },
+    {
+      "target": "happen",
+      "origin": "acontecer"
+    },
+    {
+      "target": "write",
+      "origin": "escrever"
+    },
+    {
+      "target": "provide",
+      "origin": "fornecer"
+    },
+    {
+      "target": "sit",
+      "origin": "sentar"
+    },
+    {
+      "target": "stand",
+      "origin": "ficar em pé"
+    },
+    {
+      "target": "lose",
+      "origin": "perder"
+    },
+    {
+      "target": "pay",
+      "origin": "pagar"
+    },
+    {
+      "target": "meet",
+      "origin": "encontrar"
+    },
+    {
+      "target": "include",
+      "origin": "incluir"
+    },
+    {
+      "target": "continue",
+      "origin": "continuar"
+    },
+    {
+      "target": "set",
+      "origin": "definir"
+    },
+    {
+      "target": "learn",
+      "origin": "aprender"
+    },
+    {
+      "target": "change",
+      "origin": "mudar"
+    },
+    {
+      "target": "lead",
+      "origin": "liderar"
+    },
+    {
+      "target": "understand",
+      "origin": "entender"
+    },
+    {
+      "target": "watch",
+      "origin": "assistir"
+    },
+    {
+      "target": "follow",
+      "origin": "seguir"
+    },
+    {
+      "target": "stop",
+      "origin": "parar"
+    },
+    {
+      "target": "create",
+      "origin": "criar"
+    },
+    {
+      "target": "speak",
+      "origin": "falar"
+    },
+    {
+      "target": "read",
+      "origin": "ler"
+    },
+    {
+      "target": "allow",
+      "origin": "permitir"
+    },
+    {
+      "target": "add",
+      "origin": "adicionar"
+    },
+    {
+      "target": "spend",
+      "origin": "gastar"
+    },
+    {
+      "target": "grow",
+      "origin": "crescer"
+    },
+    {
+      "target": "open",
+      "origin": "abrir"
+    },
+    {
+      "target": "walk",
+      "origin": "caminhar"
+    },
+    {
+      "target": "win",
+      "origin": "vencer"
+    },
+    {
+      "target": "offer",
+      "origin": "oferecer"
+    },
+    {
+      "target": "remember",
+      "origin": "lembrar"
+    },
+    {
+      "target": "love",
+      "origin": "amar"
+    },
+    {
+      "target": "consider",
+      "origin": "considerar"
+    },
+    {
+      "target": "appear",
+      "origin": "aparecer"
+    },
+    {
+      "target": "buy",
+      "origin": "comprar"
+    },
+    {
+      "target": "wait",
+      "origin": "esperar"
+    },
+    {
+      "target": "serve",
+      "origin": "servir"
+    },
+    {
+      "target": "die",
+      "origin": "morrer"
+    },
+    {
+      "target": "send",
+      "origin": "enviar"
+    },
+    {
+      "target": "expect",
+      "origin": "esperar"
+    },
+    {
+      "target": "build",
+      "origin": "construir"
+    },
+    {
+      "target": "stay",
+      "origin": "ficar"
+    },
+    {
+      "target": "fall",
+      "origin": "cair"
+    },
+    {
+      "target": "cut",
+      "origin": "cortar"
+    },
+    {
+      "target": "reach",
+      "origin": "alcançar"
+    },
+    {
+      "target": "kill",
+      "origin": "matar"
+    },
+    {
+      "target": "remain",
+      "origin": "permanecer"
+    },
+    {
+      "target": "suggest",
+      "origin": "sugerir"
+    },
+    {
+      "target": "raise",
+      "origin": "levantar"
+    },
+    {
+      "target": "pass",
+      "origin": "passar"
+    },
+    {
+      "target": "sell",
+      "origin": "vender"
+    },
+    {
+      "target": "require",
+      "origin": "exigir"
+    },
+    {
+      "target": "report",
+      "origin": "relatar"
+    },
+    {
+      "target": "decide",
+      "origin": "decidir"
+    },
+    {
+      "target": "pull",
+      "origin": "puxar"
+    },
+    {
+      "target": "return",
+      "origin": "retornar"
+    }
+  ]
+}

@@ -8,6 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "data:scaffold": "node scripts/scaffold-language-packs.mjs",
+    "data:build": "node scripts/build-language-pack.mjs",
+    "images:sync-consistent": "python scripts/sync-consistent-stroke-assets.py",
     "cap:sync": "npm run build && cap sync android",
     "android:build": "npm run build && cap sync android && cd android && gradlew.bat assembleDebug"
   },
@@ -17,6 +20,7 @@
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/haptics": "^8.0.2",
     "@capacitor/preferences": "^8.0.1",
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
     "idb": "^8.0.3",
     "konva": "^10.3.1",
     "lucide-react": "^1.31.0",

@@ -12,5 +12,5 @@ export function normalizeAnswer(value: string): string {
 
 export function isAnswerCorrect(card: WordCard, answer: string): boolean {
   const normalized = normalizeAnswer(answer)
-  return card.acceptedAnswers.some((accepted) => normalizeAnswer(accepted) === normalized)
+  return [card.target, ...(card.answers ?? [])].some((accepted) => normalizeAnswer(accepted) === normalized)
 }

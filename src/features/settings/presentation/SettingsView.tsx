@@ -3,7 +3,7 @@ import { ArrowUpRight, BookOpen, Brain, Check, CloudOff, Eye, EyeOff, Lightbulb,
 import type { ImageEffort, ImageResolution, PersistedState, Settings as SimpleSpeakSettings } from '../../../core/contracts/types'
 import { defaultSettings } from '../../../core/persistence/localStateRepository'
 import { imageEffortLabel, imageResolutionLabel } from '../../image-generation/domain/options'
-import { starterPack } from '../../language-packs/data/starterPack'
+import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 
 interface SettingsViewProps {
   state: PersistedState

@@ -1,0 +1,504 @@
+{
+  "words": [
+    {
+      "target": "a",
+      "origin": "um, uma",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "an",
+      "origin": "um, uma",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "the",
+      "origin": "o, a, os, as",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "and",
+      "origin": "e",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "or",
+      "origin": "ou",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "but",
+      "origin": "mas",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "if",
+      "origin": "se",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "because",
+      "origin": "porque",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "although",
+      "origin": "embora",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "while",
+      "origin": "enquanto",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "when",
+      "origin": "quando",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "before",
+      "origin": "antes",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "after",
+      "origin": "depois",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "until",
+      "origin": "até",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "since",
+      "origin": "desde",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "than",
+      "origin": "do que",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "as",
+      "origin": "como",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "that",
+      "origin": "que",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "which",
+      "origin": "qual",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "who",
+      "origin": "quem",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "whom",
+      "origin": "quem",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "what",
+      "origin": "o que",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "where",
+      "origin": "onde",
+      "partOfSpeech": "adverb"
+    },
+    {
+      "target": "why",
+      "origin": "por que",
+      "partOfSpeech": "adverb"
+    },
+    {
+      "target": "how",
+      "origin": "como",
+      "partOfSpeech": "adverb"
+    },
+    {
+      "target": "I",
+      "origin": "eu",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "you",
+      "origin": "você",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "he",
+      "origin": "ele",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "she",
+      "origin": "ela",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "it",
+      "origin": "isso",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "we",
+      "origin": "nós",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "they",
+      "origin": "eles, elas",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "me",
+      "origin": "me, mim",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "him",
+      "origin": "ele, o",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "her",
+      "origin": "ela, a",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "us",
+      "origin": "nos, nós",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "them",
+      "origin": "eles, elas",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "my",
+      "origin": "meu, minha",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "your",
+      "origin": "seu, sua",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "his",
+      "origin": "dele",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "its",
+      "origin": "dele, dela",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "our",
+      "origin": "nosso, nossa",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "their",
+      "origin": "deles, delas",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "mine",
+      "origin": "meu, minha",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "yours",
+      "origin": "seu, sua",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "hers",
+      "origin": "dela",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "ours",
+      "origin": "nosso",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "theirs",
+      "origin": "deles",
+      "partOfSpeech": "pronoun"
+    },
+    {
+      "target": "this",
+      "origin": "este, esta",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "these",
+      "origin": "estes, estas",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "those",
+      "origin": "aqueles, aquelas",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "some",
+      "origin": "algum, alguma",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "any",
+      "origin": "qualquer",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "no",
+      "origin": "nenhum",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "every",
+      "origin": "cada",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "each",
+      "origin": "cada",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "either",
+      "origin": "qualquer um dos dois",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "neither",
+      "origin": "nenhum dos dois",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "all",
+      "origin": "todos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "both",
+      "origin": "ambos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "few",
+      "origin": "poucos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "many",
+      "origin": "muitos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "much",
+      "origin": "muito",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "another",
+      "origin": "outro",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "other",
+      "origin": "outro",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "enough",
+      "origin": "suficiente",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "several",
+      "origin": "vários",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "one",
+      "origin": "um",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "two",
+      "origin": "dois",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "three",
+      "origin": "três",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "four",
+      "origin": "quatro",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "five",
+      "origin": "cinco",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "six",
+      "origin": "seis",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "seven",
+      "origin": "sete",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "eight",
+      "origin": "oito",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "nine",
+      "origin": "nove",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "ten",
+      "origin": "dez",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "hundred",
+      "origin": "cem",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "thousand",
+      "origin": "mil",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "first",
+      "origin": "primeiro",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "second",
+      "origin": "segundo",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "third",
+      "origin": "terceiro",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "half",
+      "origin": "metade",
+      "partOfSpeech": "numeral"
+    },
+    {
+      "target": "pair",
+      "origin": "par",
+      "partOfSpeech": "noun"
+    },
+    {
+      "target": "such",
+      "origin": "tal",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "own",
+      "origin": "próprio",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "same",
+      "origin": "mesmo",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "less",
+      "origin": "menos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "least",
+      "origin": "menos",
+      "partOfSpeech": "determiner"
+    },
+    {
+      "target": "whether",
+      "origin": "se",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "nor",
+      "origin": "nem",
+      "partOfSpeech": "conjunction"
+    },
+    {
+      "target": "please",
+      "origin": "por favor",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "thanks",
+      "origin": "obrigado",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "hello",
+      "origin": "olá",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "goodbye",
+      "origin": "adeus",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "yes",
+      "origin": "sim",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "okay",
+      "origin": "tudo bem",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "welcome",
+      "origin": "bem-vindo",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "congratulations",
+      "origin": "parabéns",
+      "partOfSpeech": "interjection"
+    },
+    {
+      "target": "bravo",
+      "origin": "bravo",
+      "partOfSpeech": "interjection"
+    }
+  ]
+}

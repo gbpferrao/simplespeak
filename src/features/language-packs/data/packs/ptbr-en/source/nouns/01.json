@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "time",
+      "origin": "tempo"
+    },
+    {
+      "target": "person",
+      "origin": "pessoa"
+    },
+    {
+      "target": "year",
+      "origin": "ano"
+    },
+    {
+      "target": "way",
+      "origin": "caminho"
+    },
+    {
+      "target": "day",
+      "origin": "dia"
+    },
+    {
+      "target": "thing",
+      "origin": "coisa"
+    },
+    {
+      "target": "man",
+      "origin": "homem"
+    },
+    {
+      "target": "world",
+      "origin": "mundo"
+    },
+    {
+      "target": "life",
+      "origin": "vida"
+    },
+    {
+      "target": "hand",
+      "origin": "mão"
+    },
+    {
+      "target": "part",
+      "origin": "parte"
+    },
+    {
+      "target": "place",
+      "origin": "lugar"
+    },
+    {
+      "target": "case",
+      "origin": "caso"
+    },
+    {
+      "target": "point",
+      "origin": "ponto"
+    },
+    {
+      "target": "government",
+      "origin": "governo"
+    },
+    {
+      "target": "company",
+      "origin": "empresa"
+    },
+    {
+      "target": "number",
+      "origin": "número"
+    },
+    {
+      "target": "group",
+      "origin": "grupo"
+    },
+    {
+      "target": "problem",
+      "origin": "problema"
+    },
+    {
+      "target": "fact",
+      "origin": "fato"
+    },
+    {
+      "target": "home",
+      "origin": "lar"
+    },
+    {
+      "target": "room",
+      "origin": "quarto"
+    },
+    {
+      "target": "house",
+      "origin": "casa"
+    },
+    {
+      "target": "water",
+      "origin": "água"
+    },
+    {
+      "target": "mother",
+      "origin": "mãe"
+    },
+    {
+      "target": "father",
+      "origin": "pai"
+    },
+    {
+      "target": "friend",
+      "origin": "amigo"
+    },
+    {
+      "target": "child",
+      "origin": "criança"
+    },
+    {
+      "target": "family",
+      "origin": "família"
+    },
+    {
+      "target": "student",
+      "origin": "estudante"
+    },
+    {
+      "target": "school",
+      "origin": "escola"
+    },
+    {
+      "target": "country",
+      "origin": "país"
+    },
+    {
+      "target": "city",
+      "origin": "cidade"
+    },
+    {
+      "target": "town",
+      "origin": "cidade"
+    },
+    {
+      "target": "street",
+      "origin": "rua"
+    },
+    {
+      "target": "road",
+      "origin": "estrada"
+    },
+    {
+      "target": "car",
+      "origin": "carro"
+    },
+    {
+      "target": "bus",
+      "origin": "ônibus"
+    },
+    {
+      "target": "train",
+      "origin": "trem"
+    },
+    {
+      "target": "air",
+      "origin": "ar"
+    },
+    {
+      "target": "story",
+      "origin": "história"
+    },
+    {
+      "target": "book",
+      "origin": "livro"
+    },
+    {
+      "target": "word",
+      "origin": "palavra"
+    },
+    {
+      "target": "question",
+      "origin": "pergunta"
+    },
+    {
+      "target": "answer",
+      "origin": "resposta"
+    },
+    {
+      "target": "example",
+      "origin": "exemplo"
+    },
+    {
+      "target": "idea",
+      "origin": "ideia"
+    },
+    {
+      "target": "job",
+      "origin": "emprego"
+    },
+    {
+      "target": "work",
+      "origin": "trabalho"
+    },
+    {
+      "target": "business",
+      "origin": "negócio"
+    },
+    {
+      "target": "money",
+      "origin": "dinheiro"
+    },
+    {
+      "target": "side",
+      "origin": "lado"
+    },
+    {
+      "target": "line",
+      "origin": "linha"
+    },
+    {
+      "target": "end",
+      "origin": "fim"
+    },
+    {
+      "target": "beginning",
+      "origin": "começo"
+    },
+    {
+      "target": "name",
+      "origin": "nome"
+    },
+    {
+      "target": "kind",
+      "origin": "tipo"
+    },
+    {
+      "target": "sort",
+      "origin": "tipo"
+    },
+    {
+      "target": "issue",
+      "origin": "questão"
+    },
+    {
+      "target": "information",
+      "origin": "informação"
+    },
+    {
+      "target": "power",
+      "origin": "poder"
+    },
+    {
+      "target": "fire",
+      "origin": "fogo"
+    },
+    {
+      "target": "light",
+      "origin": "luz"
+    },
+    {
+      "target": "sound",
+      "origin": "som"
+    },
+    {
+      "target": "voice",
+      "origin": "voz"
+    },
+    {
+      "target": "music",
+      "origin": "música"
+    },
+    {
+      "target": "game",
+      "origin": "jogo"
+    },
+    {
+      "target": "movie",
+      "origin": "filme"
+    },
+    {
+      "target": "picture",
+      "origin": "imagem"
+    },
+    {
+      "target": "photo",
+      "origin": "foto"
+    },
+    {
+      "target": "color",
+      "origin": "cor"
+    },
+    {
+      "target": "paper",
+      "origin": "papel"
+    },
+    {
+      "target": "letter",
+      "origin": "carta"
+    },
+    {
+      "target": "page",
+      "origin": "página"
+    },
+    {
+      "target": "card",
+      "origin": "cartão"
+    },
+    {
+      "target": "table",
+      "origin": "mesa"
+    },
+    {
+      "target": "chair",
+      "origin": "cadeira"
+    },
+    {
+      "target": "bed",
+      "origin": "cama"
+    },
+    {
+      "target": "door",
+      "origin": "porta"
+    },
+    {
+      "target": "window",
+      "origin": "janela"
+    },
+    {
+      "target": "floor",
+      "origin": "piso"
+    },
+    {
+      "target": "wall",
+      "origin": "parede"
+    },
+    {
+      "target": "kitchen",
+      "origin": "cozinha"
+    },
+    {
+      "target": "bathroom",
+      "origin": "banheiro"
+    },
+    {
+      "target": "garden",
+      "origin": "jardim"
+    },
+    {
+      "target": "key",
+      "origin": "chave"
+    },
+    {
+      "target": "phone",
+      "origin": "telefone"
+    },
+    {
+      "target": "computer",
+      "origin": "computador"
+    },
+    {
+      "target": "internet",
+      "origin": "internet"
+    },
+    {
+      "target": "map",
+      "origin": "mapa"
+    },
+    {
+      "target": "plan",
+      "origin": "plano"
+    },
+    {
+      "target": "reason",
+      "origin": "motivo"
+    },
+    {
+      "target": "result",
+      "origin": "resultado"
+    },
+    {
+      "target": "rule",
+      "origin": "regra"
+    },
+    {
+      "target": "system",
+      "origin": "sistema"
+    },
+    {
+      "target": "team",
+      "origin": "equipe"
+    },
+    {
+      "target": "language",
+      "origin": "idioma"
+    },
+    {
+      "target": "future",
+      "origin": "futuro"
+    },
+    {
+      "target": "present",
+      "origin": "presente"
+    },
+    {
+      "target": "past",
+      "origin": "passado"
+    }
+  ]
+}

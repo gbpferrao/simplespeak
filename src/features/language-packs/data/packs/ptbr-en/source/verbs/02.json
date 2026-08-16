@@ -1,0 +1,404 @@
+{
+  "words": [
+    {
+      "target": "explain",
+      "origin": "explicar"
+    },
+    {
+      "target": "hope",
+      "origin": "esperar"
+    },
+    {
+      "target": "develop",
+      "origin": "desenvolver"
+    },
+    {
+      "target": "carry",
+      "origin": "carregar"
+    },
+    {
+      "target": "break",
+      "origin": "quebrar"
+    },
+    {
+      "target": "receive",
+      "origin": "receber"
+    },
+    {
+      "target": "agree",
+      "origin": "concordar"
+    },
+    {
+      "target": "support",
+      "origin": "apoiar"
+    },
+    {
+      "target": "hit",
+      "origin": "bater"
+    },
+    {
+      "target": "produce",
+      "origin": "produzir"
+    },
+    {
+      "target": "eat",
+      "origin": "comer"
+    },
+    {
+      "target": "cover",
+      "origin": "cobrir"
+    },
+    {
+      "target": "catch",
+      "origin": "pegar"
+    },
+    {
+      "target": "draw",
+      "origin": "desenhar"
+    },
+    {
+      "target": "choose",
+      "origin": "escolher"
+    },
+    {
+      "target": "cause",
+      "origin": "causar"
+    },
+    {
+      "target": "point",
+      "origin": "apontar"
+    },
+    {
+      "target": "listen",
+      "origin": "escutar"
+    },
+    {
+      "target": "realize",
+      "origin": "perceber"
+    },
+    {
+      "target": "place",
+      "origin": "colocar"
+    },
+    {
+      "target": "close",
+      "origin": "fechar"
+    },
+    {
+      "target": "involve",
+      "origin": "envolver"
+    },
+    {
+      "target": "increase",
+      "origin": "aumentar"
+    },
+    {
+      "target": "reduce",
+      "origin": "reduzir"
+    },
+    {
+      "target": "view",
+      "origin": "observar"
+    },
+    {
+      "target": "join",
+      "origin": "juntar"
+    },
+    {
+      "target": "wish",
+      "origin": "desejar"
+    },
+    {
+      "target": "achieve",
+      "origin": "alcançar"
+    },
+    {
+      "target": "seek",
+      "origin": "buscar"
+    },
+    {
+      "target": "deal",
+      "origin": "lidar"
+    },
+    {
+      "target": "face",
+      "origin": "enfrentar"
+    },
+    {
+      "target": "fail",
+      "origin": "falhar"
+    },
+    {
+      "target": "check",
+      "origin": "verificar"
+    },
+    {
+      "target": "save",
+      "origin": "salvar"
+    },
+    {
+      "target": "imagine",
+      "origin": "imaginar"
+    },
+    {
+      "target": "manage",
+      "origin": "gerenciar"
+    },
+    {
+      "target": "notice",
+      "origin": "notar"
+    },
+    {
+      "target": "compare",
+      "origin": "comparar"
+    },
+    {
+      "target": "miss",
+      "origin": "sentir falta"
+    },
+    {
+      "target": "remove",
+      "origin": "remover"
+    },
+    {
+      "target": "enjoy",
+      "origin": "aproveitar"
+    },
+    {
+      "target": "describe",
+      "origin": "descrever"
+    },
+    {
+      "target": "finish",
+      "origin": "terminar"
+    },
+    {
+      "target": "prepare",
+      "origin": "preparar"
+    },
+    {
+      "target": "discover",
+      "origin": "descobrir"
+    },
+    {
+      "target": "improve",
+      "origin": "melhorar"
+    },
+    {
+      "target": "forget",
+      "origin": "esquecer"
+    },
+    {
+      "target": "answer",
+      "origin": "responder"
+    },
+    {
+      "target": "drive",
+      "origin": "dirigir"
+    },
+    {
+      "target": "visit",
+      "origin": "visitar"
+    },
+    {
+      "target": "pick",
+      "origin": "escolher"
+    },
+    {
+      "target": "wear",
+      "origin": "vestir"
+    },
+    {
+      "target": "worry",
+      "origin": "preocupar-se"
+    },
+    {
+      "target": "teach",
+      "origin": "ensinar"
+    },
+    {
+      "target": "travel",
+      "origin": "viajar"
+    },
+    {
+      "target": "sleep",
+      "origin": "dormir"
+    },
+    {
+      "target": "drink",
+      "origin": "beber"
+    },
+    {
+      "target": "cook",
+      "origin": "cozinhar"
+    },
+    {
+      "target": "clean",
+      "origin": "limpar"
+    },
+    {
+      "target": "wash",
+      "origin": "lavar"
+    },
+    {
+      "target": "fix",
+      "origin": "consertar"
+    },
+    {
+      "target": "touch",
+      "origin": "tocar"
+    },
+    {
+      "target": "push",
+      "origin": "empurrar"
+    },
+    {
+      "target": "throw",
+      "origin": "jogar"
+    },
+    {
+      "target": "plan",
+      "origin": "planejar"
+    },
+    {
+      "target": "study",
+      "origin": "estudar"
+    },
+    {
+      "target": "practice",
+      "origin": "praticar"
+    },
+    {
+      "target": "train",
+      "origin": "treinar"
+    },
+    {
+      "target": "type",
+      "origin": "digitar"
+    },
+    {
+      "target": "print",
+      "origin": "imprimir"
+    },
+    {
+      "target": "search",
+      "origin": "pesquisar"
+    },
+    {
+      "target": "share",
+      "origin": "compartilhar"
+    },
+    {
+      "target": "post",
+      "origin": "publicar"
+    },
+    {
+      "target": "publish",
+      "origin": "publicar"
+    },
+    {
+      "target": "collect",
+      "origin": "coletar"
+    },
+    {
+      "target": "organize",
+      "origin": "organizar"
+    },
+    {
+      "target": "store",
+      "origin": "armazenar"
+    },
+    {
+      "target": "download",
+      "origin": "baixar"
+    },
+    {
+      "target": "upload",
+      "origin": "enviar"
+    },
+    {
+      "target": "click",
+      "origin": "clicar"
+    },
+    {
+      "target": "tap",
+      "origin": "tocar"
+    },
+    {
+      "target": "drag",
+      "origin": "arrastar"
+    },
+    {
+      "target": "zoom",
+      "origin": "ampliar"
+    },
+    {
+      "target": "focus",
+      "origin": "focar"
+    },
+    {
+      "target": "reveal",
+      "origin": "revelar"
+    },
+    {
+      "target": "review",
+      "origin": "revisar"
+    },
+    {
+      "target": "rate",
+      "origin": "avaliar"
+    },
+    {
+      "target": "record",
+      "origin": "registrar"
+    },
+    {
+      "target": "generate",
+      "origin": "gerar"
+    },
+    {
+      "target": "translate",
+      "origin": "traduzir"
+    },
+    {
+      "target": "pronounce",
+      "origin": "pronunciar"
+    },
+    {
+      "target": "repeat",
+      "origin": "repetir"
+    },
+    {
+      "target": "spell",
+      "origin": "soletrar"
+    },
+    {
+      "target": "guess",
+      "origin": "adivinhar"
+    },
+    {
+      "target": "match",
+      "origin": "combinar"
+    },
+    {
+      "target": "select",
+      "origin": "selecionar"
+    },
+    {
+      "target": "filter",
+      "origin": "filtrar"
+    },
+    {
+      "target": "group",
+      "origin": "agrupar"
+    },
+    {
+      "target": "sort",
+      "origin": "classificar"
+    },
+    {
+      "target": "arrange",
+      "origin": "organizar"
+    }
+  ]
+}
