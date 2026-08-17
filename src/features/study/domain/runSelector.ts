@@ -26,11 +26,14 @@ function matchesCriterion(card: WordCard, criterion: RunCriterion, learning: Rec
 function applyCriteria(cards: WordCard[], learning: Record<string, LearningState>, criteria: RunCriterion[], now: number, baseIds: Set<string>): Set<string> {
   const selected = new Set(baseIds)
   criteria.forEach((criterion) => {
-    cards.forEach((card) => {
-      if (!matchesCriterion(card, criterion, learning, now)) return
-      if (criterion.mode === 'add') selected.add(card.id)
-      else selected.delete(card.id)
-    })
+    const matchingIds = new Set(cards.filter((card) => matchesCriterion(card, criterion, learning, now)).map((card) => card.id))
+    if (criterion.mode === 'add') {
+      selected.forEach((cardId) => {
+        if (!matchingIds.has(cardId)) selected.delete(cardId)
+      })
+    } else {
+      matchingIds.forEach((cardId) => selected.delete(cardId))
+    }
   })
   return selected
 }

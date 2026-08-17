@@ -80,7 +80,7 @@ function useBoardImage(source: string | undefined): HTMLImageElement | null {
 function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = false, speedCue = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
   const { t } = useI18n(state.settings.uiLocale)
   const scene = starterPack.scenes.find((candidate) => candidate.id === card.sceneId)
-  const sceneColor = scene?.accent ?? '#7657d9'
+  const sceneColor = scene?.accent ?? '#1769e0'
   const image = useBoardImage(imageFor(state, card))
   const learning = learningFor(state, card.id)
   const rotation = card.id.split('').reduce((total, character) => total + character.charCodeAt(0), 0) % 5 - 2

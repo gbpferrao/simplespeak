@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import { Header } from './presentation/Navigation'
+import { NotificationCenter } from './presentation/NotificationCenter'
 import { useSimpleSpeakController } from './useSimpleSpeakController'
 import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { BoardView } from '../features/board/presentation/BoardView'
@@ -21,7 +22,7 @@ export function AppShell() {
   const boardVisible = view === 'board' || Boolean(activeRun)
 
   return (
-    <div className={`app-shell ${boardVisible ? 'board-shell' : ''} ${controller.feedback ? `feedback-${controller.feedback}` : ''}`}>
+    <div className={`app-shell ${boardVisible ? 'board-shell' : ''} ${activeRun ? 'run-active' : ''} ${controller.feedback ? `feedback-${controller.feedback}` : ''}`}>
       <Header locale={locale} view={view} setView={setView} searchCards={starterPack.cards} onSearchSelect={(cardId) => { controller.setSelectedCardId(null); controller.setBoardFocusId(cardId); controller.setView('board') }} runActive={Boolean(activeRun)} onEndRun={controller.endRun} />
       <main className="main-content">
         {boardVisible && <BoardView locale={locale} state={data} stats={stats} focusId={controller.boardFocusId} setFocusId={controller.setBoardFocusId} onSelectCard={controller.setSelectedCardId} onStartRun={(config) => { controller.setRunConfig(config); controller.startRun(config) }} runSession={activeRun} onReveal={controller.revealRunCard} onAnswer={controller.answerRun} onTypedChange={controller.setTypedAnswer} onExitRun={controller.exitRun} />}
@@ -29,7 +30,7 @@ export function AppShell() {
         {view === 'settings' && !activeRun && <SettingsView locale={locale} state={data} onUpdateSettings={controller.updateSettings} onResetLearning={controller.resetLearning} />}
       </main>
       {selectedCard && <CardDetail card={selectedCard} state={data} onClose={() => controller.setSelectedCardId(null)} onSaveNote={(note) => controller.saveNote(selectedCard.id, note)} />}
-      {controller.toast && <div className="toast" role="status"><Sparkles size={15} />{controller.toast}</div>}
+      <NotificationCenter notifications={controller.notifications} label={t('notification.title')} dismissLabel={t('notification.dismiss')} onDismiss={controller.dismissNotification} />
     </div>
   )
 }

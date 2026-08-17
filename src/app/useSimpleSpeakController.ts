@@ -1,14 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { applyReview } from '../features/study/domain/scheduler'
 import { selectCardsForRun } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
-import { isRemembered, makeRunRecord, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isRemembered, makeRunRecord, runFinishTier, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
-import { playReviewSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
+import { playReviewSound, playRunFinishSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
 import type { PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
+import type { AppNotification, NotificationTone } from './notifications'
+
+const MAX_NOTIFICATIONS = 3
+const NOTIFICATION_LIFETIME_MS = 4600
 
 export type Feedback = 'hit' | 'miss' | null
 
@@ -25,10 +29,11 @@ export interface SimpleSpeakController {
   runConfig: RunConfig
   setRunConfig: (config: RunConfig) => void
   feedback: Feedback
-  toast: string | null
+  notifications: AppNotification[]
   stats: ProgressStats
   selectedCard: WordCard | null
-  notify: (message: string) => void
+  notify: (message: string, tone?: NotificationTone) => void
+  dismissNotification: (id: string) => void
   updateSettings: (patch: Partial<Settings>) => void
   startRun: (config?: RunConfig) => void
   endRun: () => void
@@ -53,7 +58,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   const [runSession, setRunSession] = useState<RunSession | null>(null)
   const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: 12, criteria: [] })
   const [feedback, setFeedback] = useState<Feedback>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  const [notifications, setNotifications] = useState<AppNotification[]>([])
+  const notificationTimers = useRef(new Map<string, number>())
 
   useEffect(() => {
     let cancelled = false
@@ -69,14 +75,30 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     if (hydrated) savePersistedState(data)
   }, [data, hydrated])
 
-  useEffect(() => () => stopRunPad(), [])
+  useEffect(() => () => {
+    stopRunPad()
+    notificationTimers.current.forEach((timer) => window.clearTimeout(timer))
+    notificationTimers.current.clear()
+  }, [])
 
   const stats = useMemo(() => progressStats(data), [data])
   const selectedCard = cardFor(starterPack.cards, selectedCardId)
 
-  function notify(message: string): void {
-    setToast(message)
-    window.setTimeout(() => setToast((current) => current === message ? null : current), 3200)
+  function dismissNotification(id: string): void {
+    const timer = notificationTimers.current.get(id)
+    if (timer !== undefined) window.clearTimeout(timer)
+    notificationTimers.current.delete(id)
+    setNotifications((current) => current.filter((notification) => notification.id !== id))
+  }
+
+  function notify(message: string, tone: NotificationTone = 'success'): void {
+    const id = newId('notification')
+    setNotifications((current) => [{ id, message, tone }, ...current].slice(0, MAX_NOTIFICATIONS))
+    const timer = window.setTimeout(() => {
+      notificationTimers.current.delete(id)
+      setNotifications((current) => current.filter((notification) => notification.id !== id))
+    }, NOTIFICATION_LIFETIME_MS)
+    notificationTimers.current.set(id, timer)
   }
 
   function updateSettings(patch: Partial<Settings>): void {
@@ -87,7 +109,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     const activeConfig: RunConfig = { ...config, criteria: config.criteria ?? [] }
     const cards = selectCardsForRun(starterPack.cards, data.learning, activeConfig)
     if (cards.length === 0) {
-      notify(translate(data.settings.uiLocale, 'run.noCards'))
+      notify(translate(data.settings.uiLocale, 'run.noCards'), 'warning')
       return
     }
     const sceneName = sceneFor(starterPack.scenes, activeConfig.sceneId)?.name ?? null
@@ -104,8 +126,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       typedAnswer: '',
       startedAt: now,
       responseStartedAt: now,
-      correctHitTimestamps: [],
-      correctStreakStartedAt: now,
+      hitTimestamps: [],
+      hitRateStartedAt: now,
       hits: 0,
       misses: 0,
       reveals: 0,
@@ -142,6 +164,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       const record = makeRunRecord({ session, status: 'completed', completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
       setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
       stopRunPad()
+      playRunFinishSound(runFinishTier(session.hits, session.misses))
       setRunSession((current) => current ? { ...session, finished: true } : current)
       notify(translate(data.settings.uiLocale, 'run.complete'))
       return
@@ -149,7 +172,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
     const nextCard = session.cards[session.currentIndex + 1]
     setRunPadVolume(runPadVolumeLevel(session))
-    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, completedIds: session.completedIds } : current)
+    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, hitTimestamps: session.hitTimestamps, hitRateStartedAt: session.hitRateStartedAt, completedIds: session.completedIds } : current)
     setBoardFocusId(nextCard?.id ?? null)
   }
 
@@ -164,8 +187,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       revealed: true,
       misses: runSession.misses + 1,
       reveals: runSession.reveals + 1,
-      correctHitTimestamps: [],
-      correctStreakStartedAt: completedAt,
+      hitTimestamps: [],
+      hitRateStartedAt: completedAt,
       completedIds: [...runSession.completedIds, card.id],
     }
 
@@ -190,13 +213,14 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     if (!card) return
     const completedAt = Date.now()
     const responseMs = completedAt - runSession.responseStartedAt
+    const acceptedHit = outcome === 'hit' || outcome === 'typed'
     const remembered = isRemembered(outcome)
-    const nextHits = runSession.hits + (remembered ? 1 : 0)
-    const nextMisses = runSession.misses + (remembered ? 0 : 1)
+    const nextHits = runSession.hits + (acceptedHit ? 1 : 0)
+    const nextMisses = runSession.misses + (acceptedHit ? 0 : 1)
     const nextReveals = runSession.reveals + (revealed ? 1 : 0)
-    const nextCorrectHitTimestamps = remembered ? [...runSession.correctHitTimestamps, completedAt] : []
-    const nextCorrectStreakStartedAt = remembered
-      ? (runSession.correctHitTimestamps.length ? runSession.correctStreakStartedAt : runSession.responseStartedAt)
+    const nextHitTimestamps = remembered ? [...runSession.hitTimestamps, completedAt] : []
+    const nextHitRateStartedAt = remembered
+      ? (runSession.hitTimestamps.length ? runSession.hitRateStartedAt : runSession.responseStartedAt)
       : completedAt
     const completedIds = [...runSession.completedIds, card.id]
 
@@ -208,7 +232,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     playReviewSound(remembered ? 'hit' : 'miss')
     window.setTimeout(() => setFeedback(null), 650)
 
-    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, correctHitTimestamps: nextCorrectHitTimestamps, correctStreakStartedAt: nextCorrectStreakStartedAt, completedIds, revealed })
+    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, hitTimestamps: nextHitTimestamps, hitRateStartedAt: nextHitRateStartedAt, completedIds, revealed })
   }
 
   function setTypedAnswer(value: string): void {
@@ -243,10 +267,11 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     runConfig,
     setRunConfig,
     feedback,
-    toast,
+    notifications,
     stats,
     selectedCard,
     notify,
+    dismissNotification,
     updateSettings,
     startRun,
     endRun,

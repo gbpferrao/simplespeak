@@ -1,25 +1,28 @@
 import { memo, useEffect, useState, type CSSProperties, type FormEvent } from 'react'
-import { Check, Eye, EyeOff, Focus, Gauge, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
-import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
-import { statusLabel as formatStatusLabel } from '../../../core/presentation/formatters'
-import { imageFor, learningFor, sceneFor } from '../../../core/presentation/selectors'
+import { ArrowRight, Check, Eye, EyeOff, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
+import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
+import { imageFor } from '../../../core/presentation/selectors'
 import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
-import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
-import { retrievability } from '../domain/scheduler'
 import type { RunSession } from '../domain/runSession'
-import { runSpeedAriaLabel, runSpeedUnit, useI18n } from '../../../core/i18n/i18n'
+import { runHitRateAriaLabel, runHitRateUnit, useI18n } from '../../../core/i18n/i18n'
 
 interface BoardRunOverlayProps {
   session: RunSession
   state: PersistedState
-  runSpeedWpm: number
+  runHitRate: number
   speedCueActive: boolean
   onReveal: () => void
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
   onTypedChange: (value: string) => void
-  onOpenCard: (cardId: string) => void
   onFocusCurrent: () => void
   onExitRun: () => void
+}
+
+function criterionTag(criterion: RunCriterion): string {
+  const value = criterion.kind === 'retention'
+    ? `${criterion.minRetention ?? 0}-${criterion.maxRetention ?? 100}%`
+    : criterion.value ?? ''
+  return criterion.mode === 'subtract' ? `-${value}` : value
 }
 
 /**
@@ -27,10 +30,9 @@ interface BoardRunOverlayProps {
  * the thing being studied; this component only supplies the small amount of
  * interaction needed to produce a retrieval signal.
  */
-export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runSpeedWpm, speedCueActive, onReveal, onAnswer, onTypedChange, onOpenCard, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
+export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runHitRate, speedCueActive, onReveal, onAnswer, onTypedChange, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
   const { t, locale } = useI18n(state.settings.uiLocale)
   const [keyboardOffset, setKeyboardOffset] = useState(0)
-  const statusLabel = (status: Parameters<typeof formatStatusLabel>[0]): string => formatStatusLabel(status, locale)
   const card = session.cards[session.currentIndex]
 
   useEffect(() => {
@@ -60,10 +62,9 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
 
   if (!card) return null
 
-  const learning = learningFor(state, card.id)
   const imagePath = imageFor(state, card)
-  const scene = sceneFor(starterPack.scenes, card.sceneId)
   const progress = session.cards.length ? ((session.currentIndex + (session.revealed ? 1 : 0)) / session.cards.length) * 100 : 0
+  const filterTags = session.config.criteria.length > 0 ? session.config.criteria.map((criterion) => criterionTag(criterion)) : [session.label]
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
@@ -75,23 +76,18 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
     <section className="board-run-overlay" style={{ '--run-keyboard-offset': `${keyboardOffset}px` } as CSSProperties} aria-label={t('run.activeAria')}>
       <div className="run-overlay-main">
         <div className="run-overlay-route">
-          <span className="run-overlay-live"><Play size={12} fill="currentColor" /> {t('run.live')}</span>
-          <div>
-            <strong>{session.label}</strong>
-            <span><span className="scene-tab-dot" style={{ background: scene?.accent }} />{t('run.cardPosition', { scene: scene?.name ?? '', current: session.currentIndex + 1, total: session.cards.length })}</span>
-          </div>
+          <span className="run-overlay-live" title={t('run.live')} aria-label={t('run.live')}><Play size={13} fill="currentColor" /></span>
+          <div className="run-overlay-filter-tags">{filterTags.map((tag, index) => <span className="run-overlay-tag" key={`${tag}-${index}`}>{tag}</span>)}</div>
         </div>
         <div className="run-overlay-score" aria-label={t('run.score')}>
           <span><Check size={13} /> {session.hits}</span>
           <span><X size={13} /> {session.misses}</span>
           <span><Eye size={13} /> {session.reveals}</span>
-          <span className={`run-overlay-speed ${speedCueActive ? 'is-fast' : ''}`} title={runSpeedAriaLabel(locale)}><Gauge size={13} /> {Math.round(runSpeedWpm)} {runSpeedUnit(locale)}</span>
-          <span className="run-overlay-stability">{statusLabel(learning.status)} · {Math.round(retrievability(learning) * 100)}%</span>
+          <span className={`run-overlay-speed ${speedCueActive ? 'is-fast' : ''}`} title={runHitRateAriaLabel(locale)}><Gauge size={13} /> {Math.round(runHitRate)} {runHitRateUnit()}</span>
         </div>
         <div className="run-overlay-actions-top">
-          <button className="run-overlay-icon-action" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={14} /></button>
-          <button className="run-overlay-detail" type="button" onClick={() => onOpenCard(card.id)}><PanelRight size={14} /> {t('run.details')}</button>
-          <button className="run-overlay-exit" type="button" onClick={onExitRun} title={t('run.leaveRun')}><Map size={14} /> {t('run.board')}</button>
+          <button className="run-overlay-icon-action" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><LocateFixed size={14} /></button>
+          <button className="run-overlay-icon-action run-overlay-close" type="button" onClick={onExitRun} aria-label={t('run.leaveRun')} title={t('run.leaveRun')}><X size={16} /></button>
         </div>
       </div>
       <div className="run-overlay-progress" aria-hidden="true"><span style={{ width: `${Math.max(4, progress)}%` }} /></div>
@@ -105,7 +101,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
           </div>
         ) : (
           <form className="run-overlay-form" onSubmit={handleSubmit}>
-            <div className="answer-input-wrap"><Keyboard size={16} /><input value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" aria-label={t('run.typeTargetAria')} /><span>{t('run.enter')}</span></div>
+            <div className="answer-input-wrap"><Keyboard size={16} /><input value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
             <div className="answer-actions"><button className="hit-button" type="button" onClick={() => onAnswer('hit', false)}><Check size={16} /> {t('run.iKnewIt')}</button><button className="miss-button" type="button" onClick={() => onAnswer('miss', false)}><X size={16} /> {t('run.missed')}</button><button className="reveal-button" type="button" onClick={onReveal}><Eye size={16} /> {t('run.reveal')}</button></div>
           </form>
         )}

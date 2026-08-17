@@ -203,6 +203,12 @@ const english: MessageCatalog = {
   'notice.resetDone': 'The board is fresh again. Your bundled word images remain available.',
 }
 
+english['run.routePresets'] = 'Route presets'
+english['run.send'] = 'Send answer'
+english['run.addMode'] = 'Filter to matches'
+english['notification.title'] = 'Notifications'
+english['notification.dismiss'] = 'Dismiss notification'
+
 const portuguese: MessageCatalog = {
   'run.end': 'Encerrar sessão', 'run.endAria': 'Encerrar esta sessão e salvar como incompleta', 'run.ended': 'Sessão salva como incompleta. Os cartões respondidos continuam contando para a retenção.', 'history.unfinished': 'incompleta', 'history.completed': 'concluída',
   'run.filters': 'Filtros progressivos', 'run.progressiveFilters': 'Monte esta sessao', 'run.addFilter': 'Adicionar criterio', 'run.noFilters': 'Nenhum criterio ainda. A opcao define a base.', 'run.filterMode': 'Modo do criterio', 'run.addMode': 'Adicionar correspondencias', 'run.subtractMode': 'Subtrair correspondencias', 'run.filterType': 'Tipo do criterio', 'run.filterGroup': 'Grupo especifico', 'run.filterPartOfSpeech': 'Classe gramatical', 'run.filterRetention': 'Faixa de retencao', 'run.selectGroup': 'Escolha um grupo', 'run.selectPartOfSpeech': 'Escolha uma classe gramatical', 'run.minRetention': 'Minimo %', 'run.maxRetention': 'Maximo %', 'run.removeFilter': 'Remover criterio', 'history.runAgain': 'Repetir sessao', 'history.criteriaCount': ({ count }) => `${count} criterios`,
@@ -252,6 +258,18 @@ const german: MessageCatalog = {
   'status.new': 'Neu', 'status.emerging': 'Im Aufbau', 'status.familiar': 'Vertraut', 'status.anchored': 'Verankert', 'format.notReviewed': 'Noch nicht wiederholt', 'format.today': 'Heute', 'format.tomorrow': 'Morgen', 'format.yesterday': 'Gestern', 'format.inDays': ({ count }) => `In ${count} Tagen`, 'format.daysAgo': ({ count }) => `Vor ${count} Tagen`,
   'notice.noteSaved': 'Eselsbrückennotiz gespeichert.', 'notice.confirmReset': 'Den gesamten Wiederholungsverlauf des Starterpakets zurücksetzen?', 'notice.resetDone': 'Das Board ist wieder frisch. Deine gebündelten Wortbilder bleiben verfügbar.',
 }
+
+portuguese['run.routePresets'] = 'Predefinições de rota'
+portuguese['run.send'] = 'Enviar resposta'
+portuguese['run.addMode'] = 'Filtrar correspondências'
+german['run.routePresets'] = 'Routenvorlagen'
+german['run.send'] = 'Antwort senden'
+german['run.addMode'] = 'Treffer filtern'
+
+portuguese['notification.title'] = 'Notificacoes'
+portuguese['notification.dismiss'] = 'Fechar notificacao'
+german['notification.title'] = 'Benachrichtigungen'
+german['notification.dismiss'] = 'Benachrichtigung schliessen'
 
 export const DEFAULT_LOCALE: SupportedLocale = 'en-US'
 
@@ -344,6 +362,16 @@ export function runSpeedAriaLabel(locale: SupportedLocale): string {
   if (locale === 'pt-BR') return 'Ritmo atual de acertos corretos'
   if (locale === 'de-DE') return 'Aktuelles Tempo richtiger Antworten'
   return 'Current correct-answer pace'
+}
+
+export function runHitRateUnit(): string {
+  return 'HPM'
+}
+
+export function runHitRateAriaLabel(locale: SupportedLocale): string {
+  if (locale === 'pt-BR') return 'Acertos por minuto atuais'
+  if (locale === 'de-DE') return 'Aktuelle Treffer pro Minute'
+  return 'Current hits per minute'
 }
 
 export function runLabelForLocale(preset: 'scene' | 'due-nearby' | 'all' | 'custom', sceneName: string | null, locale: SupportedLocale): string {

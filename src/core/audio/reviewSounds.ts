@@ -1,3 +1,5 @@
+import type { RunFinishTier } from '../../features/study/domain/runSession'
+
 type ReviewSoundKind = 'hit' | 'miss'
 
 interface ToneStep {
@@ -36,7 +38,7 @@ function scheduleReviewSound(context: AudioContext, kind: ReviewSoundKind): void
   const steps: ToneStep[] = kind === 'hit'
     ? [{ frequency: 660, at: 0, duration: 0.08 }, { frequency: 880, at: 0.065, duration: 0.1 }]
     : [{ frequency: 190, at: 0, duration: 0.11 }, { frequency: 135, at: 0.08, duration: 0.13 }]
-  const peakGain = kind === 'hit' ? 0.035 : 0.028
+  const peakGain = 0.035
   const now = context.currentTime
 
   for (const step of steps) {
@@ -48,6 +50,31 @@ function scheduleReviewSound(context: AudioContext, kind: ReviewSoundKind): void
     oscillator.frequency.setValueAtTime(step.frequency, start)
     gain.gain.setValueAtTime(0.0001, start)
     gain.gain.exponentialRampToValueAtTime(peakGain, start + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.0001, end)
+    oscillator.connect(gain)
+    gain.connect(context.destination)
+    oscillator.start(start)
+    oscillator.stop(end + 0.02)
+  }
+}
+
+function scheduleRunFinishSound(context: AudioContext, tier: RunFinishTier): void {
+  const steps: Record<RunFinishTier, ToneStep[]> = {
+    bad: [{ frequency: 220, at: 0, duration: 0.15 }, { frequency: 165, at: 0.13, duration: 0.2 }],
+    good: [{ frequency: 523, at: 0, duration: 0.11 }, { frequency: 659, at: 0.1, duration: 0.14 }, { frequency: 784, at: 0.22, duration: 0.2 }],
+    excellent: [{ frequency: 659, at: 0, duration: 0.1 }, { frequency: 784, at: 0.09, duration: 0.12 }, { frequency: 988, at: 0.19, duration: 0.13 }, { frequency: 1319, at: 0.31, duration: 0.24 }],
+  }
+  const now = context.currentTime
+  const peakGain = tier === 'bad' ? 0.035 : 0.04
+  for (const step of steps[tier]) {
+    const start = now + step.at
+    const end = start + step.duration
+    const oscillator = context.createOscillator()
+    const gain = context.createGain()
+    oscillator.type = tier === 'bad' ? 'triangle' : 'sine'
+    oscillator.frequency.setValueAtTime(step.frequency, start)
+    gain.gain.setValueAtTime(0.0001, start)
+    gain.gain.exponentialRampToValueAtTime(peakGain, start + 0.012)
     gain.gain.exponentialRampToValueAtTime(0.0001, end)
     oscillator.connect(gain)
     gain.connect(context.destination)
@@ -73,6 +100,22 @@ export function playReviewSound(kind: ReviewSoundKind): void {
     scheduleReviewSound(context, kind)
   } catch {
     // Audio is an optional cue. The learning event remains authoritative.
+  }
+}
+
+/** Play a short local completion cue selected from the final Run accuracy. */
+export function playRunFinishSound(tier: RunFinishTier): void {
+  const context = getAudioContext()
+  if (!context || context.state === 'closed') return
+
+  try {
+    if (context.state === 'suspended') {
+      void context.resume().then(() => scheduleRunFinishSound(context, tier)).catch(() => undefined)
+      return
+    }
+    scheduleRunFinishSound(context, tier)
+  } catch {
+    // Audio is optional presentation feedback. The completed Run remains authoritative.
   }
 }
 

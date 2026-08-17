@@ -3,7 +3,7 @@ import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
-import { rollingCorrectHitSpeedWpm, runSpeedCueActive, type RunConfig, type RunSession } from '../../study/domain/runSession'
+import { rollingHitRatePerMinute, runHitRateCueActive, type RunConfig, type RunSession } from '../../study/domain/runSession'
 import { BoardCanvas } from './BoardCanvas'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
 import { fitBoardCamera } from '../domain/boardCamera'
@@ -77,8 +77,8 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const activeCardId = runSession?.cards[runSession.currentIndex]?.id ?? null
   const cameraFocusId = runSession ? activeCardId : focusId
   const activeRunId = runSession?.id ?? null
-  const runSpeedWpm = runSession ? rollingCorrectHitSpeedWpm(runSession, runClock) : 0
-  const speedCueActive = runSession ? runSpeedCueActive(runSession, runClock) : false
+  const runHitRate = runSession ? rollingHitRatePerMinute(runSession, runClock) : 0
+  const speedCueActive = runSession ? runHitRateCueActive(runSession, runClock) : false
   const filteredCards = starterPack.cards
   const canvasViewportSize = runSession && runCanvasSize ? runCanvasSize : viewportSize
 
@@ -377,7 +377,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
           </div>
         </div>
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
-        {runSession && <BoardRunOverlay session={runSession} state={state} runSpeedWpm={runSpeedWpm} speedCueActive={speedCueActive} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
+        {runSession && <BoardRunOverlay session={runSession} state={state} runHitRate={runHitRate} speedCueActive={speedCueActive} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
       </div>
     </section>
   )

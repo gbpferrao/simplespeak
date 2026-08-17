@@ -1,4 +1,4 @@
-import { Play, Plus, Timer, Trash2, X } from 'lucide-react'
+import { Filter, Play, Plus, Timer, Trash2, X } from 'lucide-react'
 import { memo, useState } from 'react'
 import type { PersistedState, RunCriterion, RunCriterionKind } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
@@ -13,19 +13,19 @@ interface BoardRunBarProps {
 }
 
 const partOfSpeechValues = [...new Set(starterPack.cards.map((card) => card.partOfSpeech))].sort()
+const RUN_CARD_LIMIT = 12
+type RoutePresetValue = RunConfig['preset'] | `scene:${string}`
 
-function makeCriterion(kind: RunCriterionKind): RunCriterion {
+function makeCriterion(kind: RunCriterionKind, value?: string): RunCriterion {
   const id = `criterion-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
   if (kind === 'retention') return { id, mode: 'add', kind, minRetention: 0, maxRetention: 100 }
-  return { id, mode: 'add', kind, value: kind === 'scene' ? starterPack.scenes[0]?.id ?? '' : partOfSpeechValues[0] ?? '' }
+  return { id, mode: 'add', kind, value: value ?? (kind === 'scene' ? starterPack.scenes[0]?.id ?? '' : partOfSpeechValues[0] ?? '') }
 }
 
 export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun }: BoardRunBarProps) {
   const { t } = useI18n(state.settings.uiLocale)
   const [open, setOpen] = useState(false)
-  const [preset, setPreset] = useState<RunConfig['preset']>('due-nearby')
-  const [sceneId, setSceneId] = useState<string | null>(null)
-  const [limit, setLimit] = useState(12)
+  const [routePreset, setRoutePreset] = useState<RoutePresetValue>('due-nearby')
   const [criteria, setCriteria] = useState<RunCriterion[]>([])
 
   function updateCriterion(id: string, patch: Partial<RunCriterion>): void {
@@ -38,20 +38,29 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
   }
 
   function startRun(): void {
-    const selectedPreset = preset === 'scene' && !sceneId ? 'due-nearby' : preset
-    onStartRun({ preset: selectedPreset, sceneId: selectedPreset === 'scene' || selectedPreset === 'custom' ? sceneId : null, limit, criteria })
+    const isScenePreset = routePreset.startsWith('scene:')
+    const selectedPreset = isScenePreset ? 'scene' : routePreset as RunConfig['preset']
+    const sceneId = isScenePreset ? routePreset.slice('scene:'.length) : null
+    onStartRun({ preset: selectedPreset, sceneId: selectedPreset === 'scene' ? sceneId : null, limit: RUN_CARD_LIMIT, criteria })
     setOpen(false)
   }
 
+  function selectRoutePreset(value: RoutePresetValue): void {
+    setRoutePreset(value)
+    if (value.startsWith('scene:')) {
+      setCriteria([makeCriterion('scene', value.slice('scene:'.length))])
+      return
+    }
+    setCriteria([])
+  }
+
   return <div className={`run-launcher ${open ? 'is-open' : ''}`}>
-    {open && <section className="run-config-popover" aria-label={t('run.configureAria')}>
-      <div className="run-config-heading"><div><span className="eyebrow"><Play size={12} /> {t('run.studyRoute')}</span><strong>{t('run.chooseReturn')}</strong></div><button className="icon-button" type="button" onClick={() => setOpen(false)} aria-label={t('run.closeConfig')}><X size={17} /></button></div>
-      <label className="run-config-field"><span>{t('run.route')}</span><select value={preset} onChange={(event) => setPreset(event.target.value as RunConfig['preset'])}><option value="due-nearby">{t('run.dueNearby')}</option><option value="scene">{t('run.oneScene')}</option><option value="all">{t('run.allWords')}</option><option value="custom">{t('run.customRoute')}</option></select></label>
-      {(preset === 'scene' || preset === 'custom') && <label className="run-config-field"><span>{t('run.route')}</span><select value={sceneId ?? ''} onChange={(event) => setSceneId(event.target.value || null)}><option value="">{t('run.chooseScene')}</option>{starterPack.scenes.map((scene) => <option key={scene.id} value={scene.id}>{scene.name}</option>)}</select></label>}
-      <label className="run-config-field"><span>{t('run.cards', { count: '' }).replace(' ', '').trim()}</span><select value={limit} onChange={(event) => setLimit(Number(event.target.value))}><option value="6">{t('run.cards', { count: 6 })}</option><option value="12">{t('run.cards', { count: 12 })}</option><option value="20">{t('run.cards', { count: 20 })}</option><option value="30">{t('run.cards', { count: 30 })}</option></select></label>
+    {open ? <section className="run-config-popover" aria-label={t('run.configureAria')}>
+      <div className="run-config-heading"><div><span className="eyebrow"><Play size={12} /> {t('run.studyRoute')}</span><strong>{t('run.chooseReturn')}</strong></div><button className="run-config-close-button" type="button" onClick={() => setOpen(false)} aria-label={t('run.closeConfig')} title={t('run.closeConfig')}><X size={17} /></button></div>
+      <label className="run-config-field"><span>{t('run.routePresets')}</span><select value={routePreset} onChange={(event) => selectRoutePreset(event.target.value as RoutePresetValue)}><option value="due-nearby">{t('run.dueNearby')}</option><option value="all">{t('run.allWords')}</option><optgroup label={t('run.oneScene')}>{starterPack.scenes.map((scene) => <option key={scene.id} value={`scene:${scene.id}`}>{scene.name}</option>)}</optgroup><option value="custom">{t('run.customRoute')}</option></select></label>
 
       <div className="run-filter-panel">
-        <div className="run-filter-heading"><div><span className="eyebrow">{t('run.filters')}</span><strong>{t('run.progressiveFilters')}</strong></div><button className="text-button run-add-filter" type="button" onClick={() => setCriteria((current) => [...current, makeCriterion('scene')])}><Plus size={13} /> {t('run.addFilter')}</button></div>
+        <div className="run-filter-heading"><div><span className="eyebrow"><Filter size={12} /> {t('run.filters')}</span><strong>{t('run.progressiveFilters')}</strong></div><button className="text-button run-add-filter" type="button" onClick={() => setCriteria((current) => [...current, makeCriterion('scene')])}><Plus size={13} /> {t('run.addFilter')}</button></div>
         {criteria.length === 0 ? <span className="run-filter-empty">{t('run.noFilters')}</span> : criteria.map((criterion, index) => <div className="run-filter-card" key={criterion.id}>
           <div className="run-filter-card-heading"><span className="run-filter-index">{index + 1}</span><select className="run-filter-select" aria-label={t('run.filterMode')} value={criterion.mode} onChange={(event) => updateCriterion(criterion.id, { mode: event.target.value as RunCriterion['mode'] })}><option value="add">{t('run.addMode')}</option><option value="subtract">{t('run.subtractMode')}</option></select><button className="icon-button" type="button" onClick={() => setCriteria((current) => current.filter((item) => item.id !== criterion.id))} aria-label={t('run.removeFilter')}><Trash2 size={14} /></button></div>
           <select className="run-filter-select" aria-label={t('run.filterType')} value={criterion.kind} onChange={(event) => changeCriterionKind(criterion, event.target.value as RunCriterionKind)}><option value="scene">{t('run.filterGroup')}</option><option value="part-of-speech">{t('run.filterPartOfSpeech')}</option><option value="retention">{t('run.filterRetention')}</option></select>
@@ -63,7 +72,6 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
 
       <div className="run-config-due"><Timer size={14} /> {t('run.dueNow', { count: stats.due })}</div>
       <button className="primary-button run-config-start" type="button" onClick={startRun}><Play size={15} fill="currentColor" /> {t('run.startRoute')}</button>
-    </section>}
-    <button className="run-launch-button" type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} aria-label={open ? t('run.closeConfig') : t('run.openConfig')} title={t('run.openConfig')}><Play size={19} fill="currentColor" /></button>
+    </section> : <button className="run-launch-button" type="button" onClick={() => setOpen(true)} aria-expanded={open} aria-label={t('run.openConfig')} title={t('run.openConfig')}><Play size={19} fill="currentColor" /></button>}
   </div>
 })

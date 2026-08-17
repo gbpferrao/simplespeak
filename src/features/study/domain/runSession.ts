@@ -15,8 +15,8 @@ export interface RunSession {
   typedAnswer: string
   startedAt: number
   responseStartedAt: number
-  correctHitTimestamps: number[]
-  correctStreakStartedAt: number
+  hitTimestamps: number[]
+  hitRateStartedAt: number
   hits: number
   misses: number
   reveals: number
@@ -25,23 +25,35 @@ export interface RunSession {
 }
 
 export const RUN_SPEED_WINDOW_SIZE = 5
-export const RUN_SPEED_JITTER_THRESHOLD_WPM = 20
-export const RUN_PAD_MAX_WPM = 30
+export const RUN_HIT_RATE_JITTER_THRESHOLD = 20
+export const RUN_PAD_MAX_HITS_PER_MINUTE = 30
+export const RUN_GOOD_ACCURACY = 0.6
+export const RUN_EXCELLENT_ACCURACY = 0.9
 
-export function rollingCorrectHitSpeedWpm(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): number {
-  const timestamps = session.correctHitTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)
+export function rollingHitRatePerMinute(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): number {
+  const timestamps = session.hitTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)
   if (timestamps.length === 0) return 0
-  const windowStart = timestamps.length === 1 ? session.correctStreakStartedAt : timestamps[0]
+  const windowStart = timestamps.length === 1 ? session.hitRateStartedAt : timestamps[0]
   const elapsedMs = Math.max(1000, now - windowStart)
   return timestamps.length * 60_000 / elapsedMs
 }
 
-export function runSpeedCueActive(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): boolean {
-  return session.correctHitTimestamps.length >= 2 && rollingCorrectHitSpeedWpm(session, now) >= RUN_SPEED_JITTER_THRESHOLD_WPM
+export function runHitRateCueActive(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): boolean {
+  return session.hitTimestamps.length >= 2 && rollingHitRatePerMinute(session, now) >= RUN_HIT_RATE_JITTER_THRESHOLD
 }
 
-export function runPadVolumeLevel(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): number {
-  return Math.max(0, Math.min(1, rollingCorrectHitSpeedWpm(session, now) / RUN_PAD_MAX_WPM))
+export function runPadVolumeLevel(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): number {
+  return Math.max(0, Math.min(1, rollingHitRatePerMinute(session, now) / RUN_PAD_MAX_HITS_PER_MINUTE))
+}
+
+export type RunFinishTier = 'bad' | 'good' | 'excellent'
+
+export function runFinishTier(hits: number, misses: number): RunFinishTier {
+  const total = hits + misses
+  const accuracy = total > 0 ? hits / total : 0
+  if (accuracy >= RUN_EXCELLENT_ACCURACY) return 'excellent'
+  if (accuracy >= RUN_GOOD_ACCURACY) return 'good'
+  return 'bad'
 }
 
 export function runLabel(config: RunConfig, sceneName: string | null, locale: SupportedLocale = DEFAULT_LOCALE): string {
