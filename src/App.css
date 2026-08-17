@@ -131,9 +131,23 @@ h3 { font-size: 16px; }
 /* Board main view */
 .board-page { width: 100%; max-width: none; height: 100%; min-height: 0; flex: 1 1 auto; padding: 0; display: flex; flex-direction: column; overflow: hidden; }
 .board-frame { position: relative; width: 100%; height: 100%; min-height: 0; flex: 1 1 auto; overflow: hidden; border: 0; border-radius: 0; background: var(--canvas); box-shadow: none; }
-.board-viewport { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; background: var(--canvas); }
+.board-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  contain: strict;
+  background-color: var(--canvas);
+  /* The grid is decorative screen-space paint. A CSS repeat is composited
+     once by the browser instead of rebuilding a Konva dot list on every
+     camera change. */
+  background-image: radial-gradient(circle, rgba(38, 52, 74, 0.18) 1.1px, transparent 1.25px);
+  background-position: 0 0;
+  background-size: 44px 44px;
+}
 .board-viewport:active { cursor: grabbing; }
-.board-canvas { position: absolute; inset: 0; overflow: hidden; }
+.board-canvas { position: absolute; inset: 0; overflow: hidden; contain: strict; pointer-events: none; }
 .board-canvas > div { width: 100% !important; height: 100% !important; }
 .board-canvas canvas { display: block; }
 .run-focus-button { position: absolute; top: 16px; right: 16px; z-index: 10; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }

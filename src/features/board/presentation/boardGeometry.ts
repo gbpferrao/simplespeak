@@ -12,19 +12,6 @@ export const CARD_OVERVIEW_ZOOM = 0.045
 export const GROUP_LABEL_FADE_START = 0.2
 export const GROUP_LABEL_FADE_END = 0.07
 
-export type BoardImageResolution = 'full' | 'medium' | 'thumb'
-
-/**
- * Choose an asset close to the size the phone will actually draw. The world
- * Card stays 148px, so a 320px source is still comfortably sharp at medium
- * zoom while avoiding decoding the 1254px source for every visible Card.
- */
-export function boardImageResolution(zoom: number, emphasized: boolean): BoardImageResolution {
-  if (emphasized || zoom >= 0.42) return 'full'
-  if (zoom >= 0.12) return 'medium'
-  return 'thumb'
-}
-
 export interface BoardCamera {
   zoom: number
   x: number

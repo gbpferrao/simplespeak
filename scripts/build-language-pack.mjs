@@ -71,7 +71,7 @@ const toCompactCard = (card, sceneId, x, y, generatedImageIds) => {
     y,
   }
 
-  if (generatedImageIds.has(card.id)) output.imagePath = '/simplespeak-images/' + card.id + '.png'
+  if (generatedImageIds.has(card.id)) output.imagePath = '/simplespeak-images/' + card.id + '.webp'
 
   const sense = card.sense ?? card.senseKey
   if (sense && sense !== 'primary') output.sense = sense
@@ -486,7 +486,7 @@ const build = async () => {
   const { cardsById, membership } = validateHeuristic(heuristic, cards)
   const layout = validateLayout(heuristic.layout)
   const generatedImageFiles = await fs.readdir(generatedImagesRoot).catch((error) => error?.code === 'ENOENT' ? [] : Promise.reject(error))
-  const generatedImageIds = new Set(generatedImageFiles.filter((file) => file.endsWith('.png')).map((file) => file.replace(/\.png$/, '')))
+  const generatedImageIds = new Set(generatedImageFiles.filter((file) => file.endsWith('.webp')).map((file) => file.replace(/\.webp$/, '')))
   const sceneLayouts = heuristic.scenes.map((scene) => ({
     scene,
     ...placeCardsOrganically(scene, layout),
