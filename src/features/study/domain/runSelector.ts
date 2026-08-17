@@ -2,6 +2,31 @@ import type { LearningState, RunConfig, RunCriterion, RunPreset, WordCard } from
 import { createEmptyLearning } from '../../../core/persistence/localStateRepository'
 import { isDue, retrievability } from './scheduler'
 
+/** A zero limit is retained in RunConfig as the explicit uncapped sentinel. */
+export const UNLIMITED_RUN_LIMIT = 0
+
+const DUE_NEARBY_MAX_RETENTION = 89
+
+export function criteriaForRunPreset(preset: RunPreset, sceneId: string | null): RunCriterion[] {
+  if ((preset === 'scene' || preset === 'custom') && sceneId) {
+    return [{ id: `preset-scene-${sceneId}`, mode: 'add', kind: 'scene', value: sceneId }]
+  }
+  if (preset === 'due-nearby') {
+    return [{ id: 'preset-due-nearby', mode: 'add', kind: 'retention', minRetention: 0, maxRetention: DUE_NEARBY_MAX_RETENTION }]
+  }
+  return []
+}
+
+/**
+ * Convert legacy preset metadata into the same ordered filter list used by
+ * the route editor. New routes already provide this list; old saved routes
+ * get the equivalent criteria at replay time.
+ */
+export function materializeRunConfig(config: RunConfig): RunConfig {
+  const criteria = config.criteria?.length ? config.criteria : criteriaForRunPreset(config.preset, config.sceneId)
+  return { ...config, limit: config.limit ?? UNLIMITED_RUN_LIMIT, criteria }
+}
+
 function rankCards(cards: WordCard[], learning: Record<string, LearningState>, now: number): WordCard[] {
   return [...cards].sort((left, right) => {
     const leftState = learning[left.id] ?? createEmptyLearning()
@@ -40,26 +65,17 @@ function applyCriteria(cards: WordCard[], learning: Record<string, LearningState
 
 export function selectCardsForRun(cards: WordCard[], learning: Record<string, LearningState>, config: RunConfig): WordCard[] {
   const now = Date.now()
-  const scoped = config.sceneId && (config.preset === 'scene' || config.preset === 'custom') ? cards.filter((card) => card.sceneId === config.sceneId) : cards
-  const ranked = rankCards(scoped, learning, now)
-  if (config.criteria.length === 0) {
-    if (config.preset === 'due-nearby') {
-    const due = ranked.filter((card) => isDue(learning[card.id] ?? createEmptyLearning(), now))
-    const nearby = ranked.filter((card) => !due.some((dueCard) => dueCard.id === card.id))
-      return [...due, ...nearby].slice(0, config.limit)
-    }
-    return ranked.slice(0, config.limit)
-  }
-  const fullPool = rankCards(cards, learning, now)
-  const due = ranked.filter((card) => isDue(learning[card.id] ?? createEmptyLearning(), now))
-  const nearby = ranked.filter((card) => !due.some((dueCard) => dueCard.id === card.id)).slice(0, config.limit)
-  const baseIds = config.preset === 'due-nearby'
-    ? new Set([...due, ...nearby].map((card) => card.id))
-    : new Set(ranked.map((card) => card.id))
-  const selectedIds = applyCriteria(fullPool, learning, config.criteria, now, baseIds)
-  return fullPool.filter((card) => selectedIds.has(card.id)).slice(0, config.limit)
+  const activeConfig = materializeRunConfig(config)
+  const ranked = rankCards(cards, learning, now)
+  const baseIds = new Set(cards.map((card) => card.id))
+  const selectedIds = applyCriteria(cards, learning, activeConfig.criteria, now, baseIds)
+
+  // `limit` remains in the persisted contract for older records, but route
+  // presets no longer silently truncate a filter result. A route is bounded
+  // by its criteria; All words intentionally returns the entire pack.
+  return ranked.filter((card) => selectedIds.has(card.id))
 }
 
-export function defaultRunConfig(preset: RunPreset = 'due-nearby', sceneId: string | null = null, limit = 12): RunConfig {
-  return { preset, sceneId, limit, criteria: [] }
+export function defaultRunConfig(preset: RunPreset = 'due-nearby', sceneId: string | null = null, limit = UNLIMITED_RUN_LIMIT): RunConfig {
+  return materializeRunConfig({ preset, sceneId, limit, criteria: [] })
 }

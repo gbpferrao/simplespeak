@@ -4,6 +4,7 @@ import type { PersistedState, ReviewOutcome } from '../../../core/contracts/type
 import { formatDuration, statusLabel } from '../../../core/presentation/formatters'
 import { learningFor, sceneFor } from '../../../core/presentation/selectors'
 import { isDue, retrievability } from '../domain/scheduler'
+import { criteriaForRunPreset, materializeRunConfig, UNLIMITED_RUN_LIMIT } from '../domain/runSelector'
 import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import type { RunConfig, RunSession } from '../domain/runSession'
@@ -58,7 +59,7 @@ export function RunView({ session, state, config, setConfig, onStart, onReveal, 
 
 function RunSetup({ locale, state, config, setConfig, onStart, onOpenBoard }: { locale: SupportedLocale; state: PersistedState; config: RunConfig; setConfig: (config: RunConfig) => void; onStart: () => void; onOpenBoard: () => void }) {
   const { t } = useI18n(locale)
-  const stats = { total: starterPack.cards.length, due: starterPack.cards.filter((card) => isDueForState(state, card.id)).length }
+  const dueCount = starterPack.cards.filter((card) => isDue(learningFor(state, card.id))).length
   const presets: Array<{ id: RunConfig['preset']; title: string; description: string; icon: typeof Timer }> = [
     { id: 'due-nearby', title: t('run.dueNearby'), description: t('history.description'), icon: Timer },
     { id: 'scene', title: t('run.oneScene'), description: t('run.chooseReturn'), icon: Compass },
@@ -71,19 +72,14 @@ function RunSetup({ locale, state, config, setConfig, onStart, onOpenBoard }: { 
       <div className="run-header"><div><div className="eyebrow"><Target size={14} /> {t('run.chooseReturn')}</div><h1>{t('run.chooseReturn')}</h1><p>{t('run.setupDescription')}</p></div><button className="soft-button" type="button" onClick={onOpenBoard}><Map size={15} /> {t('nav.backToBoard')}</button></div>
       <div className="setup-grid">
         <div className="setup-main">
-          <div className="preset-grid">{presets.map(({ id, title, description, icon: Icon }) => <button key={id} className={`preset-card ${config.preset === id ? 'selected' : ''}`} type="button" onClick={() => setConfig({ ...config, preset: id })}><span className="preset-icon"><Icon size={18} /></span><span className="preset-copy"><strong>{title}</strong><span>{description}</span></span>{config.preset === id && <CheckCircle2 className="preset-check" size={18} />}</button>)}</div>
-          {(config.preset === 'scene' || config.preset === 'custom') && <div className="setup-control-card"><div className="control-card-title"><span><Compass size={15} /> {t('run.oneScene')}</span><span className="small-muted">{t('run.chooseScene')}</span></div><div className="select-row">{starterPack.scenes.map((scene) => <button key={scene.id} className={config.sceneId === scene.id ? 'selected' : ''} type="button" onClick={() => setConfig({ ...config, sceneId: scene.id })}><span className="scene-tab-dot" style={{ background: scene.accent }} />{scene.name}</button>)}</div></div>}
-          <div className="setup-control-card"><div className="control-card-title"><span><SlidersHorizontal size={15} /> {t('run.route')}</span><strong>{t('run.cards', { count: config.limit })}</strong></div><input className="range-input" type="range" min="4" max={Math.min(30, stats.total)} value={config.limit} onChange={(event) => setConfig({ ...config, limit: Number(event.target.value) })} /><div className="range-labels"><span>{t('run.cards', { count: 4 })}</span><span>{t('run.cards', { count: Math.min(30, stats.total) })}</span></div></div>
+          <div className="preset-grid">{presets.map(({ id, title, description, icon: Icon }) => <button key={id} className={`preset-card ${config.preset === id ? 'selected' : ''}`} type="button" onClick={() => setConfig(materializeRunConfig({ ...config, preset: id, sceneId: id === 'scene' || id === 'custom' ? config.sceneId : null, limit: UNLIMITED_RUN_LIMIT, criteria: criteriaForRunPreset(id, id === 'scene' || id === 'custom' ? config.sceneId : null) }))}><span className="preset-icon"><Icon size={18} /></span><span className="preset-copy"><strong>{title}</strong><span>{description}</span></span>{config.preset === id && <CheckCircle2 className="preset-check" size={18} />}</button>)}</div>
+          {(config.preset === 'scene' || config.preset === 'custom') && <div className="setup-control-card"><div className="control-card-title"><span><Compass size={15} /> {t('run.oneScene')}</span><span className="small-muted">{t('run.chooseScene')}</span></div><div className="select-row">{starterPack.scenes.map((scene) => <button key={scene.id} className={config.sceneId === scene.id ? 'selected' : ''} type="button" onClick={() => setConfig(materializeRunConfig({ ...config, sceneId: scene.id, limit: UNLIMITED_RUN_LIMIT, criteria: criteriaForRunPreset(config.preset, scene.id) }))}><span className="scene-tab-dot" style={{ background: scene.accent }} />{scene.name}</button>)}</div></div>}
           <button className="primary-button start-run-large" type="button" onClick={onStart}><Play size={17} /> {t('run.startRoute')} <ChevronRight size={16} /></button>
         </div>
-        <aside className="setup-aside"><div className="setup-preview-card"><span className="eyebrow"><Sparkles size={13} /> {t('run.dueNow', { count: stats.due })}</span><strong>{t('run.cards', { count: config.limit })}</strong></div><div className="setup-note"><ShieldCheck size={16} /><span>{t('run.continueMiss')}</span></div></aside>
+        <aside className="setup-aside"><div className="setup-preview-card"><span className="eyebrow"><Sparkles size={13} /> {t('run.dueNow', { count: dueCount })}</span></div><div className="setup-note"><ShieldCheck size={16} /><span>{t('run.continueMiss')}</span></div></aside>
       </div>
     </section>
   )
-}
-
-function isDueForState(state: PersistedState, cardId: string): boolean {
-  return isDue(learningFor(state, cardId))
 }
 
 function RunSummary({ locale, session, onStart, onOpenBoard }: { locale: SupportedLocale; session: RunSession; onStart: () => void; onOpenBoard: () => void }) {

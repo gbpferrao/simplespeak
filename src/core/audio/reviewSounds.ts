@@ -19,8 +19,10 @@ interface RunPadState {
 }
 
 const RUN_PAD_INTERVAL_MS = 720
-const RUN_PAD_MIN_GAIN = 0.0015
-const RUN_PAD_GAIN_RANGE = 0.0165
+// Web Audio gain is linear. The previous 0.0015–0.018 range was effectively
+// inaudible on the phone even when HPM reached its maximum.
+const RUN_PAD_MIN_GAIN = 0.018
+const RUN_PAD_GAIN_RANGE = 0.065
 
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null
@@ -121,6 +123,7 @@ export function playRunFinishSound(tier: RunFinishTier): void {
 
 let runPadState: RunPadState | null = null
 let runPadRequest = 0
+let runPadPendingLevel = 0
 
 function clampRunPadLevel(level: number): number {
   return Math.max(0, Math.min(1, level))
@@ -135,7 +138,7 @@ function scheduleRunPadBeat(state: RunPadState): void {
   const now = state.context.currentTime
   const oscillator = state.context.createOscillator()
   const gain = state.context.createGain()
-  const peakGain = 0.0025 + state.level * 0.0105
+  const peakGain = 0.012 + state.level * 0.04
   const end = now + 0.16
   oscillator.type = 'sine'
   oscillator.frequency.setValueAtTime(196, now)
@@ -148,10 +151,11 @@ function scheduleRunPadBeat(state: RunPadState): void {
   oscillator.stop(end + 0.02)
 }
 
-function beginRunPad(context: AudioContext, level: number, request: number): void {
+function beginRunPad(context: AudioContext, request: number): void {
   if (request !== runPadRequest || context.state === 'closed') return
 
   try {
+    const level = runPadPendingLevel
     const oscillator = context.createOscillator()
     const gain = context.createGain()
     oscillator.type = 'sine'
@@ -179,16 +183,17 @@ function beginRunPad(context: AudioContext, level: number, request: number): voi
 /** Start the low, repeating Run pad. A failed or blocked context is harmless. */
 export function startRunPad(level = 0): void {
   stopRunPad()
+  runPadPendingLevel = clampRunPadLevel(level)
   const context = getAudioContext()
   if (!context || context.state === 'closed') return
   const request = ++runPadRequest
 
   try {
     if (context.state === 'suspended') {
-      void context.resume().then(() => beginRunPad(context, level, request)).catch(() => undefined)
+      void context.resume().then(() => beginRunPad(context, request)).catch(() => undefined)
       return
     }
-    beginRunPad(context, level, request)
+    beginRunPad(context, request)
   } catch {
     // The pad is optional presentation feedback. Review state remains primary.
   }
@@ -196,9 +201,13 @@ export function startRunPad(level = 0): void {
 
 /** Adjust pad loudness without changing the Run or learning state. */
 export function setRunPadVolume(level: number): void {
+  const nextLevel = clampRunPadLevel(level)
+  // Run entry may still be resuming a suspended phone AudioContext. Keep the
+  // latest HPM level so the pad does not start at its quiet floor after the
+  // first accepted Hit wins the resume race.
+  runPadPendingLevel = nextLevel
   const state = runPadState
   if (!state || state.context.state === 'closed') return
-  const nextLevel = clampRunPadLevel(level)
   state.level = nextLevel
 
   try {
@@ -213,6 +222,7 @@ export function setRunPadVolume(level: number): void {
 /** Stop and release all nodes owned by the active Run pad. */
 export function stopRunPad(): void {
   runPadRequest += 1
+  runPadPendingLevel = 0
   const state = runPadState
   runPadState = null
   if (!state) return

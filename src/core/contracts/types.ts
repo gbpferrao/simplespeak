@@ -17,6 +17,7 @@ export interface RunCriterion {
 export interface RunConfig {
   preset: RunPreset
   sceneId: string | null
+  /** Legacy compatibility field; zero means the route is uncapped. */
   limit: number
   criteria: RunCriterion[]
 }

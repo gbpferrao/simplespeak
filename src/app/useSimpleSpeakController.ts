@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { applyReview } from '../features/study/domain/scheduler'
-import { selectCardsForRun } from '../features/study/domain/runSelector'
+import { materializeRunConfig, selectCardsForRun, UNLIMITED_RUN_LIMIT } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
 import { isRemembered, makeRunRecord, runFinishTier, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
@@ -56,7 +56,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [boardFocusId, setBoardFocusId] = useState<string | null>(null)
   const [runSession, setRunSession] = useState<RunSession | null>(null)
-  const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: 12, criteria: [] })
+  const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: UNLIMITED_RUN_LIMIT, criteria: [] })
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const notificationTimers = useRef(new Map<string, number>())
@@ -106,7 +106,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   }
 
   function startRun(config = runConfig): void {
-    const activeConfig: RunConfig = { ...config, criteria: config.criteria ?? [] }
+    const activeConfig = materializeRunConfig({ ...config, criteria: config.criteria ?? [] })
     const cards = selectCardsForRun(starterPack.cards, data.learning, activeConfig)
     if (cards.length === 0) {
       notify(translate(data.settings.uiLocale, 'run.noCards'), 'warning')

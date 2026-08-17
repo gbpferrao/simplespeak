@@ -46,7 +46,7 @@ function normalizeRunConfig(value: unknown, fallback: RunConfig): RunConfig {
   return {
     preset: normalizeRunPreset(candidate.preset ?? fallback.preset),
     sceneId: typeof candidate.sceneId === 'string' ? candidate.sceneId : fallback.sceneId,
-    limit: Number.isFinite(candidate.limit) ? Math.max(1, Math.min(60, Number(candidate.limit))) : fallback.limit,
+    limit: Number.isFinite(candidate.limit) ? Math.max(0, Math.floor(Number(candidate.limit))) : fallback.limit,
     criteria: rawCriteria.map(normalizeRunCriterion).filter((criterion): criterion is RunCriterion => Boolean(criterion)),
   }
 }
@@ -58,7 +58,7 @@ function normalizeRuns(value: unknown): RunRecord[] {
     const fallback: RunConfig = {
       preset: normalizeRunPreset(candidate.preset),
       sceneId: typeof candidate.sceneId === 'string' ? candidate.sceneId : null,
-      limit: Array.isArray(candidate.cardIds) && candidate.cardIds.length > 0 ? candidate.cardIds.length : 12,
+      limit: 0,
       criteria: [],
     }
     return { ...candidate, status: normalizeRunStatus(candidate.status), config: normalizeRunConfig(candidate.config, fallback) }

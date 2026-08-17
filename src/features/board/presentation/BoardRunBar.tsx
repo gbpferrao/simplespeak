@@ -4,6 +4,7 @@ import type { PersistedState, RunCriterion, RunCriterionKind } from '../../../co
 import type { ProgressStats } from '../../history/domain/progressStats'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import type { RunConfig } from '../../study/domain/runSession'
+import { criteriaForRunPreset, materializeRunConfig, UNLIMITED_RUN_LIMIT } from '../../study/domain/runSelector'
 import { useI18n } from '../../../core/i18n/i18n'
 
 interface BoardRunBarProps {
@@ -13,7 +14,6 @@ interface BoardRunBarProps {
 }
 
 const partOfSpeechValues = [...new Set(starterPack.cards.map((card) => card.partOfSpeech))].sort()
-const RUN_CARD_LIMIT = 12
 type RoutePresetValue = RunConfig['preset'] | `scene:${string}`
 
 function makeCriterion(kind: RunCriterionKind, value?: string): RunCriterion {
@@ -26,7 +26,7 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
   const { t } = useI18n(state.settings.uiLocale)
   const [open, setOpen] = useState(false)
   const [routePreset, setRoutePreset] = useState<RoutePresetValue>('due-nearby')
-  const [criteria, setCriteria] = useState<RunCriterion[]>([])
+  const [criteria, setCriteria] = useState<RunCriterion[]>(() => criteriaForRunPreset('due-nearby', null))
 
   function updateCriterion(id: string, patch: Partial<RunCriterion>): void {
     setCriteria((current) => current.map((criterion) => criterion.id === id ? { ...criterion, ...patch } : criterion))
@@ -41,17 +41,16 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
     const isScenePreset = routePreset.startsWith('scene:')
     const selectedPreset = isScenePreset ? 'scene' : routePreset as RunConfig['preset']
     const sceneId = isScenePreset ? routePreset.slice('scene:'.length) : null
-    onStartRun({ preset: selectedPreset, sceneId: selectedPreset === 'scene' ? sceneId : null, limit: RUN_CARD_LIMIT, criteria })
+    onStartRun(materializeRunConfig({ preset: selectedPreset, sceneId: selectedPreset === 'scene' ? sceneId : null, limit: UNLIMITED_RUN_LIMIT, criteria }))
     setOpen(false)
   }
 
   function selectRoutePreset(value: RoutePresetValue): void {
     setRoutePreset(value)
-    if (value.startsWith('scene:')) {
-      setCriteria([makeCriterion('scene', value.slice('scene:'.length))])
-      return
-    }
-    setCriteria([])
+    const isScenePreset = value.startsWith('scene:')
+    const preset = isScenePreset ? 'scene' : value as RunConfig['preset']
+    const sceneId = isScenePreset ? value.slice('scene:'.length) : null
+    setCriteria(criteriaForRunPreset(preset, sceneId))
   }
 
   return <div className={`run-launcher ${open ? 'is-open' : ''}`}>
