@@ -244,7 +244,7 @@ h3 { font-size: 16px; }
 .run-overlay-response { min-height: 48px; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .run-overlay-prompt { min-width: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--ink-soft); font-size: var(--font-ui-min); font-weight: 700; }
 .run-overlay-prompt svg { flex: 0 0 auto; color: var(--violet); }
-.run-overlay-form { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.run-overlay-form { display: grid; align-items: center; justify-items: end; justify-content: end; gap: 8px; }
 .run-overlay-form .answer-input-wrap { width: min(290px, 27vw); height: 38px; }
 .run-overlay-form .answer-actions { margin-top: 0; }
 .run-overlay-form .answer-actions button { min-height: 35px; padding-inline: 9px; }
@@ -492,7 +492,7 @@ h3 { font-size: 16px; }
   .run-overlay-score { gap: 7px; font-size: var(--font-ui-min); }
   .run-overlay-actions-top button { width: 29px; }
   .run-overlay-prompt { font-size: var(--font-ui-min); }
-  .run-overlay-form { display: grid; grid-template-columns: 1fr; gap: 7px; }
+  .run-overlay-form { display: grid; grid-template-columns: 1fr; justify-items: stretch; gap: 7px; }
   .run-overlay-form .answer-input-wrap { width: auto; min-width: 0; }
   .run-overlay-form .answer-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .run-overlay-form .answer-actions button { min-width: 0; padding-inline: 4px; font-size: var(--font-ui-min); }

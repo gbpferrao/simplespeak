@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import { memo, useEffect, useRef, useState, type CSSProperties, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { ArrowRight, Check, Eye, EyeOff, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
 import { imageFor } from '../../../core/presentation/selectors'
@@ -90,8 +90,11 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
     focusAnswerInputSoon()
   }
 
-  function preserveAnswerFocus(): void {
-    preserveAnswerFocusRef.current = document.activeElement === answerInputRef.current || preserveAnswerFocusRef.current
+  function preserveAnswerFocus(event?: ReactPointerEvent<HTMLButtonElement>): void {
+    const inputIsActive = document.activeElement === answerInputRef.current
+    if (!inputIsActive) return
+    event?.preventDefault()
+    preserveAnswerFocusRef.current = true
   }
 
   function focusAnswerInputSoon(): void {
@@ -141,8 +144,8 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
           </div>
         ) : (
           <form className="run-overlay-form" onSubmit={handleSubmit}>
-            <div className="answer-input-wrap"><Keyboard size={16} /><input ref={answerInputRef} name="typed-answer" value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="send" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" onPointerDown={preserveAnswerFocus} disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
             <div className="answer-actions"><button className="hit-button" type="button" onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('hit')}><Check size={16} /> {t('run.iKnewIt')}</button><button className="miss-button" type="button" onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('miss')}><X size={16} /> {t('run.missed')}</button><button className="reveal-button" type="button" onClick={onOpenCard}><Eye size={16} /> {t('run.reveal')}</button></div>
+            <div className="answer-input-wrap"><Keyboard size={16} /><input ref={answerInputRef} name="typed-answer" value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="send" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" onPointerDown={preserveAnswerFocus} disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
           </form>
         )}
       </div>
