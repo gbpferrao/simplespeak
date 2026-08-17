@@ -6,6 +6,7 @@ import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.
 import type { RunConfig, RunSession } from '../../study/domain/runSession'
 import { BoardCanvas } from './BoardCanvas'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
+import { fitBoardCamera } from '../domain/boardCamera'
 import { BoardRunBar } from './BoardRunBar'
 import { BoardRunOverlay } from '../../study/presentation/BoardRunOverlay'
 import type { SupportedLocale } from '../../../core/i18n/i18n'
@@ -56,6 +57,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const { t } = useI18n(locale)
   const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
+  const initialFitDoneRef = useRef(false)
   const stageRef = useRef<KonvaStage | null>(null)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -97,6 +99,23 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     observer.observe(viewportElement)
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    if (initialFitDoneRef.current || !viewportSize.width || !viewportSize.height) return
+
+    // An explicit Card/Run target is a stronger command than the default
+    // whole-board framing. Search and Run entry therefore keep their existing
+    // focus behavior when the Board mounts.
+    if (cameraFocusId) {
+      initialFitDoneRef.current = true
+      return
+    }
+
+    const fittedCamera = fitBoardCamera(filteredCards, viewportSize)
+    cameraRef.current = fittedCamera
+    setCamera(fittedCamera)
+    initialFitDoneRef.current = true
+  }, [cameraFocusId, filteredCards, viewportSize])
 
   function cancelCameraAnimation(): void {
     if (animationFrameRef.current !== null) {
