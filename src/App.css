@@ -426,10 +426,6 @@ h3 { font-size: 16px; }
 .pack-card h2 { margin-top: 8px; font-size: 18px; }
 .pack-card p { margin-top: 4px; color: var(--ink-soft); font-size: 10px; }
 .pack-info-line { display: flex; justify-content: space-between; margin: 16px 0; padding-top: 11px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 10px; font-weight: 750; }
-.local-card > svg { color: var(--green); }
-.local-card h3 { margin-top: 10px; }
-.local-card p { margin-top: 6px; color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
-.local-check { margin-top: 10px; display: flex; align-items: center; gap: 7px; color: var(--green-dark); font-size: 10px; font-weight: 750; }
 .danger-card { display: grid; gap: 14px; border-color: #f0b9b6; background: #fffafa; }
 .danger-card h2 { font-size: 18px; }
 .settings-language-field { margin-top: 16px; }

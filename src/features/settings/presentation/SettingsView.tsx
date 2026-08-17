@@ -1,4 +1,4 @@
-import { CloudOff, RotateCcw } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import type { PersistedState, Settings as SimpleSpeakSettings } from '../../../core/contracts/types'
 import type { SupportedLocale } from '../../../core/i18n/i18n'
 import { localeOptions, useI18n } from '../../../core/i18n/i18n'
@@ -34,11 +34,6 @@ export function SettingsView({ locale, state, onUpdateSettings, onResetLearning 
         </div>
 
         <aside className="settings-aside">
-          <div className="settings-card local-card">
-            <CloudOff size={19} />
-            <h2>{t('settings.offlineDefault')}</h2>
-          </div>
-
           <div className="settings-card danger-card">
             <h2>{t('settings.startOver')}</h2>
             <button className="danger-button full-button" type="button" onClick={onResetLearning}><RotateCcw size={14} /> {t('settings.resetLearning')}</button>
