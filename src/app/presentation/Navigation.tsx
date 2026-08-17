@@ -1,15 +1,19 @@
 import { ArrowLeft, Ellipsis, History, Search, Settings2, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { View, WordCard } from '../../core/contracts/types'
+import type { SupportedLocale } from '../../core/i18n/i18n'
+import { useI18n } from '../../core/i18n/i18n'
 
 interface NavigationProps {
+  locale: SupportedLocale
   view: View
   setView: (view: View) => void
   searchCards: WordCard[]
   onSearchSelect: (cardId: string) => void
 }
 
-export function Header({ view, setView, searchCards, onSearchSelect }: NavigationProps) {
+export function Header({ locale, view, setView, searchCards, onSearchSelect }: NavigationProps) {
+  const { t } = useI18n(locale)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -55,32 +59,32 @@ export function Header({ view, setView, searchCards, onSearchSelect }: Navigatio
     <header className="topbar">
       <div className="topbar-inner">
         <div className="header-leading">
-          {view !== 'board' && <button className="header-back-button" type="button" onClick={() => selectView('board')} aria-label="Back to board" title="Back to board"><ArrowLeft size={18} /></button>}
-          <button className="brand" type="button" onClick={() => selectView('board')} aria-label="Open SimpleSpeak board">
+          {view !== 'board' && <button className="header-back-button" type="button" onClick={() => selectView('board')} aria-label={t('nav.backToBoard')} title={t('nav.backToBoard')}><ArrowLeft size={18} /></button>}
+          <button className="brand" type="button" onClick={() => selectView('board')} aria-label={t('nav.openBoard')}>
             <span className="brand-word">SimpleSpeak</span>
           </button>
         </div>
         <div className="header-actions">
           <div className="header-search-wrap" ref={searchRef}>
-            <button className={`header-search-button ${searchOpen ? 'active' : ''}`} type="button" onClick={() => setSearchOpen((current) => !current)} aria-expanded={searchOpen} aria-haspopup="true" aria-label="Search words" title="Search words"><Search size={18} /></button>
-            {searchOpen && <div className="header-search-popover" aria-label="Search words">
+            <button className={`header-search-button ${searchOpen ? 'active' : ''}`} type="button" onClick={() => setSearchOpen((current) => !current)} aria-expanded={searchOpen} aria-haspopup="true" aria-label={t('nav.searchWords')} title={t('nav.searchWords')}><Search size={18} /></button>
+            {searchOpen && <div className="header-search-popover" aria-label={t('nav.searchWords')}>
               <div className="header-search-input-wrap">
                 <Search size={15} aria-hidden="true" />
-                <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Find a word" aria-label="Find a word" autoComplete="off" />
-                {searchQuery && <button className="header-search-clear" type="button" onClick={() => setSearchQuery('')} aria-label="Clear search"><X size={14} /></button>}
+                <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={t('nav.findWord')} aria-label={t('nav.findWord')} autoComplete="off" />
+                {searchQuery && <button className="header-search-clear" type="button" onClick={() => setSearchQuery('')} aria-label={t('nav.clearSearch')}><X size={14} /></button>}
               </div>
               <div className="header-search-results" aria-live="polite">
-                {!searchQuery.trim() ? <span className="header-search-empty">Type to find it on the board.</span> : searchResults.length === 0 ? <span className="header-search-empty">No matching words.</span> : searchResults.map((card) => <button className="header-search-result" type="button" key={card.id} onClick={() => selectSearchResult(card.id)}><span className="header-search-result-mark" aria-hidden="true" /><span className="header-search-result-copy"><strong>{card.target}</strong><small>{card.origin}</small></span></button>)}
+                {!searchQuery.trim() ? <span className="header-search-empty">{t('nav.searchHint')}</span> : searchResults.length === 0 ? <span className="header-search-empty">{t('nav.noMatches')}</span> : searchResults.map((card) => <button className="header-search-result" type="button" key={card.id} onClick={() => selectSearchResult(card.id)}><span className="header-search-result-mark" aria-hidden="true" /><span className="header-search-result-copy"><strong>{card.target}</strong><small>{card.origin}</small></span></button>)}
               </div>
             </div>}
           </div>
           <div className="header-menu-wrap" ref={menuRef}>
-            <button className={`header-menu-button ${menuOpen || view === 'history' || view === 'settings' ? 'active' : ''}`} type="button" onClick={() => setMenuOpen((current) => !current)} aria-expanded={menuOpen} aria-haspopup="true" aria-label="Open more views"><Ellipsis size={22} /></button>
-            {menuOpen && <div className="header-menu-popover" aria-label="More views">
-              <span className="header-menu-label">More</span>
-              <div className="header-view-tabs" role="tablist" aria-label="Secondary views">
-                <button className={view === 'history' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'history'} onClick={() => selectView('history')}><History size={16} /> History</button>
-                <button className={view === 'settings' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'settings'} onClick={() => selectView('settings')}><Settings2 size={16} /> Settings</button>
+            <button className={`header-menu-button ${menuOpen || view === 'history' || view === 'settings' ? 'active' : ''}`} type="button" onClick={() => setMenuOpen((current) => !current)} aria-expanded={menuOpen} aria-haspopup="true" aria-label={t('nav.openMoreViews')}><Ellipsis size={22} /></button>
+            {menuOpen && <div className="header-menu-popover" aria-label={t('nav.more')}>
+              <span className="header-menu-label">{t('nav.more')}</span>
+              <div className="header-view-tabs" role="tablist" aria-label={t('nav.secondaryViews')}>
+                <button className={view === 'history' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'history'} onClick={() => selectView('history')}><History size={16} /> {t('nav.history')}</button>
+                <button className={view === 'settings' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'settings'} onClick={() => selectView('settings')}><Settings2 size={16} /> {t('nav.settings')}</button>
               </div>
             </div>}
           </div>

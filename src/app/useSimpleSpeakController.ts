@@ -6,8 +6,9 @@ import { loadApiKey, saveApiKey } from '../features/settings/data/settingsReposi
 import { applyReview } from '../features/study/domain/scheduler'
 import { selectCardsForRun } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
-import { isRemembered, makeRunRecord, runLabel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isRemembered, makeRunRecord, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
+import { runLabelForLocale, translate } from '../core/i18n/i18n'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
 import type { GenerationRecord, PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
 
@@ -96,13 +97,13 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
   async function persistApiKey(): Promise<void> {
     await saveApiKey(apiKey.trim())
-    notify(apiKey.trim() ? 'Image key saved on this device.' : 'Image key removed.')
+    notify(translate(data.settings.uiLocale, apiKey.trim() ? 'notice.keySaved' : 'notice.keyRemoved'))
   }
 
   async function generateCardImage(card: WordCard, description: string): Promise<void> {
     const trimmedKey = apiKey.trim()
     if (!trimmedKey) {
-      notify('Add a Google AI API key in Settings before generating an image.')
+      notify(translate(data.settings.uiLocale, 'notice.addKey'))
       setView('settings')
       return
     }
@@ -129,12 +130,12 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       })
       const record: GenerationRecord = { ...generationBase, succeeded: true, error: null }
       setData((current) => ({ ...current, images: { ...current.images, [card.id]: image }, generations: [record, ...current.generations].slice(0, 120) }))
-      notify(`${card.target} image saved to this device.`)
+      notify(translate(data.settings.uiLocale, 'notice.imageSaved', { card: card.target }))
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown image generation error.'
+      const message = error instanceof Error ? error.message : translate(data.settings.uiLocale, 'notice.unknownImageError')
       const record: GenerationRecord = { ...generationBase, succeeded: false, error: message }
       setData((current) => ({ ...current, generations: [record, ...current.generations].slice(0, 120) }))
-      notify(`Image not changed: ${message}`)
+      notify(translate(data.settings.uiLocale, 'notice.imageNotChanged', { message }))
     } finally {
       setGeneratingCardId(null)
     }
@@ -143,7 +144,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   function startRun(config = runConfig): void {
     const cards = selectCardsForRun(starterPack.cards, data.learning, config.preset, config.sceneId, config.limit)
     if (cards.length === 0) {
-      notify('No cards match this run. Try a wider preset.')
+      notify(translate(data.settings.uiLocale, 'run.noCards'))
       return
     }
     const sceneName = sceneFor(starterPack.scenes, config.sceneId)?.name ?? null
@@ -151,7 +152,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     const session: RunSession = {
       id: newId('run'),
       preset: config.preset,
-      label: runLabel(config, sceneName),
+      label: runLabelForLocale(config.preset, sceneName, data.settings.uiLocale),
       sceneId: config.sceneId,
       cards,
       currentIndex: 0,
@@ -167,7 +168,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
-    notify(`${session.label} ready. One card at a time.`)
+    notify(translate(data.settings.uiLocale, 'run.ready', { label: session.label }))
   }
 
   function exitRun(): void {
@@ -204,7 +205,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       const record = makeRunRecord({ session: runSession, completedIds, hits: nextHits, misses: nextMisses, reveals: nextReveals, finishedAt })
       setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
       setRunSession((current) => current ? { ...current, hits: nextHits, misses: nextMisses, reveals: nextReveals, completedIds, finished: true } : current)
-      notify('Run complete. The route is a little brighter.')
+      notify(translate(data.settings.uiLocale, 'run.complete'))
       return
     }
     const nextCard = runSession.cards[runSession.currentIndex + 1]
@@ -218,16 +219,16 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
   function saveNote(cardId: string, note: string): void {
     setData((current) => ({ ...current, notes: { ...current.notes, [cardId]: note } }))
-    notify('Mnemonic note saved.')
+    notify(translate(data.settings.uiLocale, 'notice.noteSaved'))
   }
 
   function resetLearning(): void {
-    if (!window.confirm('Reset all review history and generated images for the starter pack?')) return
+    if (!window.confirm(translate(data.settings.uiLocale, 'notice.confirmReset'))) return
     const fresh = makeInitialState(starterPack.cards)
     setData((current) => ({ ...fresh, settings: current.settings }))
     setRunSession(null)
     setView('board')
-    notify('The board is fresh again. Your image settings stayed saved.')
+    notify(translate(data.settings.uiLocale, 'notice.resetDone'))
   }
 
   return {

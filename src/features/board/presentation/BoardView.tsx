@@ -9,6 +9,8 @@ import { BoardCanvas } from './BoardCanvas'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
 import { BoardRunBar } from './BoardRunBar'
 import { BoardRunOverlay } from '../../study/presentation/BoardRunOverlay'
+import type { SupportedLocale } from '../../../core/i18n/i18n'
+import { useI18n } from '../../../core/i18n/i18n'
 
 const INITIAL_CAMERA: BoardCamera = { zoom: 0.63, x: -18, y: -10 }
 
@@ -37,6 +39,7 @@ interface PinchGesture {
 }
 
 interface BoardViewProps {
+  locale: SupportedLocale
   state: PersistedState
   stats: ProgressStats
   focusId: string | null
@@ -50,7 +53,8 @@ interface BoardViewProps {
   onExitRun: () => void
 }
 
-export function BoardView({ state, stats, focusId, setFocusId, onSelectCard, onStartRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
+export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectCard, onStartRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
+  const { t } = useI18n(locale)
   const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
   const stageRef = useRef<KonvaStage | null>(null)
@@ -307,14 +311,14 @@ export function BoardView({ state, stats, focusId, setFocusId, onSelectCard, onS
   }
 
   return (
-    <section className="view board-view board-page" aria-label="SimpleSpeak board">
+    <section className="view board-view board-page" aria-label={t('board.aria')}>
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
-          <div className="board-canvas" role="application" aria-label="Interactive vocabulary board">
+          <div className="board-canvas" role="application" aria-label={t('board.interactive')}>
             <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} />
           </div>
         </div>
-        {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label="Focus current card" title="Focus current card"><Focus size={15} /></button>}
+        {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={15} /></button>}
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
         {runSession && <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onExitRun={onExitRun} />}
       </div>

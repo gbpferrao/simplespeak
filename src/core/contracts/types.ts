@@ -5,6 +5,8 @@ export type ReviewOutcome = 'hit' | 'miss' | 'reveal' | 'typed'
 export type RunPreset = 'scene' | 'due-nearby' | 'all' | 'custom'
 export type ImageResolution = '512' | '1K' | '2K'
 export type ImageEffort = 'minimal' | 'high'
+export type { SupportedLocale } from '../i18n/i18n'
+import type { SupportedLocale } from '../i18n/i18n'
 
 export interface Scene {
   id: string
@@ -88,6 +90,7 @@ export interface GenerationRecord {
 }
 
 export interface Settings {
+  uiLocale: SupportedLocale
   modelId: string
   effort: ImageEffort
   resolution: ImageResolution

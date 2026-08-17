@@ -5,6 +5,7 @@ import 'konva/lib/shapes/Text'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { CARD_SIZE } from './boardGeometry'
+import { useI18n } from '../../../core/i18n/i18n'
 
 interface BoardCardNodeProps {
   card: WordCard
@@ -73,6 +74,7 @@ function useBoardImage(source: string | undefined): HTMLImageElement | null {
 }
 
 function BoardCardNodeBase({ card, state, focused, runActive = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
+  const { t } = useI18n(state.settings.uiLocale)
   const scene = starterPack.scenes.find((candidate) => candidate.id === card.sceneId)
   const sceneColor = scene?.accent ?? '#7657d9'
   const image = useBoardImage(state.images[card.id] ?? card.imagePath)
@@ -83,7 +85,7 @@ function BoardCardNodeBase({ card, state, focused, runActive = false, revealed =
   return (
     <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 0 : rotation} opacity={opacity} name={`illustration-${card.id}`}>
       {revealed
-        ? <CardReveal card={card} state={state} image={image} />
+        ? <CardReveal card={card} state={state} image={image} noMnemonic={t('card.noMnemonic')} />
         : image
           ? <KonvaImage image={image} x={-CARD_HALF} y={-CARD_HALF} width={CARD_SIZE} height={CARD_SIZE} />
           : <Text x={-CARD_HALF} y={-24} width={CARD_SIZE} height={48} text={card.target} fill={sceneColor} fontFamily="Atkinson Hyperlegible, system-ui, sans-serif" fontSize={22} fontStyle="bold" letterSpacing={-0.5} align="center" verticalAlign="middle" wrap="word" />}
@@ -91,12 +93,12 @@ function BoardCardNodeBase({ card, state, focused, runActive = false, revealed =
   )
 }
 
-function CardReveal({ card, state, image }: { card: WordCard; state: PersistedState; image: HTMLImageElement | null }) {
+function CardReveal({ card, state, image, noMnemonic }: { card: WordCard; state: PersistedState; image: HTMLImageElement | null; noMnemonic: string }) {
   return <Group>
     {image && <KonvaImage image={image} x={-CARD_HALF} y={-CARD_HALF} width={CARD_SIZE} height={CARD_SIZE} opacity={0.22} />}
     <Text x={-CARD_HALF + 8} y={-32} width={CARD_SIZE - 16} text={card.target} fill="#26344a" fontFamily="Atkinson Hyperlegible, system-ui, sans-serif" fontSize={19} fontStyle="bold" align="center" wrap="word" />
     <Text x={-CARD_HALF + 8} y={-5} width={CARD_SIZE - 16} text={card.origin} fill="#52627a" fontFamily="Atkinson Hyperlegible, system-ui, sans-serif" fontSize={11} fontStyle="bold" align="center" wrap="word" />
-    <Text x={-CARD_HALF + 10} y={18} width={CARD_SIZE - 20} height={34} text={state.notes[card.id] || card.note || 'No mnemonic note yet.'} fill="#738096" fontFamily="Atkinson Hyperlegible, system-ui, sans-serif" fontSize={8} lineHeight={1.3} align="center" wrap="word" ellipsis />
+    <Text x={-CARD_HALF + 10} y={18} width={CARD_SIZE - 20} height={34} text={state.notes[card.id] || card.note || noMnemonic} fill="#738096" fontFamily="Atkinson Hyperlegible, system-ui, sans-serif" fontSize={8} lineHeight={1.3} align="center" wrap="word" ellipsis />
   </Group>
 }
 

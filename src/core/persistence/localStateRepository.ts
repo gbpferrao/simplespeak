@@ -1,8 +1,10 @@
 import type { ImageEffort, ImageResolution, LearningState, PersistedState, Settings, WordCard } from '../contracts/types'
+import { DEFAULT_LOCALE, normalizeLocale } from '../i18n/i18n'
 
 const STATE_KEY = 'simplespeak_state_v1'
 
 export const defaultSettings: Settings = {
+  uiLocale: DEFAULT_LOCALE,
   modelId: 'gemini-3.1-flash-image',
   effort: 'minimal',
   resolution: '1K',
@@ -34,6 +36,7 @@ function normalizeSettings(value: Partial<Settings> | undefined): Settings {
   return {
     ...defaultSettings,
     ...candidate,
+    uiLocale: normalizeLocale(candidate.uiLocale),
     modelId: normalizeModelId(candidate.modelId),
     effort: normalizeImageEffort(candidate.effort),
     resolution: normalizeImageResolution(candidate.resolution),
