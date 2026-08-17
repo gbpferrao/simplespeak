@@ -40,7 +40,10 @@ function scheduleReviewSound(context: AudioContext, kind: ReviewSoundKind): void
   const steps: ToneStep[] = kind === 'hit'
     ? [{ frequency: 660, at: 0, duration: 0.08 }, { frequency: 880, at: 0.065, duration: 0.1 }]
     : [{ frequency: 190, at: 0, duration: 0.11 }, { frequency: 135, at: 0.08, duration: 0.13 }]
-  const peakGain = 0.035
+  // Equal numeric peak gain is not equal perceived loudness here: the Miss
+  // cue is lower-frequency and uses a triangle wave, so calibrate its output
+  // upward to match the Hit cue on small phone speakers.
+  const peakGain = kind === 'miss' ? 0.07 : 0.035
   const now = context.currentTime
 
   for (const step of steps) {
