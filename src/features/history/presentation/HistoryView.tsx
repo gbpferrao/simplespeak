@@ -44,18 +44,17 @@ export function HistoryView({ locale, state, onOpenCard, onRerunRun }: { locale:
       <section className="history-card chart-card">
         <div className="history-card-heading"><h2>{t('history.runPerformance')}</h2><span className="history-section-count">{t('history.savedRuns', { count: state.runs.length })}</span></div>
         <PerformanceChart locale={locale} runs={state.runs} />
-      </section>
-
-      <section className="history-card runs-card">
-        <div className="history-card-heading"><h2>{t('history.savedRunsHeading')}</h2><span className="history-section-count">{t('history.savedRuns', { count: runs.length })}</span></div>
-        {runs.length === 0 ? <div className="empty-history large"><span>{t('history.firstRun')}</span></div> : <div className="run-history-list">{runs.map((run) => {
-          const accuracy = run.hits + run.misses ? Math.round((run.hits / (run.hits + run.misses)) * 100) : 0
-          const sceneName = starterPack.scenes.find((scene) => scene.id === run.sceneId)?.name ?? null
-          const config: RunConfig = run.config ?? { preset: run.preset, sceneId: run.sceneId, limit: run.cardIds.length || 12, criteria: [] }
-          const criteriaCount = config.criteria?.length ?? 0
-          const statusLabel = run.status === 'unfinished' ? t('history.unfinished') : t('history.completed')
-          return <div className="run-history-row" key={run.id}><div><strong>{runLabelForLocale(run.preset, sceneName, locale)}</strong><span>{new Date(run.finishedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' })} - {t('history.cardsCount', { count: run.cardIds.length })} - {formatDuration(run.durationMs, locale)}{criteriaCount > 0 ? ` - ${t('history.criteriaCount', { count: criteriaCount })}` : ''}</span><small className={`run-history-status ${run.status}`}>{statusLabel}</small></div><span className="run-accuracy">{accuracy}% <small>{t('history.signal')}</small></span><span className="run-history-score">{run.hits} <small>{t('history.hitsSmall')}</small></span><button className="run-again-button" type="button" onClick={() => onRerunRun(config)} aria-label={t('history.runAgain')} title={t('history.runAgain')}><Play size={13} fill="currentColor" /> {t('history.runAgain')}</button></div>
-        })}</div>}
+        <div className="history-runs-section">
+          <div className="history-card-heading"><h2>{t('history.savedRunsHeading')}</h2><span className="history-section-count">{t('history.savedRuns', { count: runs.length })}</span></div>
+          {runs.length === 0 ? <div className="empty-history large"><span>{t('history.firstRun')}</span></div> : <div className="run-history-list">{runs.map((run) => {
+            const accuracy = run.hits + run.misses ? Math.round((run.hits / (run.hits + run.misses)) * 100) : 0
+            const sceneName = starterPack.scenes.find((scene) => scene.id === run.sceneId)?.name ?? null
+            const config: RunConfig = run.config ?? { preset: run.preset, sceneId: run.sceneId, limit: run.cardIds.length || 12, criteria: [] }
+            const criteriaCount = config.criteria?.length ?? 0
+            const statusLabel = run.status === 'unfinished' ? t('history.unfinished') : t('history.completed')
+            return <div className="run-history-row" key={run.id}><div><strong>{runLabelForLocale(run.preset, sceneName, locale)}</strong><span>{new Date(run.finishedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' })} - {t('history.cardsCount', { count: run.cardIds.length })} - {formatDuration(run.durationMs, locale)}{criteriaCount > 0 ? ` - ${t('history.criteriaCount', { count: criteriaCount })}` : ''}</span><small className={`run-history-status ${run.status}`}>{statusLabel}</small></div><span className="run-accuracy">{accuracy}% <small>{t('history.signal')}</small></span><span className="run-history-score">{run.hits} <small>{t('history.hitsSmall')}</small></span><button className="run-again-button" type="button" onClick={() => onRerunRun(config)} aria-label={t('history.runAgain')} title={t('history.runAgain')}><Play size={13} fill="currentColor" /> {t('history.runAgain')}</button></div>
+          })}</div>}
+        </div>
       </section>
     </section>
   )
