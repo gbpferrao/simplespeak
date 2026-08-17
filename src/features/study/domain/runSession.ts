@@ -26,7 +26,6 @@ export interface RunSession {
 
 export const RUN_SPEED_WINDOW_SIZE = 5
 export const RUN_HIT_RATE_JITTER_THRESHOLD = 20
-export const RUN_PAD_MAX_HITS_PER_MINUTE = 30
 export const RUN_GOOD_ACCURACY = 0.6
 export const RUN_EXCELLENT_ACCURACY = 0.9
 
@@ -40,10 +39,6 @@ export function rollingHitRatePerMinute(session: Pick<RunSession, 'hitRateStarte
 
 export function runHitRateCueActive(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): boolean {
   return session.hitTimestamps.length >= 2 && rollingHitRatePerMinute(session, now) >= RUN_HIT_RATE_JITTER_THRESHOLD
-}
-
-export function runPadVolumeLevel(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): number {
-  return Math.max(0, Math.min(1, rollingHitRatePerMinute(session, now) / RUN_PAD_MAX_HITS_PER_MINUTE))
 }
 
 export type RunFinishTier = 'bad' | 'good' | 'excellent'

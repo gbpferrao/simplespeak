@@ -3,11 +3,12 @@ import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespe
 import { applyReview } from '../features/study/domain/scheduler'
 import { materializeRunConfig, selectCardsForRun, UNLIMITED_RUN_LIMIT } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
-import { isRemembered, makeRunRecord, runFinishTier, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isRemembered, makeRunRecord, runFinishTier, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { isAnswerCorrect } from '../features/vocabulary/domain/answerMatcher'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
-import { playReviewSound, playRunFinishSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
+import { playReviewSound, playRunFinishSound } from '../core/audio/reviewSounds'
+import { playHitHaptic } from '../core/device/reviewHaptics'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
 import type { PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
 import type { AppNotification, NotificationTone } from './notifications'
@@ -78,7 +79,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   }, [data, hydrated])
 
   useEffect(() => () => {
-    stopRunPad()
     notificationTimers.current.forEach((timer) => window.clearTimeout(timer))
     notificationTimers.current.clear()
   }, [])
@@ -140,7 +140,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
     setView('board')
-    startRunPad(0)
   }
 
   function endRun(): void {
@@ -148,7 +147,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     const finishedAt = Date.now()
     const record = makeRunRecord({ session: runSession, status: 'unfinished', completedIds: runSession.completedIds, hits: runSession.hits, misses: runSession.misses, reveals: runSession.reveals, finishedAt })
     setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
-    stopRunPad()
     setRunSession(null)
     setBoardFocusId(null)
     setView('board')
@@ -165,7 +163,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       const finishedAt = Date.now()
       const record = makeRunRecord({ session, status: 'completed', completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
       setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
-      stopRunPad()
       playRunFinishSound(runFinishTier(session.hits, session.misses))
       setRunSession((current) => current ? { ...session, finished: true } : current)
       notify(translate(data.settings.uiLocale, 'run.complete'))
@@ -173,7 +170,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }
 
     const nextCard = session.cards[session.currentIndex + 1]
-    setRunPadVolume(runPadVolumeLevel(session))
     setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, hitTimestamps: session.hitTimestamps, hitRateStartedAt: session.hitRateStartedAt, completedIds: session.completedIds } : current)
     setBoardFocusId(nextCard?.id ?? null)
   }
@@ -211,6 +207,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }))
     setFeedback(remembered ? 'hit' : 'miss')
     playReviewSound(remembered ? 'hit' : 'miss')
+    if (remembered) playHitHaptic()
     window.setTimeout(() => setFeedback(null), 650)
 
     continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, hitTimestamps: nextHitTimestamps, hitRateStartedAt: nextHitRateStartedAt, completedIds, revealed })
@@ -235,7 +232,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   function resetLearning(): void {
     if (!window.confirm(translate(data.settings.uiLocale, 'notice.confirmReset'))) return
     const fresh = makeInitialState(starterPack.cards)
-    stopRunPad()
     setData((current) => ({ ...fresh, settings: current.settings }))
     setRunSession(null)
     setView('board')
