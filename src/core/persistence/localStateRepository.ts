@@ -1,46 +1,20 @@
-import type { ImageEffort, ImageResolution, LearningState, PersistedState, RunConfig, RunCriterion, RunPreset, RunRecord, RunStatus, Settings, WordCard } from '../contracts/types'
+import type { LearningState, PersistedState, RunConfig, RunCriterion, RunPreset, RunRecord, RunStatus, Settings, WordCard } from '../contracts/types'
 import { DEFAULT_LOCALE, normalizeLocale } from '../i18n/i18n'
 
 const STATE_KEY = 'simplespeak_state_v1'
 
 export const defaultSettings: Settings = {
   uiLocale: DEFAULT_LOCALE,
-  modelId: 'gemini-3.1-flash-image',
-  effort: 'minimal',
-  resolution: '1K',
-  aspectRatio: '1:1',
-  innerPrompt: 'Create a single memorable visual for this vocabulary card. Use one clear subject, a simple scene, strong silhouette, warm editorial lighting, no written words, no labels, no watermark, and no collage. Make the meaning immediately recognizable and suitable for a square card.',
   timeframeDays: 90,
   dailyTarget: 12,
-}
-
-function normalizeImageResolution(value: unknown): ImageResolution {
-  if (value === '512') return '512'
-  if (value === '1K' || value === '1024') return '1K'
-  if (value === '2K' || value === '2048') return '2K'
-  return defaultSettings.resolution
-}
-
-function normalizeImageEffort(value: unknown): ImageEffort {
-  if (value === 'high') return 'high'
-  return defaultSettings.effort
-}
-
-function normalizeModelId(value: unknown): string {
-  if (typeof value !== 'string' || !value.trim() || value === 'gemini-2.5-flash-image') return defaultSettings.modelId
-  return value.trim()
 }
 
 function normalizeSettings(value: Partial<Settings> | undefined): Settings {
   const candidate = value ?? {}
   return {
-    ...defaultSettings,
-    ...candidate,
     uiLocale: normalizeLocale(candidate.uiLocale),
-    modelId: normalizeModelId(candidate.modelId),
-    effort: normalizeImageEffort(candidate.effort),
-    resolution: normalizeImageResolution(candidate.resolution),
-    aspectRatio: '1:1',
+    timeframeDays: Number.isFinite(candidate.timeframeDays) ? Math.max(1, Number(candidate.timeframeDays)) : defaultSettings.timeframeDays,
+    dailyTarget: Number.isFinite(candidate.dailyTarget) ? Math.max(1, Number(candidate.dailyTarget)) : defaultSettings.dailyTarget,
   }
 }
 
@@ -116,7 +90,7 @@ export function makeInitialState(cards: WordCard[]): PersistedState {
     learning[card.id] = createEmptyLearning()
     if (card.imagePath) images[card.id] = card.imagePath
   })
-  return { version: 1, learning, notes: {}, images, runs: [], generations: [], settings: { ...defaultSettings } }
+  return { version: 1, learning, notes: {}, images, runs: [], settings: { ...defaultSettings } }
 }
 
 function isBrowserStorageAvailable(): boolean {
@@ -138,13 +112,11 @@ export async function loadPersistedState(cards: WordCard[]): Promise<PersistedSt
         : createEmptyLearning()
     })
     return {
-      ...initial,
-      ...parsed,
+      version: 1,
       learning,
       notes: parsed.notes ?? {},
       images: { ...initial.images, ...(parsed.images ?? {}) },
       runs: normalizeRuns(parsed.runs),
-      generations: Array.isArray(parsed.generations) ? parsed.generations : [],
       settings: normalizeSettings(parsed.settings),
     }
   } catch {

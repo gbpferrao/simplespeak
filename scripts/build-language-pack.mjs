@@ -93,9 +93,6 @@ const toCompactCard = (card, sceneId, x, y, generatedImageIds) => {
   const note = card.note ?? card.noteSeed
   if (note) output.note = note
 
-  const imagePrompt = card.imagePrompt ?? card.imagePromptSeed
-  if (imagePrompt) output.imagePrompt = imagePrompt
-
   return output
 }
 

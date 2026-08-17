@@ -1,8 +1,5 @@
-import { useState } from 'react'
-import { ArrowUpRight, BookOpen, Brain, Check, CloudOff, Eye, EyeOff, Lightbulb, LockKeyhole, RefreshCw, RotateCcw, Save, Settings, ShieldCheck, WandSparkles } from 'lucide-react'
-import type { ImageEffort, ImageResolution, PersistedState, Settings as SimpleSpeakSettings } from '../../../core/contracts/types'
-import { defaultSettings } from '../../../core/persistence/localStateRepository'
-import { imageEffortLabel, imageResolutionLabel } from '../../image-generation/domain/options'
+import { ArrowUpRight, BookOpen, Brain, Check, CloudOff, Lightbulb, LockKeyhole, RotateCcw, Settings } from 'lucide-react'
+import type { PersistedState, Settings as SimpleSpeakSettings } from '../../../core/contracts/types'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import type { SupportedLocale } from '../../../core/i18n/i18n'
 import { localeOptions, useI18n } from '../../../core/i18n/i18n'
@@ -10,16 +7,12 @@ import { localeOptions, useI18n } from '../../../core/i18n/i18n'
 interface SettingsViewProps {
   locale: SupportedLocale
   state: PersistedState
-  apiKey: string
-  setApiKey: (value: string) => void
-  onSaveApiKey: () => Promise<void>
   onUpdateSettings: (patch: Partial<SimpleSpeakSettings>) => void
   onResetLearning: () => void
 }
 
-export function SettingsView({ locale, state, apiKey, setApiKey, onSaveApiKey, onUpdateSettings, onResetLearning }: SettingsViewProps) {
+export function SettingsView({ locale, state, onUpdateSettings, onResetLearning }: SettingsViewProps) {
   const { t } = useI18n(locale)
-  const [showKey, setShowKey] = useState(false)
   const settings = state.settings
 
   function exportPack(): void {
@@ -59,77 +52,6 @@ export function SettingsView({ locale, state, apiKey, setApiKey, onSaveApiKey, o
               </select>
             </label>
             <p className="small-muted">{t('settings.languageHelp')}</p>
-          </section>
-
-          <section className="settings-card">
-            <div className="settings-card-heading">
-              <div>
-                <span className="eyebrow"><WandSparkles size={13} /> {t('settings.imageStudio')}</span>
-                <h2>{t('settings.visualHook')}</h2>
-              </div>
-              <span className="settings-status">
-                <span className={apiKey.trim() ? 'status-dot on' : 'status-dot'} />
-                {apiKey.trim() ? t('settings.keyPresent') : t('settings.keyNeeded')}
-              </span>
-            </div>
-
-            <p className="settings-lead">{t('settings.imageLead')}</p>
-
-            <label className="field-label">
-              {t('settings.apiKey')}
-              <div className="secret-field">
-                <LockKeyhole size={15} />
-                <input type={showKey ? 'text' : 'password'} value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="AIza..." autoComplete="off" />
-                <button type="button" onClick={() => setShowKey((current) => !current)} aria-label={showKey ? t('settings.hideKey') : t('settings.showKey')}>
-                  {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
-            </label>
-
-            <div className="settings-inline-actions">
-              <button className="primary-button" type="button" onClick={() => { void onSaveApiKey() }}><Save size={15} /> {t('settings.saveKey')}</button>
-              <span><ShieldCheck size={14} /> {t('settings.savedNoServer')}</span>
-            </div>
-
-            <div className="field-grid">
-              <label className="field-label">
-                {t('settings.modelId')}
-                <input value={settings.modelId} onChange={(event) => onUpdateSettings({ modelId: event.target.value })} placeholder="gemini-3.1-flash-image" />
-              </label>
-              <label className="field-label">
-                {t('settings.modelEffort')}
-                <select value={settings.effort} onChange={(event) => onUpdateSettings({ effort: event.target.value as ImageEffort })}>
-                  <option value="minimal">{imageEffortLabel('minimal', locale)}</option>
-                  <option value="high">{imageEffortLabel('high', locale)}</option>
-                </select>
-              </label>
-              <label className="field-label">
-                {t('settings.resolution')}
-                <select value={settings.resolution} onChange={(event) => onUpdateSettings({ resolution: event.target.value as ImageResolution })}>
-                  <option value="512">{imageResolutionLabel('512', locale)}</option>
-                  <option value="1K">{imageResolutionLabel('1K', locale)}</option>
-                  <option value="2K">{imageResolutionLabel('2K', locale)}</option>
-                </select>
-              </label>
-              <label className="field-label">
-                {t('settings.aspectRatio')}
-                <div className="locked-select"><span>{t('settings.square')}</span><LockKeyhole size={13} /></div>
-              </label>
-            </div>
-
-            <p className="small-muted image-settings-note">{t('settings.imageNote')}</p>
-
-            <label className="field-label">
-              {t('settings.innerPrompt')}
-              <div className="prompt-field">
-                <textarea value={settings.innerPrompt} onChange={(event) => onUpdateSettings({ innerPrompt: event.target.value })} rows={5} />
-                <span>{t('settings.characters', { count: settings.innerPrompt.length })}</span>
-              </div>
-            </label>
-            <div className="prompt-reset-row">
-              <span>{t('settings.promptSent')}</span>
-              <button className="text-button" type="button" onClick={() => onUpdateSettings({ innerPrompt: defaultSettings.innerPrompt })}><RefreshCw size={13} /> {t('settings.resetDefault')}</button>
-            </div>
           </section>
 
           <section className="settings-card">

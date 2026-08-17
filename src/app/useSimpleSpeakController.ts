@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespeak-v1.json'
-import { composeImagePrompt } from '../features/image-generation/domain/promptComposer'
-import { generateGoogleImage } from '../integrations/google-image/googleImageClient'
-import { loadApiKey, saveApiKey } from '../features/settings/data/settingsRepository'
 import { applyReview } from '../features/study/domain/scheduler'
 import { selectCardsForRun } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
@@ -11,36 +8,28 @@ import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
 import { playReviewSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
-import type { GenerationRecord, PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
+import type { PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
 
 export type Feedback = 'hit' | 'miss' | null
 
 export interface SimpleSpeakController {
   data: PersistedState
-  apiKey: string
-  setApiKey: (value: string) => void
   hydrated: boolean
   view: View
   setView: (view: View) => void
   selectedCardId: string | null
   setSelectedCardId: (cardId: string | null) => void
-  stabilityCardId: string | null
-  setStabilityCardId: (cardId: string | null) => void
   boardFocusId: string | null
   setBoardFocusId: (cardId: string | null) => void
   runSession: RunSession | null
   runConfig: RunConfig
   setRunConfig: (config: RunConfig) => void
   feedback: Feedback
-  generatingCardId: string | null
   toast: string | null
   stats: ProgressStats
   selectedCard: WordCard | null
-  stabilityCard: WordCard | null
   notify: (message: string) => void
-  persistApiKey: () => Promise<void>
   updateSettings: (patch: Partial<Settings>) => void
-  generateCardImage: (card: WordCard, description: string) => Promise<void>
   startRun: (config?: RunConfig) => void
   endRun: () => void
   exitRun: () => void
@@ -57,24 +46,20 @@ function newId(prefix: string): string {
 
 export function useSimpleSpeakController(): SimpleSpeakController {
   const [data, setData] = useState<PersistedState>(() => makeInitialState(starterPack.cards))
-  const [apiKey, setApiKey] = useState('')
   const [hydrated, setHydrated] = useState(false)
   const [view, setView] = useState<View>('board')
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
-  const [stabilityCardId, setStabilityCardId] = useState<string | null>(null)
   const [boardFocusId, setBoardFocusId] = useState<string | null>(null)
   const [runSession, setRunSession] = useState<RunSession | null>(null)
   const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: 12, criteria: [] })
   const [feedback, setFeedback] = useState<Feedback>(null)
-  const [generatingCardId, setGeneratingCardId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([loadPersistedState(starterPack.cards), loadApiKey()]).then(([storedState, storedApiKey]) => {
+    loadPersistedState(starterPack.cards).then((storedState) => {
       if (cancelled) return
       setData(storedState)
-      setApiKey(storedApiKey)
       setHydrated(true)
     })
     return () => { cancelled = true }
@@ -88,7 +73,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
   const stats = useMemo(() => progressStats(data), [data])
   const selectedCard = cardFor(starterPack.cards, selectedCardId)
-  const stabilityCard = cardFor(starterPack.cards, stabilityCardId)
 
   function notify(message: string): void {
     setToast(message)
@@ -97,52 +81,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
   function updateSettings(patch: Partial<Settings>): void {
     setData((current) => ({ ...current, settings: { ...current.settings, ...patch } }))
-  }
-
-  async function persistApiKey(): Promise<void> {
-    await saveApiKey(apiKey.trim())
-    notify(translate(data.settings.uiLocale, apiKey.trim() ? 'notice.keySaved' : 'notice.keyRemoved'))
-  }
-
-  async function generateCardImage(card: WordCard, description: string): Promise<void> {
-    const trimmedKey = apiKey.trim()
-    if (!trimmedKey) {
-      notify(translate(data.settings.uiLocale, 'notice.addKey'))
-      setView('settings')
-      return
-    }
-    setGeneratingCardId(card.id)
-    const settings = data.settings
-    const prompt = composeImagePrompt({ card, description, note: data.notes[card.id] ?? '', settings, originLanguage: starterPack.originLanguage })
-    const generationBase = {
-      id: newId('generation'),
-      cardId: card.id,
-      prompt: prompt.userPrompt,
-      modelId: settings.modelId,
-      resolution: settings.resolution,
-      occurredAt: Date.now(),
-    }
-    try {
-      const image = await generateGoogleImage({
-        apiKey: trimmedKey,
-        modelId: settings.modelId,
-        systemInstruction: prompt.systemInstruction,
-        userPrompt: prompt.userPrompt,
-        effort: settings.effort,
-        resolution: settings.resolution,
-        aspectRatio: settings.aspectRatio,
-      })
-      const record: GenerationRecord = { ...generationBase, succeeded: true, error: null }
-      setData((current) => ({ ...current, images: { ...current.images, [card.id]: image }, generations: [record, ...current.generations].slice(0, 120) }))
-      notify(translate(data.settings.uiLocale, 'notice.imageSaved', { card: card.target }))
-    } catch (error) {
-      const message = error instanceof Error ? error.message : translate(data.settings.uiLocale, 'notice.unknownImageError')
-      const record: GenerationRecord = { ...generationBase, succeeded: false, error: message }
-      setData((current) => ({ ...current, generations: [record, ...current.generations].slice(0, 120) }))
-      notify(translate(data.settings.uiLocale, 'notice.imageNotChanged', { message }))
-    } finally {
-      setGeneratingCardId(null)
-    }
   }
 
   function startRun(config = runConfig): void {
@@ -294,30 +232,22 @@ export function useSimpleSpeakController(): SimpleSpeakController {
 
   return {
     data,
-    apiKey,
-    setApiKey,
     hydrated,
     view,
     setView,
     selectedCardId,
     setSelectedCardId,
-    stabilityCardId,
-    setStabilityCardId,
     boardFocusId,
     setBoardFocusId,
     runSession,
     runConfig,
     setRunConfig,
     feedback,
-    generatingCardId,
     toast,
     stats,
     selectedCard,
-    stabilityCard,
     notify,
-    persistApiKey,
     updateSettings,
-    generateCardImage,
     startRun,
     endRun,
     exitRun,

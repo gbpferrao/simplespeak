@@ -122,7 +122,7 @@ const english: MessageCatalog = {
   'history.cardsLosingAltitude': 'Cards losing altitude',
   'history.retrievability': 'retrievability',
   'history.completeRun': 'Complete a run to start seeing decay signals.',
-  'history.openStability': ({ card, score }) => `Open stability for ${card}, ${score}% retrievable`,
+  'history.openStability': ({ card, score }) => `Open details for ${card}, ${score}% retrievable`,
   'history.savedRunsHeading': 'Saved runs',
   'history.recentPractice': 'Recent practice, without a streak trap',
   'history.firstRun': 'Your first run will appear here.',
@@ -141,30 +141,10 @@ const english: MessageCatalog = {
 
   'settings.controlRoom': 'Control room',
   'settings.title': 'Make the board yours.',
-  'settings.description': 'Everything stays on this device except the image request you explicitly send to Google.',
+  'settings.description': 'Your learning state and the bundled word images stay on this device.',
   'settings.localSettings': 'local settings',
   'settings.language': 'UI language',
   'settings.languageHelp': 'Choose the language for app controls, explanations, and messages.',
-  'settings.imageStudio': 'Image studio',
-  'settings.visualHook': 'Give the cards a visual hook.',
-  'settings.keyPresent': 'key present',
-  'settings.keyNeeded': 'key needed',
-  'settings.imageLead': 'Paste a Google AI API key to generate square card visuals. A saved image is kept locally; regenerate to overwrite it, and a failed request leaves the previous image untouched.',
-  'settings.apiKey': 'Google AI API key',
-  'settings.hideKey': 'Hide API key',
-  'settings.showKey': 'Show API key',
-  'settings.saveKey': 'Save key',
-  'settings.savedNoServer': 'Stored with device preferences; no SimpleSpeak server.',
-  'settings.modelId': 'Model id',
-  'settings.modelEffort': 'Model effort',
-  'settings.resolution': 'Resolution',
-  'settings.aspectRatio': 'Aspect ratio',
-  'settings.square': '1:1 square',
-  'settings.imageNote': 'Gemini 3.1 Flash Image uses 512px, 1K, or 2K here. 1K is the balanced default for card visuals.',
-  'settings.innerPrompt': 'Inner image prompt',
-  'settings.characters': ({ count }) => `${count} characters`,
-  'settings.promptSent': 'Prompt is sent as the model instruction, followed by the card description.',
-  'settings.resetDefault': 'Reset default',
   'settings.learningRhythm': 'Learning rhythm',
   'settings.irregularUse': 'Make irregular use work.',
   'settings.rhythmLead': 'The horizon shapes suggested targets. It does not punish a gap or create fake missed days.',
@@ -185,38 +165,20 @@ const english: MessageCatalog = {
   'settings.scenes': ({ count }) => `${count} scenes`,
   'settings.exportPack': 'Export pack JSON',
   'settings.offlineDefault': 'Offline by default',
-  'settings.offlineDescription': 'Board, notes, runs, review history, and generated images work without a network. Only generation uses the API key.',
+  'settings.offlineDescription': 'Board, notes, runs, review history, and bundled word images work without a network.',
   'settings.localState': 'local state',
   'settings.localImages': 'local images',
   'settings.localHistory': 'local history',
   'settings.maintenance': 'Maintenance',
   'settings.startOver': 'Start the learning state over',
-  'settings.keepImages': 'Keep image settings, clear review history and saved images.',
+  'settings.keepImages': 'Keep bundled word images and clear review history.',
   'settings.resetLearning': 'Reset learning',
 
-  'card.wordCard': ({ sense }) => `Word card - ${sense}`,
   'card.closeDetails': 'Close card details',
   'card.visualAlt': ({ card }) => `${card} visual`,
-  'card.noImage': 'No generated image yet',
-  'card.selectedMeaning': ({ partOfSpeech }) => `Selected bounded meaning - ${partOfSpeech}`,
-  'card.stabilityPanel': 'Stability panel',
-  'card.savedImage': 'Saved image - regenerate to overwrite',
-  'card.frontWord': 'Front will use the word until generated',
-  'card.visualPrompt': 'Visual prompt',
-  'card.promptPlaceholder': 'Describe the visual hook for this word...',
-  'card.generating': 'Generating...',
-  'card.regenerate': 'Regenerate image',
-  'card.generate': 'Generate square image',
-  'card.generationHelp': 'The request includes the inner prompt, this description, the target word, and the selected meaning. A failed request does not erase the saved image.',
   'card.mnemonic': 'Mnemonic note',
-  'card.private': 'private to this card',
   'card.notePlaceholder': 'Write a private mnemonic for this meaning...',
   'card.saveNote': 'Save note',
-  'card.context': 'Context',
-  'card.packContent': 'pack content',
-  'card.openStability': 'Open word stability',
-  'card.reviewHalfLife': ({ reviews, days }) => `${reviews} reviews - ${days} day half-life`,
-  'card.noMnemonic': 'No mnemonic note yet.',
 
   'stability.title': 'Word stability',
   'stability.close': 'Close stability panel',
@@ -251,21 +213,9 @@ const english: MessageCatalog = {
   'format.inDays': ({ count }) => `In ${count} days`,
   'format.daysAgo': ({ count }) => `${count} days ago`,
 
-  'notice.keySaved': 'Image key saved on this device.',
-  'notice.keyRemoved': 'Image key removed.',
-  'notice.addKey': 'Add a Google AI API key in Settings before generating an image.',
-  'notice.imageSaved': ({ card }) => `${card} image saved to this device.`,
-  'notice.unknownImageError': 'Unknown image generation error.',
-  'notice.imageNotChanged': ({ message }) => `Image not changed: ${message}`,
   'notice.noteSaved': 'Mnemonic note saved.',
-  'notice.confirmReset': 'Reset all review history and generated images for the starter pack?',
-  'notice.resetDone': 'The board is fresh again. Your image settings stayed saved.',
-
-  'image.quickLight': 'quick and light',
-  'image.standardRecommended': 'standard (recommended)',
-  'image.detailedHeavier': 'detailed and heavier',
-  'image.highEffort': 'High - more composition thinking',
-  'image.minimalEffort': 'Minimal - quick card visuals',
+  'notice.confirmReset': 'Reset all review history for the starter pack?',
+  'notice.resetDone': 'The board is fresh again. Your bundled word images remain available.',
 }
 
 const portuguese: MessageCatalog = {
@@ -341,6 +291,46 @@ export function getBrowserLocale(): SupportedLocale {
 }
 
 const catalogs: Record<SupportedLocale, MessageCatalog> = { 'en-US': english, 'pt-BR': portuguese, 'de-DE': german }
+
+const retiredImageGenerationKeys = [
+  'settings.imageStudio', 'settings.visualHook', 'settings.keyPresent',
+  'settings.keyNeeded', 'settings.imageLead', 'settings.apiKey',
+  'settings.hideKey', 'settings.showKey', 'settings.saveKey',
+  'settings.savedNoServer', 'settings.modelId', 'settings.modelEffort',
+  'settings.resolution', 'settings.aspectRatio', 'settings.square',
+  'settings.imageNote', 'settings.innerPrompt', 'settings.characters',
+  'settings.promptSent', 'settings.resetDefault', 'card.wordCard',
+  'card.noImage', 'card.selectedMeaning', 'card.stabilityPanel',
+  'card.savedImage', 'card.frontWord', 'card.visualPrompt',
+  'card.promptPlaceholder', 'card.generating', 'card.regenerate',
+  'card.generate', 'card.generationHelp', 'card.private', 'card.context',
+  'card.packContent', 'card.openStability', 'card.reviewHalfLife',
+  'card.noMnemonic', 'notice.keySaved', 'notice.keyRemoved', 'notice.addKey',
+  'notice.imageSaved', 'notice.unknownImageError', 'notice.imageNotChanged',
+  'image.quickLight', 'image.standardRecommended', 'image.detailedHeavier',
+  'image.highEffort', 'image.minimalEffort',
+]
+
+for (const catalog of Object.values(catalogs)) {
+  for (const key of retiredImageGenerationKeys) delete catalog[key]
+}
+
+Object.assign(catalogs['pt-BR'], {
+  'settings.description': 'Seu estado de aprendizagem e as imagens nativas das palavras ficam neste dispositivo.',
+  'settings.offlineDescription': 'Quadro, notas, sessões, histórico de revisões e imagens nativas funcionam sem rede.',
+  'settings.keepImages': 'Manter as imagens nativas e limpar o histórico de revisões.',
+  'notice.confirmReset': 'Redefinir todo o histórico de revisões do pacote inicial?',
+  'notice.resetDone': 'O quadro está novo outra vez. Suas imagens nativas continuam disponíveis.',
+  'history.openStability': ({ card, score }: { card: string; score: string | number }) => `Abrir detalhes de ${card}, ${score}% recuperável`,
+})
+Object.assign(catalogs['de-DE'], {
+  'settings.description': 'Lernstand und gebündelte Wortbilder bleiben auf diesem Gerät.',
+  'settings.offlineDescription': 'Board, Notizen, Läufe, Wiederholungsverlauf und gebündelte Wortbilder funktionieren offline.',
+  'settings.keepImages': 'Gebündelte Wortbilder behalten und Wiederholungsverlauf löschen.',
+  'notice.confirmReset': 'Den gesamten Wiederholungsverlauf des Starterpakets zurücksetzen?',
+  'notice.resetDone': 'Das Board ist wieder frisch. Deine gebündelten Wortbilder bleiben verfügbar.',
+  'history.openStability': ({ card, score }: { card: string; score: string | number }) => `Details für ${card} öffnen, ${score}% abrufbar`,
+})
 
 export function translate(locale: SupportedLocale, key: string, values: Record<string, string | number> = {}): string {
   const message = catalogs[locale][key] ?? english[key] ?? key

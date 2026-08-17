@@ -20,8 +20,6 @@ export interface RunConfig {
   limit: number
   criteria: RunCriterion[]
 }
-export type ImageResolution = '512' | '1K' | '2K'
-export type ImageEffort = 'minimal' | 'high'
 export type { SupportedLocale } from '../i18n/i18n'
 import type { SupportedLocale } from '../i18n/i18n'
 
@@ -53,7 +51,6 @@ export interface WordCard {
     origin?: string
   }
   note?: string
-  imagePrompt?: string
 }
 
 export interface ReviewEvent {
@@ -97,24 +94,8 @@ export interface RunRecord {
   config?: RunConfig
 }
 
-export interface GenerationRecord {
-  id: string
-  cardId: string
-  prompt: string
-  modelId: string
-  resolution: ImageResolution
-  succeeded: boolean
-  occurredAt: number
-  error: string | null
-}
-
 export interface Settings {
   uiLocale: SupportedLocale
-  modelId: string
-  effort: ImageEffort
-  resolution: ImageResolution
-  aspectRatio: '1:1'
-  innerPrompt: string
   timeframeDays: number
   dailyTarget: number
 }
@@ -125,6 +106,5 @@ export interface PersistedState {
   notes: Record<string, string>
   images: Record<string, string>
   runs: RunRecord[]
-  generations: GenerationRecord[]
   settings: Settings
 }
