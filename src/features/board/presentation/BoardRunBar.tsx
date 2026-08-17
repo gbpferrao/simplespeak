@@ -14,7 +14,7 @@ interface BoardRunBarProps {
 }
 
 const partOfSpeechValues = [...new Set(starterPack.cards.map((card) => card.partOfSpeech))].sort()
-type RoutePresetValue = RunConfig['preset'] | `scene:${string}`
+type RoutePresetValue = Exclude<RunConfig['preset'], 'all'> | `scene:${string}`
 
 function makeCriterion(kind: RunCriterionKind, value?: string): RunCriterion {
   const id = `criterion-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
@@ -55,12 +55,12 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
 
   return <div className={`run-launcher ${open ? 'is-open' : ''}`}>
     {open ? <section className="run-config-popover" aria-label={t('run.configureAria')}>
-      <div className="run-config-heading"><div><span className="eyebrow"><Play size={12} /> {t('run.studyRoute')}</span><strong>{t('run.chooseReturn')}</strong></div><button className="run-config-close-button" type="button" onClick={() => setOpen(false)} aria-label={t('run.closeConfig')} title={t('run.closeConfig')}><X size={17} /></button></div>
-      <label className="run-config-field"><span>{t('run.routePresets')}</span><select value={routePreset} onChange={(event) => selectRoutePreset(event.target.value as RoutePresetValue)}><option value="due-nearby">{t('run.dueNearby')}</option><option value="all">{t('run.allWords')}</option><optgroup label={t('run.oneScene')}>{starterPack.scenes.map((scene) => <option key={scene.id} value={`scene:${scene.id}`}>{scene.name}</option>)}</optgroup><option value="custom">{t('run.customRoute')}</option></select></label>
+      <div className="run-config-heading"><strong>{t('run.chooseReturn')}</strong><button className="run-config-close-button" type="button" onClick={() => setOpen(false)} aria-label={t('run.closeConfig')} title={t('run.closeConfig')}><X size={17} /></button></div>
+      <label className="run-config-field"><span>{t('run.routePresets')}</span><select value={routePreset} onChange={(event) => selectRoutePreset(event.target.value as RoutePresetValue)}><option value="due-nearby">{t('run.dueNearby')}</option><optgroup label={t('run.oneScene')}>{starterPack.scenes.map((scene) => <option key={scene.id} value={`scene:${scene.id}`}>{scene.name}</option>)}</optgroup><option value="custom">{t('run.customRoute')}</option></select></label>
 
       <div className="run-filter-panel">
-        <div className="run-filter-heading"><div><span className="eyebrow"><Filter size={12} /> {t('run.filters')}</span><strong>{t('run.progressiveFilters')}</strong></div><button className="text-button run-add-filter" type="button" onClick={() => setCriteria((current) => [...current, makeCriterion('scene')])}><Plus size={13} /> {t('run.addFilter')}</button></div>
-        {criteria.length === 0 ? <span className="run-filter-empty">{t('run.noFilters')}</span> : criteria.map((criterion, index) => <div className="run-filter-card" key={criterion.id}>
+        <div className="run-filter-heading"><strong>{t('run.progressiveFilters')}</strong><button className="text-button run-add-filter" type="button" onClick={() => setCriteria((current) => [...current, makeCriterion('scene')])}><Plus size={13} /> {t('run.addFilter')}</button></div>
+        {criteria.length === 0 ? <span className="run-filter-empty"><Filter size={13} /> {t('run.allWords')}</span> : criteria.map((criterion, index) => <div className="run-filter-card" key={criterion.id}>
           <div className="run-filter-card-heading"><span className="run-filter-index">{index + 1}</span><select className="run-filter-select" aria-label={t('run.filterMode')} value={criterion.mode} onChange={(event) => updateCriterion(criterion.id, { mode: event.target.value as RunCriterion['mode'] })}><option value="add">{t('run.addMode')}</option><option value="subtract">{t('run.subtractMode')}</option></select><button className="icon-button" type="button" onClick={() => setCriteria((current) => current.filter((item) => item.id !== criterion.id))} aria-label={t('run.removeFilter')}><Trash2 size={14} /></button></div>
           <select className="run-filter-select" aria-label={t('run.filterType')} value={criterion.kind} onChange={(event) => changeCriterionKind(criterion, event.target.value as RunCriterionKind)}><option value="scene">{t('run.filterGroup')}</option><option value="part-of-speech">{t('run.filterPartOfSpeech')}</option><option value="retention">{t('run.filterRetention')}</option></select>
           {criterion.kind === 'scene' && <select className="run-filter-select" aria-label={t('run.selectGroup')} value={criterion.value ?? ''} onChange={(event) => updateCriterion(criterion.id, { value: event.target.value })}>{starterPack.scenes.map((scene) => <option key={scene.id} value={scene.id}>{scene.name}</option>)}</select>}
