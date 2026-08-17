@@ -172,7 +172,6 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
     setView('board')
-    notify(translate(data.settings.uiLocale, 'run.ready', { label: session.label }))
   }
 
   function exitRun(): void {
