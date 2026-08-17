@@ -19,6 +19,7 @@ type MessageValue = string | ((values: Record<string, string | number>) => strin
 type MessageCatalog = Record<string, MessageValue>
 
 const english: MessageCatalog = {
+  'card.primarySense': 'Primary',
   'run.cardPositionShort': ({ current, total }) => `Card ${current} of ${total}`,
   'run.stabilityNow': ({ status, count }) => `${status} - ${count}% now`,
   'outcome.hit': 'Hit',
@@ -245,6 +246,7 @@ const english: MessageCatalog = {
 }
 
 const portuguese: MessageCatalog = {
+  'card.primarySense': 'Principal',
   'run.cardPositionShort': ({ current, total }) => `Cartão ${current} de ${total}`,
   'run.stabilityNow': ({ status, count }) => `${status} - ${count}% agora`,
   'outcome.hit': 'Acerto',
@@ -269,6 +271,7 @@ const portuguese: MessageCatalog = {
 }
 
 const german: MessageCatalog = {
+  'card.primarySense': 'Primär',
   'run.cardPositionShort': ({ current, total }) => `Karte ${current} von ${total}`,
   'run.stabilityNow': ({ status, count }) => `${status} - ${count}% jetzt`,
   'outcome.hit': 'Treffer',

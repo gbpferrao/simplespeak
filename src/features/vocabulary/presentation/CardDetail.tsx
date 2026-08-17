@@ -22,6 +22,7 @@ export function CardDetail({ card, state, generating, onClose, onGenerate, onOpe
   const [note, setNote] = useState(savedNote)
   const learning = learningFor(state, card.id)
   const image = state.images[card.id]
+  const senseLabel = card.sense ? humanize(card.sense) : t('card.primarySense')
 
   useEffect(() => {
     setDescription(card.imagePrompt ?? '')
@@ -39,7 +40,7 @@ export function CardDetail({ card, state, generating, onClose, onGenerate, onOpe
   return (
     <div className="overlay-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
       <aside className="modal-card detail-modal" role="dialog" aria-modal="true" aria-labelledby="card-detail-title">
-        <div className="drawer-header"><div><span className="eyebrow"><BookOpen size={13} /> {t('card.wordCard', { sense: humanize(card.sense ?? 'primary') })}</span><h2 id="card-detail-title">{card.target}</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label={t('card.closeDetails')}><X size={18} /></button></div>
+        <div className="drawer-header"><div><span className="eyebrow"><BookOpen size={13} /> {t('card.wordCard', { sense: senseLabel })}</span><h2 id="card-detail-title">{card.target}</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label={t('card.closeDetails')}><X size={18} /></button></div>
         <div className="detail-scroll">
           <div className={`detail-visual ${image ? 'has-image' : 'fallback'}`}>{image ? <img src={image} alt={t('card.visualAlt', { card: card.target })} /> : <><span className="visual-word">{card.target}</span><span className="visual-caption">{t('card.noImage')}</span></>}</div>
           <div className="detail-identity"><div><span className="detail-origin-label">{t('card.selectedMeaning', { partOfSpeech: card.partOfSpeech })}</span><strong>{card.origin}</strong></div><span className={`status-badge status-${learning.status}`}>{statusLabel(learning.status, locale)}</span></div>

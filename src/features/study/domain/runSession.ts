@@ -1,4 +1,5 @@
 import type { PersistedState, ReviewOutcome, RunPreset, WordCard } from '../../../core/contracts/types'
+import { DEFAULT_LOCALE, runLabelForLocale, type SupportedLocale } from '../../../core/i18n/i18n'
 
 export interface RunConfig {
   preset: RunPreset
@@ -24,11 +25,8 @@ export interface RunSession {
   finished: boolean
 }
 
-export function runLabel(config: RunConfig, sceneName: string | null): string {
-  if (config.preset === 'scene' && sceneName) return `${sceneName} route`
-  if (config.preset === 'due-nearby') return 'Due + nearby'
-  if (config.preset === 'all') return 'All words'
-  return 'Custom route'
+export function runLabel(config: RunConfig, sceneName: string | null, locale: SupportedLocale = DEFAULT_LOCALE): string {
+  return runLabelForLocale(config.preset, sceneName, locale)
 }
 
 export function isRemembered(outcome: ReviewOutcome): boolean {
