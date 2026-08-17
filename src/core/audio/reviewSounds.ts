@@ -18,6 +18,9 @@ let hitSoundBuffersPromise: Promise<AudioBuffer[]> | null = null
 let missSoundBufferPromise: Promise<AudioBuffer> | null = null
 let hitSoundStreak = 0
 let hitSoundStreakEpoch = 0
+// The first Miss in a consecutive run is the cue; later Misses remain silent
+// until a Hit or Run boundary breaks the sequence.
+let lastReviewSoundKind: ReviewSoundKind | null = null
 
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null
@@ -136,6 +139,7 @@ function runWhenAudioReady(context: AudioContext, callback: () => void): void {
 export function resetHitSoundStreak(): void {
   hitSoundStreak = 0
   hitSoundStreakEpoch += 1
+  lastReviewSoundKind = null
 }
 
 /**
@@ -144,8 +148,15 @@ export function resetHitSoundStreak(): void {
  * review event.
  */
 export function playReviewSound(kind: ReviewSoundKind): void {
+  const isDuplicateMiss = kind === 'miss' && lastReviewSoundKind === 'miss'
+  if (isDuplicateMiss) return
+
+  lastReviewSoundKind = kind
   const streak = kind === 'hit' ? ++hitSoundStreak : 0
-  if (kind === 'miss') resetHitSoundStreak()
+  if (kind === 'miss') {
+    hitSoundStreak = 0
+    hitSoundStreakEpoch += 1
+  }
   const context = getAudioContext()
   if (!context || context.state === 'closed') return
 
