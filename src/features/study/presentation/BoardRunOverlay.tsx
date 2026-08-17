@@ -1,7 +1,6 @@
 import { memo, useEffect, useRef, useState, type CSSProperties, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { ArrowRight, Check, Eye, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
-import { imageFor } from '../../../core/presentation/selectors'
 import type { RunSession } from '../domain/runSession'
 import { runHitRateAriaLabel, runHitRateUnit, useI18n } from '../../../core/i18n/i18n'
 
@@ -77,7 +76,6 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
 
   if (!card) return null
 
-  const imagePath = imageFor(state, card)
   const progress = session.cards.length ? ((session.currentIndex + (session.revealed ? 1 : 0)) / session.cards.length) * 100 : 0
   const filterTags = session.config.criteria.length > 0 ? session.config.criteria.map((criterion) => criterionTag(criterion)) : [session.label]
 
@@ -135,9 +133,6 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
       </div>
       <div className="run-overlay-progress" aria-hidden="true"><span style={{ width: `${Math.max(4, progress)}%` }} /></div>
       <div className={`run-overlay-response ${session.revealed ? 'is-revealed' : ''}`}>
-        <div className="run-overlay-prompt">
-          {session.revealed ? <><Eye size={15} /> {t('run.backOpen')}</> : imagePath ? <><Keyboard size={15} /> {t('run.recall')}</> : <span className="run-overlay-focused-word">{card.target}</span>}
-        </div>
         {session.revealed ? (
           <div className="answer-actions revealed-actions">
             <button className="primary-button" type="button" onClick={() => onAnswer('reveal', true)}><RotateCcw size={15} /> {t('run.continueMiss').split(' · ')[0]}</button>

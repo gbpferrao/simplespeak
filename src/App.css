@@ -229,7 +229,7 @@ h3 { font-size: 16px; }
 .run-overlay-filter-tags::-webkit-scrollbar { display: none; }
 .run-overlay-tag { min-height: 24px; padding: 0 7px; display: inline-flex; align-items: center; flex: 0 0 auto; border: 1px solid #b7d0f5; border-radius: 999px; color: var(--violet-dark); background: var(--violet-soft); font-size: var(--font-ui-min); font-weight: 800; white-space: nowrap; }
 .run-overlay-live { width: 28px; height: 28px; display: inline-grid; place-items: center; flex: 0 0 auto; border-radius: 0; color: #87a9dc; background: transparent; }
-.run-overlay-focused-word, .run-focused-word { color: var(--ink); font-weight: 850; letter-spacing: -.02em; }
+.run-focused-word { color: var(--ink); font-weight: 850; letter-spacing: -.02em; }
 .run-overlay-score { display: flex; align-items: center; gap: 9px; color: var(--ink-soft); font-size: var(--font-ui-min); font-weight: 800; white-space: nowrap; }
 .run-overlay-score > span { display: inline-flex; align-items: center; gap: 3px; }
 .run-overlay-score > span:first-child { color: var(--green-dark); }
@@ -243,9 +243,7 @@ h3 { font-size: 16px; }
 .run-overlay-progress { height: 4px; margin: 4px 10px 6px; overflow: hidden; border-radius: 4px; background: rgba(255,255,255,.84); }
 .run-overlay-progress span { display: block; height: 100%; border-radius: inherit; background: var(--violet); transition: width .3s ease; }
 .run-overlay-response { min-height: 48px; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.run-overlay-prompt { min-width: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--ink-soft); font-size: var(--font-ui-min); font-weight: 700; }
-.run-overlay-prompt svg { flex: 0 0 auto; color: var(--violet); }
-.run-overlay-form { display: grid; align-items: center; justify-items: end; justify-content: end; gap: 8px; }
+.run-overlay-form { margin-left: auto; display: grid; align-items: center; justify-items: end; justify-content: end; gap: 8px; }
 .run-overlay-form .answer-input-wrap { width: min(290px, 27vw); height: 38px; }
 .run-overlay-form .answer-actions { margin-top: 0; }
 .run-overlay-form .answer-actions button { min-height: 35px; padding-inline: 9px; }
@@ -492,8 +490,7 @@ h3 { font-size: 16px; }
   .run-overlay-form .answer-actions { flex: 1 1 auto; }
   .run-overlay-score { gap: 7px; font-size: var(--font-ui-min); }
   .run-overlay-actions-top button { width: 28px; }
-  .run-overlay-prompt { font-size: var(--font-ui-min); }
-  .run-overlay-form { display: grid; grid-template-columns: 1fr; justify-items: stretch; gap: 7px; }
+  .run-overlay-form { width: 100%; margin-left: 0; display: grid; grid-template-columns: 1fr; justify-items: stretch; gap: 7px; }
   .run-overlay-form .answer-input-wrap { width: auto; min-width: 0; }
   .run-overlay-form .answer-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .run-overlay-form .answer-actions button { min-width: 0; padding-inline: 4px; font-size: var(--font-ui-min); }
