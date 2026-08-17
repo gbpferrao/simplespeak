@@ -1,11 +1,13 @@
 import type { LearningState } from '../../../core/contracts/types'
 import { retrievability } from '../../study/domain/scheduler'
+import { ACQUIRED_RETENTION_THRESHOLD } from '../../study/domain/retentionBands'
 
 /**
  * Prototype visual cues. These values affect canvas presentation only; they
  * are not Scheduler thresholds and are intentionally not persisted settings.
  */
-export const BOARD_RETENTION_DIM_THRESHOLD = 0.6
+/** Cards below the shared acquired boundary are quietened on the Board. */
+export const BOARD_RETENTION_DIM_THRESHOLD = ACQUIRED_RETENTION_THRESHOLD
 export const BOARD_RETENTION_DIM_OPACITY = 0.46
 export const BOARD_RUN_CONTEXT_OPACITY = 0.28
 

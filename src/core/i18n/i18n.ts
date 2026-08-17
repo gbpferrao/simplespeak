@@ -30,6 +30,18 @@ const english: MessageCatalog = {
   'run.tapReveal': 'Tap to reveal',
   'run.percentComplete': ({ count }) => `${count}% complete`,
   'history.cardsCount': ({ count }) => `${count} Cards`,
+  'history.acquired': 'Acquired',
+  'history.acquiredThreshold': ({ count }) => `${count}% retrievability`,
+  'history.acquiredDescription': ({ count }) => `At or above ${count}% retrievability`,
+  'history.dueBand': 'Due',
+  'history.dueBandDescription': ({ min, max }) => `${min}% to ${max}% retrievability`,
+  'history.needsReturn': 'Needs a return',
+  'history.needsReturnDescription': ({ lost, new: notStarted }) => `${lost} lost · ${notStarted} not tried`,
+  'history.wordCount': ({ count }) => `of ${count} Cards`,
+  'history.noWords': 'No Cards in this group yet.',
+  'history.lost': 'lost',
+  'history.notStarted': 'not tried',
+  'history.openRetention': ({ card, score }) => `Open ${card}, ${score}`,
   'app.opening': 'Opening SimpleSpeak...',
   'nav.backToBoard': 'Back to board',
   'nav.openBoard': 'Open SimpleSpeak board',
@@ -303,6 +315,38 @@ Object.assign(catalogs['de-DE'], {
   'notice.confirmReset': 'Den gesamten Wiederholungsverlauf des Starterpakets zurücksetzen?',
   'notice.resetDone': 'Das Board ist wieder frisch. Deine gebündelten Wortbilder bleiben verfügbar.',
   'history.openStability': ({ card, score }: { card: string; score: string | number }) => `Details für ${card} öffnen, ${score}% abrufbar`,
+})
+
+Object.assign(catalogs['pt-BR'], {
+  'history.description': 'Numeros uteis para voltar: estado atual das palavras, precisao e sessoes recentes.',
+  'history.acquired': 'Adquiridas',
+  'history.acquiredThreshold': ({ count }: { count: string | number }) => `${count}% de recuperabilidade`,
+  'history.acquiredDescription': ({ count }: { count: string | number }) => `Com pelo menos ${count}% de recuperabilidade`,
+  'history.dueBand': 'Pendentes',
+  'history.dueBandDescription': ({ min, max }: { min: string | number; max: string | number }) => `${min}% a ${max}% de recuperabilidade`,
+  'history.needsReturn': 'Pedem retorno',
+  'history.needsReturnDescription': ({ lost, new: notStarted }: { lost: string | number; new: string | number }) => `${lost} perdidas · ${notStarted} nao testadas`,
+  'history.wordCount': ({ count }: { count: string | number }) => `de ${count} cartoes`,
+  'history.noWords': 'Nenhum cartao neste grupo ainda.',
+  'history.lost': 'perdida',
+  'history.notStarted': 'nao testada',
+  'history.openRetention': ({ card, score }: { card: string; score: string | number }) => `Abrir ${card}, ${score}`,
+})
+
+Object.assign(catalogs['de-DE'], {
+  'history.description': 'Nutzliche Zahlen fur die Ruckkehr: aktueller Wortstatus, Genauigkeit und letzte Laufe.',
+  'history.acquired': 'Aufgebaut',
+  'history.acquiredThreshold': ({ count }: { count: string | number }) => `${count}% Abrufbarkeit`,
+  'history.acquiredDescription': ({ count }: { count: string | number }) => `Ab ${count}% Abrufbarkeit`,
+  'history.dueBand': 'Fallig',
+  'history.dueBandDescription': ({ min, max }: { min: string | number; max: string | number }) => `${min}% bis ${max}% Abrufbarkeit`,
+  'history.needsReturn': 'Brauchen Ruckkehr',
+  'history.needsReturnDescription': ({ lost, new: notStarted }: { lost: string | number; new: string | number }) => `${lost} verloren · ${notStarted} noch nicht getestet`,
+  'history.wordCount': ({ count }: { count: string | number }) => `von ${count} Karten`,
+  'history.noWords': 'Noch keine Karten in dieser Gruppe.',
+  'history.lost': 'verloren',
+  'history.notStarted': 'nicht getestet',
+  'history.openRetention': ({ card, score }: { card: string; score: string | number }) => `${card} öffnen, ${score}`,
 })
 
 export function translate(locale: SupportedLocale, key: string, values: Record<string, string | number> = {}): string {
