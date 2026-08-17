@@ -356,9 +356,9 @@ export function runSpeedUnit(locale: SupportedLocale): string {
 }
 
 export function runSpeedAriaLabel(locale: SupportedLocale): string {
-  if (locale === 'pt-BR') return 'Velocidade média atual da sessão'
-  if (locale === 'de-DE') return 'Aktuelle durchschnittliche Laufgeschwindigkeit'
-  return 'Current rolling progression speed'
+  if (locale === 'pt-BR') return 'Ritmo atual de acertos corretos'
+  if (locale === 'de-DE') return 'Aktuelles Tempo richtiger Antworten'
+  return 'Current correct-answer pace'
 }
 
 export function runLabelForLocale(preset: 'scene' | 'due-nearby' | 'all' | 'custom', sceneName: string | null, locale: SupportedLocale): string {

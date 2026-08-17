@@ -6,10 +6,10 @@ import { loadApiKey, saveApiKey } from '../features/settings/data/settingsReposi
 import { applyReview } from '../features/study/domain/scheduler'
 import { selectCardsForRun } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
-import { isRemembered, makeRunRecord, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isRemembered, makeRunRecord, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
-import { playReviewSound } from '../core/audio/reviewSounds'
+import { playReviewSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
 import type { GenerationRecord, PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
 
@@ -82,6 +82,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   useEffect(() => {
     if (hydrated) savePersistedState(data)
   }, [data, hydrated])
+
+  useEffect(() => () => stopRunPad(), [])
 
   const stats = useMemo(() => progressStats(data), [data])
   const selectedCard = cardFor(starterPack.cards, selectedCardId)
@@ -163,7 +165,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       typedAnswer: '',
       startedAt: now,
       responseStartedAt: now,
-      progressTimestamps: [],
+      correctHitTimestamps: [],
+      correctStreakStartedAt: now,
       hits: 0,
       misses: 0,
       reveals: 0,
@@ -174,9 +177,11 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
     setView('board')
+    startRunPad(0)
   }
 
   function exitRun(): void {
+    stopRunPad()
     setRunSession(null)
     setBoardFocusId(null)
     setView('board')
@@ -188,12 +193,14 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       const finishedAt = Date.now()
       const record = makeRunRecord({ session, completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
       setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
+      stopRunPad()
       setRunSession((current) => current ? { ...session, finished: true } : current)
       notify(translate(data.settings.uiLocale, 'run.complete'))
       return
     }
 
     const nextCard = session.cards[session.currentIndex + 1]
+    setRunPadVolume(runPadVolumeLevel(session))
     setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, completedIds: session.completedIds } : current)
     setBoardFocusId(nextCard?.id ?? null)
   }
@@ -209,7 +216,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       revealed: true,
       misses: runSession.misses + 1,
       reveals: runSession.reveals + 1,
-      progressTimestamps: [...runSession.progressTimestamps, completedAt],
+      correctHitTimestamps: [],
+      correctStreakStartedAt: completedAt,
       completedIds: [...runSession.completedIds, card.id],
     }
 
@@ -219,6 +227,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }))
     setFeedback('miss')
     playReviewSound('miss')
+    setRunPadVolume(0)
     window.setTimeout(() => setFeedback(null), 650)
     setRunSession(revealedSession)
   }
@@ -237,6 +246,10 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     const nextHits = runSession.hits + (remembered ? 1 : 0)
     const nextMisses = runSession.misses + (remembered ? 0 : 1)
     const nextReveals = runSession.reveals + (revealed ? 1 : 0)
+    const nextCorrectHitTimestamps = remembered ? [...runSession.correctHitTimestamps, completedAt] : []
+    const nextCorrectStreakStartedAt = remembered
+      ? (runSession.correctHitTimestamps.length ? runSession.correctStreakStartedAt : runSession.responseStartedAt)
+      : completedAt
     const completedIds = [...runSession.completedIds, card.id]
 
     setData((current) => ({
@@ -247,7 +260,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     playReviewSound(remembered ? 'hit' : 'miss')
     window.setTimeout(() => setFeedback(null), 650)
 
-    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, progressTimestamps: [...runSession.progressTimestamps, completedAt], completedIds, revealed })
+    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, correctHitTimestamps: nextCorrectHitTimestamps, correctStreakStartedAt: nextCorrectStreakStartedAt, completedIds, revealed })
   }
 
   function setTypedAnswer(value: string): void {
@@ -262,6 +275,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   function resetLearning(): void {
     if (!window.confirm(translate(data.settings.uiLocale, 'notice.confirmReset'))) return
     const fresh = makeInitialState(starterPack.cards)
+    stopRunPad()
     setData((current) => ({ ...fresh, settings: current.settings }))
     setRunSession(null)
     setView('board')

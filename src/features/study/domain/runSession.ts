@@ -15,7 +15,8 @@ export interface RunSession {
   typedAnswer: string
   startedAt: number
   responseStartedAt: number
-  progressTimestamps: number[]
+  correctHitTimestamps: number[]
+  correctStreakStartedAt: number
   hits: number
   misses: number
   reveals: number
@@ -25,17 +26,22 @@ export interface RunSession {
 
 export const RUN_SPEED_WINDOW_SIZE = 5
 export const RUN_SPEED_JITTER_THRESHOLD_WPM = 20
+export const RUN_PAD_MAX_WPM = 30
 
-export function rollingRunSpeedWpm(session: Pick<RunSession, 'startedAt' | 'progressTimestamps'>, now = Date.now()): number {
-  const timestamps = session.progressTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)
+export function rollingCorrectHitSpeedWpm(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): number {
+  const timestamps = session.correctHitTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)
   if (timestamps.length === 0) return 0
-  const windowStart = timestamps.length === 1 ? session.startedAt : timestamps[0]
+  const windowStart = timestamps.length === 1 ? session.correctStreakStartedAt : timestamps[0]
   const elapsedMs = Math.max(1000, now - windowStart)
   return timestamps.length * 60_000 / elapsedMs
 }
 
-export function runSpeedCueActive(session: Pick<RunSession, 'startedAt' | 'progressTimestamps'>, now = Date.now()): boolean {
-  return session.progressTimestamps.length >= 2 && rollingRunSpeedWpm(session, now) >= RUN_SPEED_JITTER_THRESHOLD_WPM
+export function runSpeedCueActive(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): boolean {
+  return session.correctHitTimestamps.length >= 2 && rollingCorrectHitSpeedWpm(session, now) >= RUN_SPEED_JITTER_THRESHOLD_WPM
+}
+
+export function runPadVolumeLevel(session: Pick<RunSession, 'correctStreakStartedAt' | 'correctHitTimestamps'>, now = Date.now()): number {
+  return Math.max(0, Math.min(1, rollingCorrectHitSpeedWpm(session, now) / RUN_PAD_MAX_WPM))
 }
 
 export function runLabel(config: RunConfig, sceneName: string | null, locale: SupportedLocale = DEFAULT_LOCALE): string {

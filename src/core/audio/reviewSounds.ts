@@ -8,6 +8,18 @@ interface ToneStep {
 
 let audioContext: AudioContext | null = null
 
+interface RunPadState {
+  context: AudioContext
+  oscillator: OscillatorNode
+  gain: GainNode
+  level: number
+  timer: number
+}
+
+const RUN_PAD_INTERVAL_MS = 720
+const RUN_PAD_MIN_GAIN = 0.0015
+const RUN_PAD_GAIN_RANGE = 0.0165
+
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null
   const AudioContextConstructor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
@@ -61,5 +73,123 @@ export function playReviewSound(kind: ReviewSoundKind): void {
     scheduleReviewSound(context, kind)
   } catch {
     // Audio is an optional cue. The learning event remains authoritative.
+  }
+}
+
+let runPadState: RunPadState | null = null
+let runPadRequest = 0
+
+function clampRunPadLevel(level: number): number {
+  return Math.max(0, Math.min(1, level))
+}
+
+function runPadGainFor(level: number): number {
+  return RUN_PAD_MIN_GAIN + clampRunPadLevel(level) * RUN_PAD_GAIN_RANGE
+}
+
+function scheduleRunPadBeat(state: RunPadState): void {
+  if (state.context.state === 'closed') return
+  const now = state.context.currentTime
+  const oscillator = state.context.createOscillator()
+  const gain = state.context.createGain()
+  const peakGain = 0.0025 + state.level * 0.0105
+  const end = now + 0.16
+  oscillator.type = 'sine'
+  oscillator.frequency.setValueAtTime(196, now)
+  gain.gain.setValueAtTime(0.0001, now)
+  gain.gain.exponentialRampToValueAtTime(peakGain, now + 0.025)
+  gain.gain.exponentialRampToValueAtTime(0.0001, end)
+  oscillator.connect(gain)
+  gain.connect(state.context.destination)
+  oscillator.start(now)
+  oscillator.stop(end + 0.02)
+}
+
+function beginRunPad(context: AudioContext, level: number, request: number): void {
+  if (request !== runPadRequest || context.state === 'closed') return
+
+  try {
+    const oscillator = context.createOscillator()
+    const gain = context.createGain()
+    oscillator.type = 'sine'
+    oscillator.frequency.setValueAtTime(130.81, context.currentTime)
+    gain.gain.setValueAtTime(0.0001, context.currentTime)
+    oscillator.connect(gain)
+    gain.connect(context.destination)
+    oscillator.start()
+
+    const state: RunPadState = {
+      context,
+      oscillator,
+      gain,
+      level: clampRunPadLevel(level),
+      timer: window.setInterval(() => scheduleRunPadBeat(state), RUN_PAD_INTERVAL_MS),
+    }
+    runPadState = state
+    setRunPadVolume(level)
+    scheduleRunPadBeat(state)
+  } catch {
+    // The pad is optional presentation feedback. Review state remains primary.
+  }
+}
+
+/** Start the low, repeating Run pad. A failed or blocked context is harmless. */
+export function startRunPad(level = 0): void {
+  stopRunPad()
+  const context = getAudioContext()
+  if (!context || context.state === 'closed') return
+  const request = ++runPadRequest
+
+  try {
+    if (context.state === 'suspended') {
+      void context.resume().then(() => beginRunPad(context, level, request)).catch(() => undefined)
+      return
+    }
+    beginRunPad(context, level, request)
+  } catch {
+    // The pad is optional presentation feedback. Review state remains primary.
+  }
+}
+
+/** Adjust pad loudness without changing the Run or learning state. */
+export function setRunPadVolume(level: number): void {
+  const state = runPadState
+  if (!state || state.context.state === 'closed') return
+  const nextLevel = clampRunPadLevel(level)
+  state.level = nextLevel
+
+  try {
+    const now = state.context.currentTime
+    state.gain.gain.cancelScheduledValues(now)
+    state.gain.gain.setTargetAtTime(runPadGainFor(nextLevel), now, 0.08)
+  } catch {
+    // The pad is optional presentation feedback. Review state remains primary.
+  }
+}
+
+/** Stop and release all nodes owned by the active Run pad. */
+export function stopRunPad(): void {
+  runPadRequest += 1
+  const state = runPadState
+  runPadState = null
+  if (!state) return
+
+  window.clearInterval(state.timer)
+  try {
+    const now = state.context.currentTime
+    state.gain.gain.cancelScheduledValues(now)
+    state.gain.gain.setTargetAtTime(0.0001, now, 0.04)
+    state.oscillator.stop(now + 0.16)
+    window.setTimeout(() => {
+      state.oscillator.disconnect()
+      state.gain.disconnect()
+    }, 220)
+  } catch {
+    try {
+      state.oscillator.disconnect()
+      state.gain.disconnect()
+    } catch {
+      // Audio cleanup is best effort.
+    }
   }
 }
