@@ -40,7 +40,9 @@
   text-rendering: optimizeLegibility;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+html, body { -webkit-touch-callout: none; }
+input, textarea, [contenteditable="true"], [contenteditable="plaintext-only"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 button, input, textarea, select { font: inherit; }
 button { color: inherit; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
