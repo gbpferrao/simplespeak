@@ -66,6 +66,9 @@ const english: MessageCatalog = {
   'run.cardPosition': ({ current, total, scene }) => `${scene} · Card ${current} of ${total}`,
   'run.score': 'Run score',
   'run.details': 'Details',
+  'run.end': 'End run',
+  'run.endAria': 'End this run and save it as unfinished',
+  'run.ended': 'Run saved as unfinished. Answered Cards still count toward retention.',
   'run.leaveRun': 'Leave run and keep the route saved',
   'run.board': 'Board',
   'run.backOpen': 'Back open — keep the scene and mark the return.',
@@ -133,6 +136,8 @@ const english: MessageCatalog = {
   'history.recent': 'recent',
   'history.runAgain': 'Run again',
   'history.criteriaCount': ({ count }) => `${count} criteria`,
+  'history.unfinished': 'unfinished',
+  'history.completed': 'completed',
 
   'settings.controlRoom': 'Control room',
   'settings.title': 'Make the board yours.',
@@ -264,6 +269,7 @@ const english: MessageCatalog = {
 }
 
 const portuguese: MessageCatalog = {
+  'run.end': 'Encerrar sessão', 'run.endAria': 'Encerrar esta sessão e salvar como incompleta', 'run.ended': 'Sessão salva como incompleta. Os cartões respondidos continuam contando para a retenção.', 'history.unfinished': 'incompleta', 'history.completed': 'concluída',
   'run.filters': 'Filtros progressivos', 'run.progressiveFilters': 'Monte esta sessao', 'run.addFilter': 'Adicionar criterio', 'run.noFilters': 'Nenhum criterio ainda. A opcao define a base.', 'run.filterMode': 'Modo do criterio', 'run.addMode': 'Adicionar correspondencias', 'run.subtractMode': 'Subtrair correspondencias', 'run.filterType': 'Tipo do criterio', 'run.filterGroup': 'Grupo especifico', 'run.filterPartOfSpeech': 'Classe gramatical', 'run.filterRetention': 'Faixa de retencao', 'run.selectGroup': 'Escolha um grupo', 'run.selectPartOfSpeech': 'Escolha uma classe gramatical', 'run.minRetention': 'Minimo %', 'run.maxRetention': 'Maximo %', 'run.removeFilter': 'Remover criterio', 'history.runAgain': 'Repetir sessao', 'history.criteriaCount': ({ count }) => `${count} criterios`,
   'card.primarySense': 'Principal',
   'run.cardPositionShort': ({ current, total }) => `Cartão ${current} de ${total}`,
@@ -290,6 +296,7 @@ const portuguese: MessageCatalog = {
 }
 
 const german: MessageCatalog = {
+  'run.end': 'Lauf beenden', 'run.endAria': 'Diesen Lauf beenden und als unvollständig speichern', 'run.ended': 'Lauf als unvollständig gespeichert. Beantwortete Karten zählen weiter für die Retention.', 'history.unfinished': 'unvollständig', 'history.completed': 'abgeschlossen',
   'run.filters': 'Progressive Filter', 'run.progressiveFilters': 'Diesen Lauf formen', 'run.addFilter': 'Kriterium hinzufuegen', 'run.noFilters': 'Noch keine Kriterien. Die Auswahl definiert die Basis.', 'run.filterMode': 'Kriteriumsmodus', 'run.addMode': 'Treffer hinzufuegen', 'run.subtractMode': 'Treffer abziehen', 'run.filterType': 'Kriteriumstyp', 'run.filterGroup': 'Bestimmte Gruppe', 'run.filterPartOfSpeech': 'Wortart', 'run.filterRetention': 'Abrufbarkeitsbereich', 'run.selectGroup': 'Gruppe auswaehlen', 'run.selectPartOfSpeech': 'Wortart auswaehlen', 'run.minRetention': 'Minimum %', 'run.maxRetention': 'Maximum %', 'run.removeFilter': 'Kriterium entfernen', 'history.runAgain': 'Erneut starten', 'history.criteriaCount': ({ count }) => `${count} Kriterien`,
   'card.primarySense': 'Primär',
   'run.cardPositionShort': ({ current, total }) => `Karte ${current} von ${total}`,

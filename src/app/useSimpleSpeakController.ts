@@ -42,6 +42,7 @@ export interface SimpleSpeakController {
   updateSettings: (patch: Partial<Settings>) => void
   generateCardImage: (card: WordCard, description: string) => Promise<void>
   startRun: (config?: RunConfig) => void
+  endRun: () => void
   exitRun: () => void
   revealRunCard: () => void
   answerRun: (outcome: ReviewOutcome, revealed: boolean) => void
@@ -180,18 +181,27 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     startRunPad(0)
   }
 
-  function exitRun(): void {
+  function endRun(): void {
+    if (!runSession || runSession.finished) return
+    const finishedAt = Date.now()
+    const record = makeRunRecord({ session: runSession, status: 'unfinished', completedIds: runSession.completedIds, hits: runSession.hits, misses: runSession.misses, reveals: runSession.reveals, finishedAt })
+    setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
     stopRunPad()
     setRunSession(null)
     setBoardFocusId(null)
     setView('board')
+    notify(translate(data.settings.uiLocale, 'run.ended'))
+  }
+
+  function exitRun(): void {
+    endRun()
   }
 
   function continueRun(session: RunSession): void {
     const finalCard = session.currentIndex >= session.cards.length - 1
     if (finalCard) {
       const finishedAt = Date.now()
-      const record = makeRunRecord({ session, completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
+      const record = makeRunRecord({ session, status: 'completed', completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
       setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
       stopRunPad()
       setRunSession((current) => current ? { ...session, finished: true } : current)
@@ -309,6 +319,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     updateSettings,
     generateCardImage,
     startRun,
+    endRun,
     exitRun,
     revealRunCard,
     answerRun,

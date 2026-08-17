@@ -3,6 +3,7 @@ export type View = 'board' | 'history' | 'settings'
 export type CardStatus = 'new' | 'emerging' | 'familiar' | 'anchored'
 export type ReviewOutcome = 'hit' | 'miss' | 'reveal' | 'typed'
 export type RunPreset = 'scene' | 'due-nearby' | 'all' | 'custom'
+export type RunStatus = 'completed' | 'unfinished'
 export type RunFilterMode = 'add' | 'subtract'
 export type RunCriterionKind = 'scene' | 'part-of-speech' | 'retention'
 export interface RunCriterion {
@@ -81,6 +82,7 @@ export interface LearningState {
 
 export interface RunRecord {
   id: string
+  status: RunStatus
   preset: RunPreset
   label: string
   sceneId: string | null

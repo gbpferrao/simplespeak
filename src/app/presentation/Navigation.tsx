@@ -1,4 +1,4 @@
-import { ArrowLeft, Ellipsis, History, Search, Settings2, X } from 'lucide-react'
+import { ArrowLeft, CircleStop, Ellipsis, History, Search, Settings2, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { View, WordCard } from '../../core/contracts/types'
 import type { SupportedLocale } from '../../core/i18n/i18n'
@@ -10,6 +10,8 @@ interface NavigationProps {
   setView: (view: View) => void
   searchCards: WordCard[]
   onSearchSelect: (cardId: string) => void
+  runActive: boolean
+  onEndRun: () => void
 }
 
 /**
@@ -35,7 +37,7 @@ function BrandButton({ locale, setView }: Pick<NavigationProps, 'locale' | 'setV
   return <button className="brand" type="button" onClick={() => setView('board')} aria-label={t('nav.openBoard')}><span className="brand-word">SimpleSpeak</span></button>
 }
 
-function HeaderActions({ locale, view, setView, searchCards, onSearchSelect, showSearch }: NavigationProps & { showSearch: boolean }) {
+function HeaderActions({ locale, view, setView, searchCards, onSearchSelect, showSearch, runActive, onEndRun }: NavigationProps & { showSearch: boolean }) {
   const { t } = useI18n(locale)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -97,6 +99,7 @@ function HeaderActions({ locale, view, setView, searchCards, onSearchSelect, sho
         <button className={`header-menu-button ${menuOpen || view === 'history' || view === 'settings' ? 'active' : ''}`} type="button" onClick={() => setMenuOpen((current) => !current)} aria-expanded={menuOpen} aria-haspopup="true" aria-label={t('nav.openMoreViews')}><Ellipsis size={22} /></button>
         {menuOpen && <div className="header-menu-popover" aria-label={t('nav.more')}>
           <span className="header-menu-label">{t('nav.more')}</span>
+          {runActive && <button className="header-end-run-button" type="button" onClick={() => { onEndRun(); setMenuOpen(false) }} aria-label={t('run.endAria')}><CircleStop size={16} /> {t('run.end')}</button>}
           <div className="header-view-tabs" role="tablist" aria-label={t('nav.secondaryViews')}>
             <button className={view === 'history' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'history'} onClick={() => selectView('history')}><History size={16} /> {t('nav.history')}</button>
             <button className={view === 'settings' ? 'active' : ''} type="button" role="tab" aria-selected={view === 'settings'} onClick={() => selectView('settings')}><Settings2 size={16} /> {t('nav.settings')}</button>

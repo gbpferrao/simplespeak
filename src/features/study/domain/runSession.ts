@@ -1,4 +1,4 @@
-import type { PersistedState, ReviewOutcome, RunConfig, RunPreset, WordCard } from '../../../core/contracts/types'
+import type { PersistedState, ReviewOutcome, RunConfig, RunPreset, RunStatus, WordCard } from '../../../core/contracts/types'
 import { DEFAULT_LOCALE, runLabelForLocale, type SupportedLocale } from '../../../core/i18n/i18n'
 
 export type { RunConfig } from '../../../core/contracts/types'
@@ -54,6 +54,7 @@ export function isRemembered(outcome: ReviewOutcome): boolean {
 
 export interface RunRecordInput {
   session: RunSession
+  status: RunStatus
   completedIds: string[]
   hits: number
   misses: number
@@ -64,6 +65,7 @@ export interface RunRecordInput {
 export function makeRunRecord(input: RunRecordInput): PersistedState['runs'][number] {
   return {
     id: input.session.id,
+    status: input.status,
     preset: input.session.preset,
     label: input.session.label,
     sceneId: input.session.sceneId,

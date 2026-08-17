@@ -89,6 +89,8 @@ h3 { font-size: 16px; }
 .header-menu-wrap { position: relative; z-index: 60; }
 .header-menu-popover { position: absolute; top: calc(100% + 8px); right: 0; z-index: 60; width: 190px; padding: 9px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-raised); }
 .header-menu-label { display: block; padding: 3px 7px 7px; color: var(--ink-muted); font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.header-end-run-button { width: 100%; min-height: 38px; margin-bottom: 7px; padding: 6px 9px; display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; border: 1px solid #f1c0bd; border-radius: 9px; color: var(--coral-dark); background: var(--coral-soft); cursor: pointer; font-size: 10px; font-weight: 800; }
+.header-end-run-button:hover { border-color: var(--coral); background: #ffe2e0; }
 .header-view-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .header-view-tabs button { min-height: 42px; padding: 6px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1px solid transparent; border-radius: 9px; color: var(--ink-soft); background: transparent; cursor: pointer; font-size: 10px; font-weight: 780; }
 .header-view-tabs button:hover, .header-view-tabs button.active { border-color: var(--line); color: var(--violet-dark); background: var(--violet-soft); }
@@ -421,6 +423,9 @@ h3 { font-size: 16px; }
 .run-history-row > div { min-width: 0; display: grid; gap: 4px; }
 .run-history-row strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .run-history-row > div span { color: var(--ink-muted); font-size: 9px; }
+.run-history-status { color: var(--ink-muted) !important; font-size: 8px !important; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.run-history-status.unfinished { color: var(--coral-dark) !important; }
+.run-history-status.completed { color: var(--green-dark) !important; }
 .run-history-icon { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 8px; color: var(--violet); background: var(--violet-soft); }
 .run-accuracy, .run-history-score { color: var(--ink); font-size: 11px; font-weight: 850; text-align: right; }
 .run-accuracy small, .run-history-score small { display: block; color: var(--ink-muted); font-size: 8px; font-weight: 700; }

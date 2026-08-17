@@ -1,4 +1,4 @@
-import type { ImageEffort, ImageResolution, LearningState, PersistedState, RunConfig, RunCriterion, RunPreset, RunRecord, Settings, WordCard } from '../contracts/types'
+import type { ImageEffort, ImageResolution, LearningState, PersistedState, RunConfig, RunCriterion, RunPreset, RunRecord, RunStatus, Settings, WordCard } from '../contracts/types'
 import { DEFAULT_LOCALE, normalizeLocale } from '../i18n/i18n'
 
 const STATE_KEY = 'simplespeak_state_v1'
@@ -48,6 +48,10 @@ function normalizeRunPreset(value: unknown): RunPreset {
   return value === 'scene' || value === 'due-nearby' || value === 'all' || value === 'custom' ? value : 'due-nearby'
 }
 
+function normalizeRunStatus(value: unknown): RunStatus {
+  return value === 'unfinished' ? 'unfinished' : 'completed'
+}
+
 function normalizeRunCriterion(value: unknown, index: number): RunCriterion | null {
   if (!value || typeof value !== 'object') return null
   const candidate = value as Partial<RunCriterion>
@@ -87,7 +91,7 @@ function normalizeRuns(value: unknown): RunRecord[] {
       limit: Array.isArray(candidate.cardIds) && candidate.cardIds.length > 0 ? candidate.cardIds.length : 12,
       criteria: [],
     }
-    return { ...candidate, config: normalizeRunConfig(candidate.config, fallback) }
+    return { ...candidate, status: normalizeRunStatus(candidate.status), config: normalizeRunConfig(candidate.config, fallback) }
   })
 }
 
