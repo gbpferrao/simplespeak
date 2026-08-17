@@ -10,7 +10,7 @@ stores one lossless WebP per card. The board can use that same sharp source at
 every zoom without a runtime canvas mask or a blurry JPEG tier swap.
 
 Default source:
-    ..\\simplespeak-centerline-review\\consistent-stroke-44px
+    ..\\simplespeak-centerline-review\\consistent-stroke-33px
 
 Override it with --source-dir when the review workspace moves.
 """
@@ -25,7 +25,7 @@ from PIL import Image, ImageOps
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SOURCE = PROJECT_ROOT.parent / "simplespeak-centerline-review" / "consistent-stroke-44px"
+DEFAULT_SOURCE = PROJECT_ROOT.parent / "simplespeak-centerline-review" / "consistent-stroke-33px"
 DEFAULT_PUBLIC = PROJECT_ROOT / "public" / "simplespeak-images"
 DEFAULT_PACK = PROJECT_ROOT / "src" / "features" / "language-packs" / "data" / "packs" / "ptbr-en" / "simplespeak-v1.json"
 
