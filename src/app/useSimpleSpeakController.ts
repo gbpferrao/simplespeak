@@ -39,7 +39,7 @@ export interface SimpleSpeakController {
   startRun: (config?: RunConfig) => void
   endRun: () => void
   exitRun: () => void
-  revealRunCard: () => void
+  openRunCardDetails: () => void
   answerRun: (outcome: ReviewOutcome, revealed: boolean) => void
   submitTypedAnswer: (answer: string) => void
   setTypedAnswer: (value: string) => void
@@ -178,31 +178,10 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setBoardFocusId(nextCard?.id ?? null)
   }
 
-  function revealRunCard(): void {
-    if (!runSession || runSession.finished || runSession.revealed) return
+  function openRunCardDetails(): void {
+    if (!runSession || runSession.finished) return
     const card = runSession.cards[runSession.currentIndex]
-    if (!card) return
-    const completedAt = Date.now()
-    const responseMs = completedAt - runSession.responseStartedAt
-    const revealedSession: RunSession = {
-      ...runSession,
-      revealed: true,
-      misses: runSession.misses + 1,
-      reveals: runSession.reveals + 1,
-      hitTimestamps: [],
-      hitRateStartedAt: completedAt,
-      completedIds: [...runSession.completedIds, card.id],
-    }
-
-    setData((current) => ({
-      ...current,
-      learning: { ...current.learning, [card.id]: applyReview(learningFor(current, card.id), card.id, runSession.id, 'reveal', true, responseMs) },
-    }))
-    setFeedback('miss')
-    playReviewSound('miss')
-    setRunPadVolume(0)
-    window.setTimeout(() => setFeedback(null), 650)
-    setRunSession(revealedSession)
+    if (card) setSelectedCardId(card.id)
   }
 
   function answerRun(outcome: ReviewOutcome, revealed: boolean): void {
@@ -285,7 +264,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     startRun,
     endRun,
     exitRun,
-    revealRunCard,
+    openRunCardDetails,
     answerRun,
     submitTypedAnswer,
     setTypedAnswer,
