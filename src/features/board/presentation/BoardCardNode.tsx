@@ -34,7 +34,7 @@ function trimImageCache(): void {
 }
 
 function useBoardImage(source: string | undefined): HTMLImageElement | null {
-  // Pack illustrations are pre-colored, transparent WebP assets. Generated
+  // Pack illustrations are pre-colored, transparent WebP assets. Bundled
   // card images are already finished visuals. Both paths therefore use the
   // same immutable source at every zoom level: no JPEG tier swap, canvas
   // rasterization, mask filter, or color pass occurs during interaction.

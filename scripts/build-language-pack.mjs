@@ -5,7 +5,7 @@ const projectRoot = process.cwd()
 const dataRoot = path.join(projectRoot, 'src', 'features', 'language-packs', 'data')
 const packRoot = path.join(dataRoot, 'packs', 'ptbr-en')
 const sourceRoot = path.join(packRoot, 'source')
-const generatedImagesRoot = path.join(projectRoot, 'public', 'simplespeak-images')
+const bundledImagesRoot = path.join(projectRoot, 'public', 'simplespeak-images')
 const manifestPath = path.join(packRoot, 'pack.json')
 const heuristicPath = path.join(packRoot, 'heuristic.json')
 const outputPath = path.join(packRoot, 'simplespeak-v1.json')
@@ -60,7 +60,7 @@ const sourceCardId = (card, partOfSpeech) => {
   return partOfSpeech + '-' + slugify(card.target) + suffix
 }
 
-const toCompactCard = (card, sceneId, x, y, generatedImageIds) => {
+const toCompactCard = (card, sceneId, x, y, bundledImageIds) => {
   const output = {
     id: card.id,
     target: card.target,
@@ -71,7 +71,7 @@ const toCompactCard = (card, sceneId, x, y, generatedImageIds) => {
     y,
   }
 
-  if (generatedImageIds.has(card.id)) output.imagePath = '/simplespeak-images/' + card.id + '.webp'
+  if (bundledImageIds.has(card.id)) output.imagePath = '/simplespeak-images/' + card.id + '.webp'
 
   const sense = card.sense ?? card.senseKey
   if (sense && sense !== 'primary') output.sense = sense
@@ -482,8 +482,8 @@ const build = async () => {
   const { cards, packSummary } = await validateSourcePacks()
   const { cardsById, membership } = validateHeuristic(heuristic, cards)
   const layout = validateLayout(heuristic.layout)
-  const generatedImageFiles = await fs.readdir(generatedImagesRoot).catch((error) => error?.code === 'ENOENT' ? [] : Promise.reject(error))
-  const generatedImageIds = new Set(generatedImageFiles.filter((file) => file.endsWith('.webp')).map((file) => file.replace(/\.webp$/, '')))
+  const bundledImageFiles = await fs.readdir(bundledImagesRoot).catch((error) => error?.code === 'ENOENT' ? [] : Promise.reject(error))
+  const bundledImageIds = new Set(bundledImageFiles.filter((file) => file.endsWith('.webp')).map((file) => file.replace(/\.webp$/, '')))
   const sceneLayouts = heuristic.scenes.map((scene) => ({
     scene,
     ...placeCardsOrganically(scene, layout),
@@ -496,7 +496,7 @@ const build = async () => {
     scene.scene.wordIds.forEach((wordId, index) => {
       const sourceCard = cardsById.get(wordId)
       const position = positions[index]
-      outputCards.push(toCompactCard(sourceCard, scene.scene.id, scene.x + position.x, scene.y + position.y, generatedImageIds))
+      outputCards.push(toCompactCard(sourceCard, scene.scene.id, scene.x + position.x, scene.y + position.y, bundledImageIds))
     })
   }
 
@@ -529,12 +529,12 @@ const build = async () => {
   }
 
   const expectedIds = new Set(cards.map((card) => card.id))
-  const generatedIds = new Set(outputCards.map((card) => card.id))
-  if (expectedIds.size !== generatedIds.size || [...expectedIds].some((id) => !generatedIds.has(id))) {
-    throw new Error('Generated card ids do not match source card ids.')
+  const outputIds = new Set(outputCards.map((card) => card.id))
+  if (expectedIds.size !== outputIds.size || [...expectedIds].some((id) => !outputIds.has(id))) {
+    throw new Error('Built card ids do not match source card ids.')
   }
   if ([...membership.values()].some((sceneId) => !outputScenes.some((scene) => scene.id === sceneId))) {
-    throw new Error('Generated cards contain an unknown scene id.')
+    throw new Error('Built cards contain an unknown scene id.')
   }
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true })
