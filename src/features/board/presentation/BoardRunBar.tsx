@@ -71,6 +71,6 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
 
       <div className="run-config-due"><Timer size={14} /> {t('run.dueNow', { count: stats.due })}</div>
       <button className="primary-button run-config-start" type="button" onClick={startRun}><Play size={15} fill="currentColor" /> {t('run.startRoute')}</button>
-    </section> : <button className="run-launch-button" type="button" onClick={() => setOpen(true)} aria-expanded={open} aria-label={t('run.openConfig')} title={t('run.openConfig')}><Play size={19} fill="currentColor" /></button>}
+    </section> : <button className="run-launch-button" type="button" onClick={() => setOpen(true)} aria-expanded={open} aria-label={t('run.openConfig')} title={t('run.openConfig')}><Play size={34} strokeWidth={2.2} fill="currentColor" /></button>}
   </div>
 })

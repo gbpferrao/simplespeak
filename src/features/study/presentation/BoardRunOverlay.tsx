@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState, type CSSProperties, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react'
-import { ArrowRight, Check, Eye, EyeOff, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
+import { ArrowRight, Check, Eye, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
 import { imageFor } from '../../../core/presentation/selectors'
 import type { RunSession } from '../domain/runSession'
@@ -119,7 +119,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
     <section className="board-run-overlay" style={{ '--run-keyboard-offset': `${keyboardOffset}px` } as CSSProperties} aria-label={t('run.activeAria')}>
       <div className="run-overlay-main">
         <div className="run-overlay-route">
-          <span className="run-overlay-live" title={t('run.live')} aria-label={t('run.live')}><Play size={13} fill="currentColor" /></span>
+          <span className="run-overlay-live" title={t('run.live')} aria-label={t('run.live')}><Play size={23} strokeWidth={2.2} fill="currentColor" /></span>
           <div className="run-overlay-filter-tags">{filterTags.map((tag, index) => <span className="run-overlay-tag" key={`${tag}-${index}`}>{tag}</span>)}</div>
         </div>
         <div className="run-overlay-score" aria-label={t('run.score')}>
@@ -136,7 +136,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
       <div className="run-overlay-progress" aria-hidden="true"><span style={{ width: `${Math.max(4, progress)}%` }} /></div>
       <div className={`run-overlay-response ${session.revealed ? 'is-revealed' : ''}`}>
         <div className="run-overlay-prompt">
-          {session.revealed ? <><Eye size={15} /> {t('run.backOpen')}</> : imagePath ? <><Keyboard size={15} /> {t('run.recall')}</> : <><EyeOff size={15} /> {t('run.noImage')}</>}
+          {session.revealed ? <><Eye size={15} /> {t('run.backOpen')}</> : imagePath ? <><Keyboard size={15} /> {t('run.recall')}</> : <span className="run-overlay-focused-word">{card.target}</span>}
         </div>
         {session.revealed ? (
           <div className="answer-actions revealed-actions">
