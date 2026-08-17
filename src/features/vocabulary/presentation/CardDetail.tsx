@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Lightbulb, Save, X } from 'lucide-react'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
-import { learningFor } from '../../../core/presentation/selectors'
+import { imageFor, learningFor } from '../../../core/presentation/selectors'
 import { useI18n } from '../../../core/i18n/i18n'
 import { StabilityGraph } from './StabilityGraph'
 
@@ -17,7 +17,7 @@ export function CardDetail({ card, state, onClose, onSaveNote }: CardDetailProps
   const savedNote = state.notes[card.id] ?? ''
   const [note, setNote] = useState(savedNote)
   const learning = learningFor(state, card.id)
-  const image = state.images[card.id]
+  const image = imageFor(state, card)
 
   useEffect(() => {
     setNote(savedNote)

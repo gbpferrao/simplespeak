@@ -97,6 +97,19 @@ function isBrowserStorageAvailable(): boolean {
   return typeof window !== 'undefined' && Boolean(window.localStorage)
 }
 
+function normalizeImages(cards: WordCard[], value: unknown): Record<string, string> {
+  const images: Record<string, string> = {}
+  if (value && typeof value === 'object') {
+    for (const [cardId, imagePath] of Object.entries(value)) {
+      if (typeof imagePath === 'string' && imagePath.trim()) images[cardId] = imagePath
+    }
+  }
+  for (const card of cards) {
+    if (card.imagePath) images[card.id] = card.imagePath
+  }
+  return images
+}
+
 export async function loadPersistedState(cards: WordCard[]): Promise<PersistedState> {
   if (!isBrowserStorageAvailable()) return makeInitialState(cards)
   try {
@@ -115,7 +128,7 @@ export async function loadPersistedState(cards: WordCard[]): Promise<PersistedSt
       version: 1,
       learning,
       notes: parsed.notes ?? {},
-      images: { ...initial.images, ...(parsed.images ?? {}) },
+      images: normalizeImages(cards, parsed.images),
       runs: normalizeRuns(parsed.runs),
       settings: normalizeSettings(parsed.settings),
     }

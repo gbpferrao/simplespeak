@@ -2,7 +2,7 @@ import { memo, useEffect, useState, type CSSProperties, type FormEvent } from 'r
 import { Check, Eye, EyeOff, Focus, Gauge, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import { statusLabel as formatStatusLabel } from '../../../core/presentation/formatters'
-import { learningFor, sceneFor } from '../../../core/presentation/selectors'
+import { imageFor, learningFor, sceneFor } from '../../../core/presentation/selectors'
 import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { retrievability } from '../domain/scheduler'
@@ -61,6 +61,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
   if (!card) return null
 
   const learning = learningFor(state, card.id)
+  const imagePath = imageFor(state, card)
   const scene = sceneFor(starterPack.scenes, card.sceneId)
   const progress = session.cards.length ? ((session.currentIndex + (session.revealed ? 1 : 0)) / session.cards.length) * 100 : 0
 
@@ -96,7 +97,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
       <div className="run-overlay-progress" aria-hidden="true"><span style={{ width: `${Math.max(4, progress)}%` }} /></div>
       <div className={`run-overlay-response ${session.revealed ? 'is-revealed' : ''}`}>
         <div className="run-overlay-prompt">
-          {session.revealed ? <><Eye size={15} /> {t('run.backOpen')}</> : state.images[card.id] ? <><Keyboard size={15} /> {t('run.recall')}</> : <><EyeOff size={15} /> {t('run.noImage')}</>}
+          {session.revealed ? <><Eye size={15} /> {t('run.backOpen')}</> : imagePath ? <><Keyboard size={15} /> {t('run.recall')}</> : <><EyeOff size={15} /> {t('run.noImage')}</>}
         </div>
         {session.revealed ? (
           <div className="answer-actions revealed-actions">
