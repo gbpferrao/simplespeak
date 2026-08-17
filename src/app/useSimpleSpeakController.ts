@@ -9,6 +9,7 @@ import { progressStats, type ProgressStats } from '../features/history/domain/pr
 import { isRemembered, makeRunRecord, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
+import { playReviewSound } from '../core/audio/reviewSounds'
 import { loadPersistedState, makeInitialState, savePersistedState } from '../core/persistence/localStateRepository'
 import type { GenerationRecord, PersistedState, ReviewOutcome, Settings, View, WordCard } from '../core/contracts/types'
 
@@ -217,6 +218,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       learning: { ...current.learning, [card.id]: applyReview(learningFor(current, card.id), card.id, runSession.id, 'reveal', true, responseMs) },
     }))
     setFeedback('miss')
+    playReviewSound('miss')
     window.setTimeout(() => setFeedback(null), 650)
     setRunSession(revealedSession)
   }
@@ -242,6 +244,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       learning: { ...current.learning, [card.id]: applyReview(learningFor(current, card.id), card.id, runSession.id, outcome, revealed, responseMs) },
     }))
     setFeedback(remembered ? 'hit' : 'miss')
+    playReviewSound(remembered ? 'hit' : 'miss')
     window.setTimeout(() => setFeedback(null), 650)
 
     continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, progressTimestamps: [...runSession.progressTimestamps, completedAt], completedIds, revealed })
