@@ -1,5 +1,5 @@
-import { Activity, BarChart3, BookOpen, CalendarDays, ChevronRight, Flame, History, Info, Layers3, Lightbulb, Sparkles, Target, Timer } from 'lucide-react'
-import type { PersistedState } from '../../../core/contracts/types'
+import { Activity, BarChart3, BookOpen, CalendarDays, ChevronRight, Flame, History, Info, Layers3, Lightbulb, Play, Sparkles, Target, Timer } from 'lucide-react'
+import type { PersistedState, RunConfig } from '../../../core/contracts/types'
 import { formatDuration } from '../../../core/presentation/formatters'
 import { learningFor } from '../../../core/presentation/selectors'
 import { retrievability } from '../../study/domain/scheduler'
@@ -8,7 +8,7 @@ import type { ProgressStats } from '../domain/progressStats'
 import type { SupportedLocale } from '../../../core/i18n/i18n'
 import { runLabelForLocale, useI18n } from '../../../core/i18n/i18n'
 
-export function HistoryView({ locale, state, stats, onOpenCard }: { locale: SupportedLocale; state: PersistedState; stats: ProgressStats; onOpenCard: (cardId: string) => void }) {
+export function HistoryView({ locale, state, stats, onOpenCard, onRerunRun }: { locale: SupportedLocale; state: PersistedState; stats: ProgressStats; onOpenCard: (cardId: string) => void; onRerunRun: (config: RunConfig) => void }) {
   const { t } = useI18n(locale)
   const runs = state.runs.slice(0, 8)
   const totalReviewed = starterPack.cards.reduce((sum, card) => sum + learningFor(state, card.id).reviewCount, 0)
@@ -51,7 +51,9 @@ export function HistoryView({ locale, state, stats, onOpenCard }: { locale: Supp
         {runs.length === 0 ? <div className="empty-history large"><BookOpen size={22} /><strong>{t('history.firstRun')}</strong><span>{t('history.firstRunDescription')}</span></div> : <div className="run-history-list">{runs.map((run) => {
           const accuracy = run.hits + run.misses ? Math.round((run.hits / (run.hits + run.misses)) * 100) : 0
           const sceneName = starterPack.scenes.find((scene) => scene.id === run.sceneId)?.name ?? null
-          return <div className="run-history-row" key={run.id}><span className="run-history-icon"><Sparkles size={15} /></span><div><strong>{runLabelForLocale(run.preset, sceneName, locale)}</strong><span>{new Date(run.finishedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' })} - {t('history.cardsCount', { count: run.cardIds.length })} - {formatDuration(run.durationMs, locale)}</span></div><span className="run-accuracy">{accuracy}% <small>{t('history.signal')}</small></span><span className="run-history-score">{run.hits} <small>{t('history.hitsSmall')}</small></span></div>
+          const config: RunConfig = run.config ?? { preset: run.preset, sceneId: run.sceneId, limit: run.cardIds.length || 12, criteria: [] }
+          const criteriaCount = config.criteria?.length ?? 0
+          return <div className="run-history-row" key={run.id}><span className="run-history-icon"><Sparkles size={15} /></span><div><strong>{runLabelForLocale(run.preset, sceneName, locale)}</strong><span>{new Date(run.finishedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' })} - {t('history.cardsCount', { count: run.cardIds.length })} - {formatDuration(run.durationMs, locale)}{criteriaCount > 0 ? ` - ${t('history.criteriaCount', { count: criteriaCount })}` : ''}</span></div><span className="run-accuracy">{accuracy}% <small>{t('history.signal')}</small></span><span className="run-history-score">{run.hits} <small>{t('history.hitsSmall')}</small></span><button className="run-again-button" type="button" onClick={() => onRerunRun(config)} aria-label={t('history.runAgain')} title={t('history.runAgain')}><Play size={13} fill="currentColor" /> {t('history.runAgain')}</button></div>
         })}</div>}
       </div>
       <div className="history-footer-note"><Info size={15} /><span>{t('history.footer')}</span></div>

@@ -160,7 +160,7 @@ h3 { font-size: 16px; }
 .run-launcher { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 14; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
 .run-launch-button { width: 64px; height: 64px; display: grid; place-items: center; border: 1px solid var(--violet-dark); border-bottom-width: 4px; border-radius: 50%; color: #fff; background: var(--violet); box-shadow: 0 4px 0 var(--violet-dark), 0 10px 20px rgba(38,52,74,.12); cursor: pointer; }
 .run-launch-button:hover { background: #6848ca; transform: translateY(-2px); }
-.run-config-popover { position: absolute; left: 50%; bottom: calc(100% + 12px); width: min(310px, calc(100vw - 32px)); padding: 15px; display: grid; gap: 10px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-raised); transform: translateX(-50%); }
+.run-config-popover { position: absolute; left: 50%; bottom: calc(100% + 12px); width: min(340px, calc(100vw - 32px)); max-height: min(78vh, 650px); overflow: auto; padding: 15px; display: grid; gap: 10px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-raised); transform: translateX(-50%); }
 .run-config-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .run-config-heading > div { display: grid; gap: 4px; }
 .run-config-heading strong { font-size: 15px; }
@@ -169,6 +169,21 @@ h3 { font-size: 16px; }
 .run-config-field select { min-height: 36px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--surface-soft); cursor: pointer; font-size: 11px; font-weight: 750; text-transform: none; }
 .run-config-due { display: inline-flex; align-items: center; gap: 6px; color: var(--yellow-dark); font-size: 10px; font-weight: 800; }
 .run-config-start { width: 100%; }
+.run-filter-panel { display: grid; gap: 8px; padding-top: 3px; border-top: 1px solid var(--line); }
+.run-filter-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.run-filter-heading > div { display: grid; gap: 3px; }
+.run-filter-heading strong { font-size: 12px; }
+.run-add-filter { font-size: 10px; }
+.run-filter-empty { padding: 4px 0; color: var(--ink-muted); font-size: 10px; }
+.run-filter-card { display: grid; gap: 6px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); }
+.run-filter-card-heading { display: grid; grid-template-columns: 20px minmax(0, 1fr) 28px; align-items: center; gap: 5px; }
+.run-filter-index { width: 19px; height: 19px; display: grid; place-items: center; border-radius: 50%; color: var(--violet-dark); background: var(--violet-soft); font-size: 9px; font-weight: 850; }
+.run-filter-select { width: 100%; min-height: 30px; padding: 0 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--surface); cursor: pointer; font-size: 10px; font-weight: 700; }
+.run-filter-card-heading .icon-button { width: 28px; height: 28px; color: var(--ink-muted); }
+.run-retention-inputs { display: grid; grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr); align-items: end; gap: 5px; }
+.run-retention-inputs label { display: grid; gap: 3px; color: var(--ink-muted); font-size: 8px; font-weight: 800; text-transform: uppercase; }
+.run-retention-inputs input { width: 100%; min-height: 30px; padding: 0 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--surface); font-size: 10px; font-weight: 700; }
+.run-retention-separator { padding-bottom: 8px; color: var(--ink-muted); font-size: 12px; text-align: center; }
 
 /* Board Run bar */
 .run-bar { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 11; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid var(--line-strong); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow-card); }
@@ -401,13 +416,15 @@ h3 { font-size: 16px; }
 .decay-bar { height: 6px; overflow: hidden; border-radius: 99px; background: var(--surface-soft); }
 .decay-bar i { height: 100%; display: block; border-radius: inherit; background: var(--green); }
 .run-history-list { display: grid; }
-.run-history-row { min-height: 58px; padding: 8px 0; display: grid; grid-template-columns: 31px minmax(0, 1fr) 70px 54px; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+.run-history-row { min-height: 58px; padding: 8px 0; display: grid; grid-template-columns: 31px minmax(0, 1fr) 70px 54px auto; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
 .run-history-row > div { min-width: 0; display: grid; gap: 4px; }
 .run-history-row strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .run-history-row > div span { color: var(--ink-muted); font-size: 9px; }
 .run-history-icon { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 8px; color: var(--violet); background: var(--violet-soft); }
 .run-accuracy, .run-history-score { color: var(--ink); font-size: 11px; font-weight: 850; text-align: right; }
 .run-accuracy small, .run-history-score small { display: block; color: var(--ink-muted); font-size: 8px; font-weight: 700; }
+.run-again-button { min-height: 28px; padding: 0 7px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--line); border-radius: 7px; color: var(--violet-dark); background: var(--surface); cursor: pointer; font-size: 9px; font-weight: 800; white-space: nowrap; }
+.run-again-button:hover { border-color: #bcb0eb; background: var(--violet-soft); }
 .empty-history { min-height: 155px; display: grid; place-items: center; align-content: center; gap: 8px; color: var(--ink-muted); font-size: 11px; text-align: center; }
 .empty-history.large { min-height: 125px; }
 .empty-history strong { color: var(--ink); }
@@ -511,6 +528,8 @@ h3 { font-size: 16px; }
   .run-overlay-form .answer-actions button { min-width: 0; padding-inline: 4px; font-size: 9px; }
   .run-overlay-response .revealed-actions { margin-left: 0; }
   .run-launch-button { width: 58px; height: 58px; }
+  .run-history-row { grid-template-columns: 31px minmax(0, 1fr) 54px auto; gap: 7px; }
+  .run-history-score { display: none; }
   .view { padding: 22px 16px 30px; }
   .board-page { padding: 0; }
   .view-heading, .run-header { display: grid; gap: 10px; }

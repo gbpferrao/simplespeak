@@ -1,15 +1,12 @@
-import type { PersistedState, ReviewOutcome, RunPreset, WordCard } from '../../../core/contracts/types'
+import type { PersistedState, ReviewOutcome, RunConfig, RunPreset, WordCard } from '../../../core/contracts/types'
 import { DEFAULT_LOCALE, runLabelForLocale, type SupportedLocale } from '../../../core/i18n/i18n'
 
-export interface RunConfig {
-  preset: RunPreset
-  sceneId: string | null
-  limit: number
-}
+export type { RunConfig } from '../../../core/contracts/types'
 
 export interface RunSession {
   id: string
   preset: RunPreset
+  config: RunConfig
   label: string
   sceneId: string | null
   cards: WordCard[]
@@ -56,5 +53,6 @@ export function makeRunRecord(input: RunRecordInput): PersistedState['runs'][num
     durationMs: input.finishedAt - input.session.startedAt,
     startedAt: input.session.startedAt,
     finishedAt: input.finishedAt,
+    config: input.session.config,
   }
 }

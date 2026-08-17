@@ -3,6 +3,22 @@ export type View = 'board' | 'history' | 'settings'
 export type CardStatus = 'new' | 'emerging' | 'familiar' | 'anchored'
 export type ReviewOutcome = 'hit' | 'miss' | 'reveal' | 'typed'
 export type RunPreset = 'scene' | 'due-nearby' | 'all' | 'custom'
+export type RunFilterMode = 'add' | 'subtract'
+export type RunCriterionKind = 'scene' | 'part-of-speech' | 'retention'
+export interface RunCriterion {
+  id: string
+  mode: RunFilterMode
+  kind: RunCriterionKind
+  value?: string
+  minRetention?: number
+  maxRetention?: number
+}
+export interface RunConfig {
+  preset: RunPreset
+  sceneId: string | null
+  limit: number
+  criteria: RunCriterion[]
+}
 export type ImageResolution = '512' | '1K' | '2K'
 export type ImageEffort = 'minimal' | 'high'
 export type { SupportedLocale } from '../i18n/i18n'
@@ -76,6 +92,7 @@ export interface RunRecord {
   durationMs: number
   startedAt: number
   finishedAt: number
+  config?: RunConfig
 }
 
 export interface GenerationRecord {

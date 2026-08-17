@@ -62,7 +62,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   const [stabilityCardId, setStabilityCardId] = useState<string | null>(null)
   const [boardFocusId, setBoardFocusId] = useState<string | null>(null)
   const [runSession, setRunSession] = useState<RunSession | null>(null)
-  const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: 12 })
+  const [runConfig, setRunConfig] = useState<RunConfig>({ preset: 'due-nearby', sceneId: null, limit: 12, criteria: [] })
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [generatingCardId, setGeneratingCardId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -142,18 +142,20 @@ export function useSimpleSpeakController(): SimpleSpeakController {
   }
 
   function startRun(config = runConfig): void {
-    const cards = selectCardsForRun(starterPack.cards, data.learning, config.preset, config.sceneId, config.limit)
+    const activeConfig: RunConfig = { ...config, criteria: config.criteria ?? [] }
+    const cards = selectCardsForRun(starterPack.cards, data.learning, activeConfig)
     if (cards.length === 0) {
       notify(translate(data.settings.uiLocale, 'run.noCards'))
       return
     }
-    const sceneName = sceneFor(starterPack.scenes, config.sceneId)?.name ?? null
+    const sceneName = sceneFor(starterPack.scenes, activeConfig.sceneId)?.name ?? null
     const now = Date.now()
     const session: RunSession = {
       id: newId('run'),
-      preset: config.preset,
-      label: runLabelForLocale(config.preset, sceneName, data.settings.uiLocale),
-      sceneId: config.sceneId,
+      preset: activeConfig.preset,
+      config: activeConfig,
+      label: runLabelForLocale(activeConfig.preset, sceneName, data.settings.uiLocale),
+      sceneId: activeConfig.sceneId,
       cards,
       currentIndex: 0,
       revealed: false,
@@ -166,8 +168,10 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       completedIds: [],
       finished: false,
     }
+    setRunConfig(activeConfig)
     setRunSession(session)
     setBoardFocusId(cards[0]?.id ?? null)
+    setView('board')
     notify(translate(data.settings.uiLocale, 'run.ready', { label: session.label }))
   }
 

@@ -82,6 +82,22 @@ const english: MessageCatalog = {
   'run.routeLabel': ({ scene }) => `${scene} route`,
   'run.complete': 'Run complete. The route is a little brighter.',
   'run.noCards': 'No cards match this run. Try a wider preset.',
+  'run.filters': 'Progressive filters',
+  'run.progressiveFilters': 'Shape this run',
+  'run.addFilter': 'Add criterion',
+  'run.noFilters': 'No criteria yet. The preset defines the base set.',
+  'run.filterMode': 'Criterion mode',
+  'run.addMode': 'Add matches',
+  'run.subtractMode': 'Subtract matches',
+  'run.filterType': 'Criterion type',
+  'run.filterGroup': 'Specific group',
+  'run.filterPartOfSpeech': 'Part of speech',
+  'run.filterRetention': 'Retention range',
+  'run.selectGroup': 'Choose a group',
+  'run.selectPartOfSpeech': 'Choose a part of speech',
+  'run.minRetention': 'Minimum %',
+  'run.maxRetention': 'Maximum %',
+  'run.removeFilter': 'Remove criterion',
 
   'history.eyebrow': 'Memory ledger',
   'history.title': 'History that helps you return.',
@@ -115,6 +131,8 @@ const english: MessageCatalog = {
   'history.graphStart': 'Your graph starts with your first run.',
   'history.older': 'older',
   'history.recent': 'recent',
+  'history.runAgain': 'Run again',
+  'history.criteriaCount': ({ count }) => `${count} criteria`,
 
   'settings.controlRoom': 'Control room',
   'settings.title': 'Make the board yours.',
@@ -246,6 +264,7 @@ const english: MessageCatalog = {
 }
 
 const portuguese: MessageCatalog = {
+  'run.filters': 'Filtros progressivos', 'run.progressiveFilters': 'Monte esta sessao', 'run.addFilter': 'Adicionar criterio', 'run.noFilters': 'Nenhum criterio ainda. A opcao define a base.', 'run.filterMode': 'Modo do criterio', 'run.addMode': 'Adicionar correspondencias', 'run.subtractMode': 'Subtrair correspondencias', 'run.filterType': 'Tipo do criterio', 'run.filterGroup': 'Grupo especifico', 'run.filterPartOfSpeech': 'Classe gramatical', 'run.filterRetention': 'Faixa de retencao', 'run.selectGroup': 'Escolha um grupo', 'run.selectPartOfSpeech': 'Escolha uma classe gramatical', 'run.minRetention': 'Minimo %', 'run.maxRetention': 'Maximo %', 'run.removeFilter': 'Remover criterio', 'history.runAgain': 'Repetir sessao', 'history.criteriaCount': ({ count }) => `${count} criterios`,
   'card.primarySense': 'Principal',
   'run.cardPositionShort': ({ current, total }) => `Cartão ${current} de ${total}`,
   'run.stabilityNow': ({ status, count }) => `${status} - ${count}% agora`,
@@ -271,6 +290,7 @@ const portuguese: MessageCatalog = {
 }
 
 const german: MessageCatalog = {
+  'run.filters': 'Progressive Filter', 'run.progressiveFilters': 'Diesen Lauf formen', 'run.addFilter': 'Kriterium hinzufuegen', 'run.noFilters': 'Noch keine Kriterien. Die Auswahl definiert die Basis.', 'run.filterMode': 'Kriteriumsmodus', 'run.addMode': 'Treffer hinzufuegen', 'run.subtractMode': 'Treffer abziehen', 'run.filterType': 'Kriteriumstyp', 'run.filterGroup': 'Bestimmte Gruppe', 'run.filterPartOfSpeech': 'Wortart', 'run.filterRetention': 'Abrufbarkeitsbereich', 'run.selectGroup': 'Gruppe auswaehlen', 'run.selectPartOfSpeech': 'Wortart auswaehlen', 'run.minRetention': 'Minimum %', 'run.maxRetention': 'Maximum %', 'run.removeFilter': 'Kriterium entfernen', 'history.runAgain': 'Erneut starten', 'history.criteriaCount': ({ count }) => `${count} Kriterien`,
   'card.primarySense': 'Primär',
   'run.cardPositionShort': ({ current, total }) => `Karte ${current} von ${total}`,
   'run.stabilityNow': ({ status, count }) => `${status} - ${count}% jetzt`,

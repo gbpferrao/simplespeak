@@ -1,4 +1,4 @@
-import type { ImageEffort, ImageResolution, LearningState, PersistedState, Settings, WordCard } from '../contracts/types'
+import type { ImageEffort, ImageResolution, LearningState, PersistedState, RunConfig, RunCriterion, RunPreset, RunRecord, Settings, WordCard } from '../contracts/types'
 import { DEFAULT_LOCALE, normalizeLocale } from '../i18n/i18n'
 
 const STATE_KEY = 'simplespeak_state_v1'
@@ -42,6 +42,53 @@ function normalizeSettings(value: Partial<Settings> | undefined): Settings {
     resolution: normalizeImageResolution(candidate.resolution),
     aspectRatio: '1:1',
   }
+}
+
+function normalizeRunPreset(value: unknown): RunPreset {
+  return value === 'scene' || value === 'due-nearby' || value === 'all' || value === 'custom' ? value : 'due-nearby'
+}
+
+function normalizeRunCriterion(value: unknown, index: number): RunCriterion | null {
+  if (!value || typeof value !== 'object') return null
+  const candidate = value as Partial<RunCriterion>
+  const kind = candidate.kind === 'scene' || candidate.kind === 'part-of-speech' || candidate.kind === 'retention' ? candidate.kind : null
+  if (!kind) return null
+  const mode = candidate.mode === 'subtract' ? 'subtract' : 'add'
+  const id = typeof candidate.id === 'string' && candidate.id ? candidate.id : `criterion-${index}`
+  const criterion: RunCriterion = { id, mode, kind }
+  if (typeof candidate.value === 'string') criterion.value = candidate.value
+  if (kind === 'retention') {
+    const minRetention = Number.isFinite(candidate.minRetention) ? Math.max(0, Math.min(100, Number(candidate.minRetention))) : 0
+    const maxRetention = Number.isFinite(candidate.maxRetention) ? Math.max(minRetention, Math.min(100, Number(candidate.maxRetention))) : 100
+    criterion.minRetention = minRetention
+    criterion.maxRetention = maxRetention
+  }
+  return criterion
+}
+
+function normalizeRunConfig(value: unknown, fallback: RunConfig): RunConfig {
+  const candidate = value && typeof value === 'object' ? value as Partial<RunConfig> : {}
+  const rawCriteria = Array.isArray(candidate.criteria) ? candidate.criteria : []
+  return {
+    preset: normalizeRunPreset(candidate.preset ?? fallback.preset),
+    sceneId: typeof candidate.sceneId === 'string' ? candidate.sceneId : fallback.sceneId,
+    limit: Number.isFinite(candidate.limit) ? Math.max(1, Math.min(60, Number(candidate.limit))) : fallback.limit,
+    criteria: rawCriteria.map(normalizeRunCriterion).filter((criterion): criterion is RunCriterion => Boolean(criterion)),
+  }
+}
+
+function normalizeRuns(value: unknown): RunRecord[] {
+  if (!Array.isArray(value)) return []
+  return value.map((run) => {
+    const candidate = run as RunRecord
+    const fallback: RunConfig = {
+      preset: normalizeRunPreset(candidate.preset),
+      sceneId: typeof candidate.sceneId === 'string' ? candidate.sceneId : null,
+      limit: Array.isArray(candidate.cardIds) && candidate.cardIds.length > 0 ? candidate.cardIds.length : 12,
+      criteria: [],
+    }
+    return { ...candidate, config: normalizeRunConfig(candidate.config, fallback) }
+  })
 }
 
 export function createEmptyLearning(): LearningState {
@@ -92,7 +139,7 @@ export async function loadPersistedState(cards: WordCard[]): Promise<PersistedSt
       learning,
       notes: parsed.notes ?? {},
       images: { ...initial.images, ...(parsed.images ?? {}) },
-      runs: Array.isArray(parsed.runs) ? parsed.runs : [],
+      runs: normalizeRuns(parsed.runs),
       generations: Array.isArray(parsed.generations) ? parsed.generations : [],
       settings: normalizeSettings(parsed.settings),
     }
