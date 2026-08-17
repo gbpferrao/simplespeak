@@ -4,6 +4,7 @@ import { applyReview } from '../features/study/domain/scheduler'
 import { materializeRunConfig, selectCardsForRun, UNLIMITED_RUN_LIMIT } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
 import { isRemembered, makeRunRecord, runFinishTier, runPadVolumeLevel, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isAnswerCorrect } from '../features/vocabulary/domain/answerMatcher'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
 import { playReviewSound, playRunFinishSound, setRunPadVolume, startRunPad, stopRunPad } from '../core/audio/reviewSounds'
@@ -40,6 +41,7 @@ export interface SimpleSpeakController {
   exitRun: () => void
   revealRunCard: () => void
   answerRun: (outcome: ReviewOutcome, revealed: boolean) => void
+  submitTypedAnswer: (answer: string) => void
   setTypedAnswer: (value: string) => void
   saveNote: (cardId: string, note: string) => void
   resetLearning: () => void
@@ -235,6 +237,13 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, hitTimestamps: nextHitTimestamps, hitRateStartedAt: nextHitRateStartedAt, completedIds, revealed })
   }
 
+  function submitTypedAnswer(answer: string): void {
+    if (!runSession || runSession.finished || runSession.revealed || !answer.trim()) return
+    const card = runSession.cards[runSession.currentIndex]
+    if (!card) return
+    answerRun(isAnswerCorrect(card, answer) ? 'typed' : 'miss', false)
+  }
+
   function setTypedAnswer(value: string): void {
     setRunSession((current) => current ? { ...current, typedAnswer: value } : current)
   }
@@ -278,6 +287,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     exitRun,
     revealRunCard,
     answerRun,
+    submitTypedAnswer,
     setTypedAnswer,
     saveNote,
     resetLearning,

@@ -2,7 +2,6 @@ import { memo, useEffect, useState, type CSSProperties, type FormEvent } from 'r
 import { ArrowRight, Check, Eye, EyeOff, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
 import { imageFor } from '../../../core/presentation/selectors'
-import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
 import type { RunSession } from '../domain/runSession'
 import { runHitRateAriaLabel, runHitRateUnit, useI18n } from '../../../core/i18n/i18n'
 
@@ -13,6 +12,7 @@ interface BoardRunOverlayProps {
   speedCueActive: boolean
   onReveal: () => void
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
+  onSubmitTyped: (answer: string) => void
   onTypedChange: (value: string) => void
   onFocusCurrent: () => void
   onExitRun: () => void
@@ -30,7 +30,7 @@ function criterionTag(criterion: RunCriterion): string {
  * the thing being studied; this component only supplies the small amount of
  * interaction needed to produce a retrieval signal.
  */
-export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runHitRate, speedCueActive, onReveal, onAnswer, onTypedChange, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
+export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runHitRate, speedCueActive, onReveal, onAnswer, onSubmitTyped, onTypedChange, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
   const { t, locale } = useI18n(state.settings.uiLocale)
   const [keyboardOffset, setKeyboardOffset] = useState(0)
   const card = session.cards[session.currentIndex]
@@ -68,8 +68,8 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    if (session.revealed || !session.typedAnswer.trim()) return
-    onAnswer(isAnswerCorrect(card, session.typedAnswer) ? 'typed' : 'miss', false)
+    const submittedAnswer = new FormData(event.currentTarget).get('typed-answer')
+    onSubmitTyped(typeof submittedAnswer === 'string' ? submittedAnswer : session.typedAnswer)
   }
 
   return (
@@ -101,7 +101,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
           </div>
         ) : (
           <form className="run-overlay-form" onSubmit={handleSubmit}>
-            <div className="answer-input-wrap"><Keyboard size={16} /><input value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
+            <div className="answer-input-wrap"><Keyboard size={16} /><input name="typed-answer" value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="send" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
             <div className="answer-actions"><button className="hit-button" type="button" onClick={() => onAnswer('hit', false)}><Check size={16} /> {t('run.iKnewIt')}</button><button className="miss-button" type="button" onClick={() => onAnswer('miss', false)}><X size={16} /> {t('run.missed')}</button><button className="reveal-button" type="button" onClick={onReveal}><Eye size={16} /> {t('run.reveal')}</button></div>
           </form>
         )}

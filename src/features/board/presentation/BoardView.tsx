@@ -52,11 +52,12 @@ interface BoardViewProps {
   runSession: RunSession | null
   onReveal: () => void
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
+  onSubmitTyped: (answer: string) => void
   onTypedChange: (value: string) => void
   onExitRun: () => void
 }
 
-export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectCard, onStartRun, runSession, onReveal, onAnswer, onTypedChange, onExitRun }: BoardViewProps) {
+export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectCard, onStartRun, runSession, onReveal, onAnswer, onSubmitTyped, onTypedChange, onExitRun }: BoardViewProps) {
   const { t } = useI18n(locale)
   const [camera, setCamera] = useState<BoardCamera>(INITIAL_CAMERA)
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
@@ -377,7 +378,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
           </div>
         </div>
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
-        {runSession && <BoardRunOverlay session={runSession} state={state} runHitRate={runHitRate} speedCueActive={speedCueActive} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
+        {runSession && <BoardRunOverlay session={runSession} state={state} runHitRate={runHitRate} speedCueActive={speedCueActive} onReveal={onReveal} onAnswer={onAnswer} onSubmitTyped={onSubmitTyped} onTypedChange={onTypedChange} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
       </div>
     </section>
   )
