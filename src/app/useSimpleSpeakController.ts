@@ -180,12 +180,50 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setView('board')
   }
 
+  function continueRun(session: RunSession): void {
+    const finalCard = session.currentIndex >= session.cards.length - 1
+    if (finalCard) {
+      const finishedAt = Date.now()
+      const record = makeRunRecord({ session, completedIds: session.completedIds, hits: session.hits, misses: session.misses, reveals: session.reveals, finishedAt })
+      setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
+      setRunSession((current) => current ? { ...session, finished: true } : current)
+      notify(translate(data.settings.uiLocale, 'run.complete'))
+      return
+    }
+
+    const nextCard = session.cards[session.currentIndex + 1]
+    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, completedIds: session.completedIds } : current)
+    setBoardFocusId(nextCard?.id ?? null)
+  }
+
   function revealRunCard(): void {
-    setRunSession((current) => current ? { ...current, revealed: true } : current)
+    if (!runSession || runSession.finished || runSession.revealed) return
+    const card = runSession.cards[runSession.currentIndex]
+    if (!card) return
+    const responseMs = Date.now() - runSession.responseStartedAt
+    const revealedSession: RunSession = {
+      ...runSession,
+      revealed: true,
+      misses: runSession.misses + 1,
+      reveals: runSession.reveals + 1,
+      completedIds: [...runSession.completedIds, card.id],
+    }
+
+    setData((current) => ({
+      ...current,
+      learning: { ...current.learning, [card.id]: applyReview(learningFor(current, card.id), card.id, runSession.id, 'reveal', true, responseMs) },
+    }))
+    setFeedback('miss')
+    window.setTimeout(() => setFeedback(null), 650)
+    setRunSession(revealedSession)
   }
 
   function answerRun(outcome: ReviewOutcome, revealed: boolean): void {
     if (!runSession || runSession.finished) return
+    if (runSession.revealed) {
+      continueRun(runSession)
+      return
+    }
     const card = runSession.cards[runSession.currentIndex]
     if (!card) return
     const responseMs = Date.now() - runSession.responseStartedAt
@@ -202,18 +240,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setFeedback(remembered ? 'hit' : 'miss')
     window.setTimeout(() => setFeedback(null), 650)
 
-    const finalCard = runSession.currentIndex >= runSession.cards.length - 1
-    if (finalCard) {
-      const finishedAt = Date.now()
-      const record = makeRunRecord({ session: runSession, completedIds, hits: nextHits, misses: nextMisses, reveals: nextReveals, finishedAt })
-      setData((current) => ({ ...current, runs: [record, ...current.runs].slice(0, 120) }))
-      setRunSession((current) => current ? { ...current, hits: nextHits, misses: nextMisses, reveals: nextReveals, completedIds, finished: true } : current)
-      notify(translate(data.settings.uiLocale, 'run.complete'))
-      return
-    }
-    const nextCard = runSession.cards[runSession.currentIndex + 1]
-    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: nextHits, misses: nextMisses, reveals: nextReveals, completedIds } : current)
-    setBoardFocusId(nextCard?.id ?? null)
+    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, completedIds, revealed })
   }
 
   function setTypedAnswer(value: string): void {

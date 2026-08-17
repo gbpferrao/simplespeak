@@ -71,7 +71,7 @@ const english: MessageCatalog = {
   'run.backOpen': 'Back open — keep the scene and mark the return.',
   'run.recall': 'Recall the target, then type it or choose a signal.',
   'run.noImage': 'No image yet — use the word on the focused Card as your cue.',
-  'run.continueMiss': 'Continue · counted as miss',
+  'run.continueMiss': 'Continue',
   'run.typeTarget': 'Type the target word...',
   'run.typeTargetAria': 'Type the target word',
   'run.enter': 'Enter',

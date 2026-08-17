@@ -153,9 +153,8 @@ h3 { font-size: 16px; }
 .board-canvas { position: absolute; inset: 0; overflow: hidden; contain: strict; pointer-events: none; }
 .board-canvas > div { width: 100% !important; height: 100% !important; }
 .board-canvas canvas { display: block; }
-.run-overlay-focus-row { display: flex; justify-content: flex-end; padding: 0 5px; }
-.run-focus-button { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }
-.run-focus-button:hover { border-color: #bcb0eb; background: var(--violet-soft); transform: translateY(-1px); }
+.run-overlay-icon-action { width: 29px; height: 29px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 7px; color: var(--violet-dark); background: var(--surface); cursor: pointer; }
+.run-overlay-icon-action:hover { border-color: #bcb0eb; background: var(--violet-soft); transform: translateY(-1px); }
 
 .run-launcher { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 14; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
 .run-launch-button { width: 64px; height: 64px; display: grid; place-items: center; border: 1px solid var(--violet-dark); border-bottom-width: 4px; border-radius: 50%; color: #fff; background: var(--violet); box-shadow: 0 4px 0 var(--violet-dark), 0 10px 20px rgba(38,52,74,.12); cursor: pointer; }
@@ -202,10 +201,10 @@ h3 { font-size: 16px; }
 .run-bar-hint { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-muted); font-size: 9px; }
 
 /* Active run stays on the Board. This is a floating instrument panel, not a second study screen. */
-.board-run-overlay { position: absolute; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 20; display: grid; gap: 5px; pointer-events: none; }
+.board-run-overlay { position: absolute; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 20; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); pointer-events: none; }
 .board-run-overlay > * { pointer-events: auto; }
-.run-overlay-main, .run-overlay-response { border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); }
-.run-overlay-main { min-height: 49px; padding: 8px 10px; display: grid; grid-template-columns: minmax(205px, 1fr) auto auto; align-items: center; gap: 11px; }
+.run-overlay-main, .run-overlay-response { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.run-overlay-main { min-height: 42px; padding: 0; display: grid; grid-template-columns: minmax(205px, 1fr) auto auto; align-items: center; gap: 11px; }
 .run-overlay-route { min-width: 0; display: flex; align-items: center; gap: 9px; }
 .run-overlay-route > div { min-width: 0; display: grid; gap: 3px; }
 .run-overlay-route strong { overflow: hidden; color: var(--ink); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
@@ -221,9 +220,9 @@ h3 { font-size: 16px; }
 .run-overlay-actions-top button { min-height: 29px; padding: 0 8px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink-soft); background: var(--surface); cursor: pointer; font-size: 9px; font-weight: 800; }
 .run-overlay-actions-top button:hover { color: var(--violet-dark); border-color: #bcb0eb; background: var(--violet-soft); }
 .run-overlay-exit { color: var(--violet-dark) !important; }
-.run-overlay-progress { height: 4px; margin-inline: 10px; overflow: hidden; border-radius: 4px; background: rgba(255,255,255,.84); }
+.run-overlay-progress { height: 4px; margin: 4px 10px 6px; overflow: hidden; border-radius: 4px; background: rgba(255,255,255,.84); }
 .run-overlay-progress span { display: block; height: 100%; border-radius: inherit; background: var(--violet); transition: width .3s ease; }
-.run-overlay-response { min-height: 55px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.run-overlay-response { min-height: 48px; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .run-overlay-prompt { min-width: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--ink-soft); font-size: 10px; font-weight: 700; }
 .run-overlay-prompt svg { flex: 0 0 auto; color: var(--violet); }
 .run-overlay-form { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
@@ -499,7 +498,6 @@ h3 { font-size: 16px; }
   .icon-button { width: 34px; height: 34px; }
   .main-content { min-height: 0; }
   .board-page { height: 100%; min-height: 0; padding: 0; }
-  .run-focus-button { width: 30px; height: 30px; }
   .run-bar { left: 10px; right: 10px; bottom: 10px; max-height: calc(100% - 145px); overflow: auto; padding: 10px; gap: 10px; }
   .run-bar-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
   .run-bar-field, .run-bar-field select { width: 100%; }
@@ -513,14 +511,12 @@ h3 { font-size: 16px; }
   .run-overlay-form { justify-content: stretch; }
   .run-overlay-form .answer-input-wrap { width: min(260px, 42vw); flex: 1 1 180px; }
   .run-overlay-form .answer-actions { flex: 1 1 auto; }
-  .run-overlay-main { padding: 8px; }
   .run-overlay-route strong { font-size: 10px; }
   .run-overlay-route span:not(.run-overlay-live):not(.scene-tab-dot) { font-size: 8px; }
   .run-overlay-score { gap: 7px; font-size: 8px; }
   .run-overlay-stability { display: none !important; }
   .run-overlay-actions-top button { padding-inline: 6px; font-size: 8px; }
   .run-overlay-actions-top button svg { display: none; }
-  .run-overlay-response { padding: 8px; }
   .run-overlay-prompt { font-size: 9px; }
   .run-overlay-form { display: grid; grid-template-columns: 1fr; gap: 7px; }
   .run-overlay-form .answer-input-wrap { width: auto; min-width: 0; }

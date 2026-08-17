@@ -33,7 +33,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
 
   const learning = learningFor(state, card.id)
   const scene = sceneFor(starterPack.scenes, card.sceneId)
-  const progress = session.cards.length ? (session.currentIndex / session.cards.length) * 100 : 0
+  const progress = session.cards.length ? ((session.currentIndex + (session.revealed ? 1 : 0)) / session.cards.length) * 100 : 0
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
@@ -43,9 +43,6 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
 
   return (
     <section className="board-run-overlay" aria-label={t('run.activeAria')}>
-      <div className="run-overlay-focus-row">
-        <button className="run-focus-button" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={15} /></button>
-      </div>
       <div className="run-overlay-main">
         <div className="run-overlay-route">
           <span className="run-overlay-live"><Play size={12} fill="currentColor" /> {t('run.live')}</span>
@@ -57,9 +54,11 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
         <div className="run-overlay-score" aria-label={t('run.score')}>
           <span><Check size={13} /> {session.hits}</span>
           <span><X size={13} /> {session.misses}</span>
+          <span><Eye size={13} /> {session.reveals}</span>
           <span className="run-overlay-stability">{statusLabel(learning.status)} · {Math.round(retrievability(learning) * 100)}%</span>
         </div>
         <div className="run-overlay-actions-top">
+          <button className="run-overlay-icon-action" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={14} /></button>
           <button className="run-overlay-detail" type="button" onClick={() => onOpenCard(card.id)}><PanelRight size={14} /> {t('run.details')}</button>
           <button className="run-overlay-exit" type="button" onClick={onExitRun} title={t('run.leaveRun')}><Map size={14} /> {t('run.board')}</button>
         </div>
@@ -71,7 +70,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
         </div>
         {session.revealed ? (
           <div className="answer-actions revealed-actions">
-            <button className="primary-button" type="button" onClick={() => onAnswer('reveal', true)}><RotateCcw size={15} /> {t('run.continueMiss')}</button>
+            <button className="primary-button" type="button" onClick={() => onAnswer('reveal', true)}><RotateCcw size={15} /> {t('run.continueMiss').split(' · ')[0]}</button>
           </div>
         ) : (
           <form className="run-overlay-form" onSubmit={handleSubmit}>
