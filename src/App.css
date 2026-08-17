@@ -153,7 +153,7 @@ h3 { font-size: 16px; }
 .run-focus-button { position: absolute; top: 16px; right: 16px; z-index: 10; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }
 .run-focus-button:hover { border-color: #bcb0eb; background: var(--violet-soft); transform: translateY(-1px); }
 
-.run-launcher { position: absolute; left: 50%; top: 50%; z-index: 14; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -50%); }
+.run-launcher { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 14; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
 .run-launch-button { width: 64px; height: 64px; display: grid; place-items: center; border: 1px solid var(--violet-dark); border-bottom-width: 4px; border-radius: 50%; color: #fff; background: var(--violet); box-shadow: 0 4px 0 var(--violet-dark), 0 10px 20px rgba(38,52,74,.12); cursor: pointer; }
 .run-launch-button:hover { background: #6848ca; transform: translateY(-2px); }
 .run-config-popover { position: absolute; left: 50%; bottom: calc(100% + 12px); width: min(310px, calc(100vw - 32px)); padding: 15px; display: grid; gap: 10px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-raised); transform: translateX(-50%); }
