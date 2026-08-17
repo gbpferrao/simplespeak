@@ -162,6 +162,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       typedAnswer: '',
       startedAt: now,
       responseStartedAt: now,
+      progressTimestamps: [],
       hits: 0,
       misses: 0,
       reveals: 0,
@@ -200,12 +201,14 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     if (!runSession || runSession.finished || runSession.revealed) return
     const card = runSession.cards[runSession.currentIndex]
     if (!card) return
-    const responseMs = Date.now() - runSession.responseStartedAt
+    const completedAt = Date.now()
+    const responseMs = completedAt - runSession.responseStartedAt
     const revealedSession: RunSession = {
       ...runSession,
       revealed: true,
       misses: runSession.misses + 1,
       reveals: runSession.reveals + 1,
+      progressTimestamps: [...runSession.progressTimestamps, completedAt],
       completedIds: [...runSession.completedIds, card.id],
     }
 
@@ -226,7 +229,8 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }
     const card = runSession.cards[runSession.currentIndex]
     if (!card) return
-    const responseMs = Date.now() - runSession.responseStartedAt
+    const completedAt = Date.now()
+    const responseMs = completedAt - runSession.responseStartedAt
     const remembered = isRemembered(outcome)
     const nextHits = runSession.hits + (remembered ? 1 : 0)
     const nextMisses = runSession.misses + (remembered ? 0 : 1)
@@ -240,7 +244,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     setFeedback(remembered ? 'hit' : 'miss')
     window.setTimeout(() => setFeedback(null), 650)
 
-    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, completedIds, revealed })
+    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, progressTimestamps: [...runSession.progressTimestamps, completedAt], completedIds, revealed })
   }
 
   function setTypedAnswer(value: string): void {

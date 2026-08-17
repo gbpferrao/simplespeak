@@ -15,11 +15,27 @@ export interface RunSession {
   typedAnswer: string
   startedAt: number
   responseStartedAt: number
+  progressTimestamps: number[]
   hits: number
   misses: number
   reveals: number
   completedIds: string[]
   finished: boolean
+}
+
+export const RUN_SPEED_WINDOW_SIZE = 5
+export const RUN_SPEED_JITTER_THRESHOLD_WPM = 20
+
+export function rollingRunSpeedWpm(session: Pick<RunSession, 'startedAt' | 'progressTimestamps'>, now = Date.now()): number {
+  const timestamps = session.progressTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)
+  if (timestamps.length === 0) return 0
+  const windowStart = timestamps.length === 1 ? session.startedAt : timestamps[0]
+  const elapsedMs = Math.max(1000, now - windowStart)
+  return timestamps.length * 60_000 / elapsedMs
+}
+
+export function runSpeedCueActive(session: Pick<RunSession, 'startedAt' | 'progressTimestamps'>, now = Date.now()): boolean {
+  return session.progressTimestamps.length >= 2 && rollingRunSpeedWpm(session, now) >= RUN_SPEED_JITTER_THRESHOLD_WPM
 }
 
 export function runLabel(config: RunConfig, sceneName: string | null, locale: SupportedLocale = DEFAULT_LOCALE): string {

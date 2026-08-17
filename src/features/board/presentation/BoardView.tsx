@@ -3,7 +3,7 @@ import type { Stage as KonvaStage } from 'konva/lib/Stage'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
-import type { RunConfig, RunSession } from '../../study/domain/runSession'
+import { rollingRunSpeedWpm, runSpeedCueActive, type RunConfig, type RunSession } from '../../study/domain/runSession'
 import { BoardCanvas } from './BoardCanvas'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
 import { fitBoardCamera } from '../domain/boardCamera'
@@ -60,6 +60,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const initialFitDoneRef = useRef(false)
   const stageRef = useRef<KonvaStage | null>(null)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
+  const [runClock, setRunClock] = useState(() => Date.now())
   const viewportRef = useRef<HTMLDivElement>(null)
   const animationFrameRef = useRef<number | null>(null)
   const stageCameraFrameRef = useRef<number | null>(null)
@@ -71,7 +72,17 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const lastActivationRef = useRef<{ cardId: string; at: number } | null>(null)
   const activeCardId = runSession?.cards[runSession.currentIndex]?.id ?? null
   const cameraFocusId = runSession ? activeCardId : focusId
+  const activeRunId = runSession?.id ?? null
+  const runSpeedWpm = runSession ? rollingRunSpeedWpm(runSession, runClock) : 0
+  const speedCueActive = runSession ? runSpeedCueActive(runSession, runClock) : false
   const filteredCards = starterPack.cards
+
+  useEffect(() => {
+    if (!activeRunId) return
+    setRunClock(Date.now())
+    const interval = window.setInterval(() => setRunClock(Date.now()), 1000)
+    return () => window.clearInterval(interval)
+  }, [activeRunId])
 
   // Only mount cards near the viewport. The Stage remains one unified board;
   // this just avoids decoding and hit-testing distant cards on small phones.
@@ -333,11 +344,11 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
           <div className="board-canvas" role="application" aria-label={t('board.interactive')}>
-            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} />
+            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} />
           </div>
         </div>
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
-        {runSession && <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
+        {runSession && <BoardRunOverlay session={runSession} state={state} runSpeedWpm={runSpeedWpm} speedCueActive={speedCueActive} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
       </div>
     </section>
   )

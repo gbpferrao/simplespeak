@@ -215,6 +215,8 @@ h3 { font-size: 16px; }
 .run-overlay-score > span { display: inline-flex; align-items: center; gap: 3px; }
 .run-overlay-score > span:first-child { color: var(--green-dark); }
 .run-overlay-score > span:nth-child(2) { color: var(--coral-dark); }
+.run-overlay-speed { color: var(--ink-soft); }
+.run-overlay-speed.is-fast { color: var(--yellow-dark) !important; }
 .run-overlay-stability { padding-left: 5px; border-left: 1px solid var(--line); color: var(--violet-dark) !important; font-size: 8px !important; font-weight: 800; }
 .run-overlay-actions-top { display: flex; align-items: center; gap: 5px; }
 .run-overlay-actions-top button { min-height: 29px; padding: 0 8px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink-soft); background: var(--surface); cursor: pointer; font-size: 9px; font-weight: 800; }

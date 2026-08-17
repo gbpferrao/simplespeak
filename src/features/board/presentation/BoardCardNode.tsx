@@ -1,5 +1,6 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Group, Image as KonvaImage, Text } from 'react-konva/lib/ReactKonvaCore'
+import type { Group as KonvaGroup } from 'konva/lib/Group'
 import 'konva/lib/shapes/Image'
 import 'konva/lib/shapes/Text'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
@@ -15,6 +16,7 @@ interface BoardCardNodeProps {
   focused: boolean
   runMode?: boolean
   runActive?: boolean
+  speedCue?: boolean
   revealed?: boolean
   cardOpacity?: number
 }
@@ -75,7 +77,7 @@ function useBoardImage(source: string | undefined): HTMLImageElement | null {
   return image
 }
 
-function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
+function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = false, speedCue = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
   const { t } = useI18n(state.settings.uiLocale)
   const scene = starterPack.scenes.find((candidate) => candidate.id === card.sceneId)
   const sceneColor = scene?.accent ?? '#7657d9'
@@ -84,9 +86,41 @@ function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = 
   const rotation = card.id.split('').reduce((total, character) => total + character.charCodeAt(0), 0) % 5 - 2
   const visualScale = runActive ? 1.12 : focused ? 1.05 : 1
   const opacity = boardCardOpacity({ learning, baseOpacity: cardOpacity, focused, active: runActive, runMode })
+  const groupRef = useRef<KonvaGroup | null>(null)
+  const baseX = card.x + CARD_HALF
+  const baseY = card.y + CARD_HALF - (runActive ? 7 : 0)
+
+  useEffect(() => {
+    const group = groupRef.current
+    if (!group) return
+    const reset = (): void => {
+      group.position({ x: baseX, y: baseY })
+      group.rotation(focused || runActive ? 0 : rotation)
+      group.getLayer()?.batchDraw()
+    }
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+    if (!speedCue || reducedMotion) {
+      reset()
+      return
+    }
+
+    let tick = 0
+    const interval = window.setInterval(() => {
+      tick += 1
+      const offset = tick % 2 === 0 ? -1.4 : 1.4
+      group.position({ x: baseX + offset, y: baseY + (tick % 3 === 0 ? 0.8 : 0) })
+      group.rotation((focused || runActive ? 0 : rotation) + (tick % 2 === 0 ? -0.7 : 0.7))
+      group.getLayer()?.batchDraw()
+    }, 140)
+
+    return () => {
+      window.clearInterval(interval)
+      reset()
+    }
+  }, [baseX, baseY, focused, rotation, runActive, speedCue])
 
   return (
-    <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 0 : rotation} opacity={opacity} name={`illustration-${card.id}`}>
+    <Group ref={groupRef} x={baseX} y={baseY} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 0 : rotation} opacity={opacity} name={`illustration-${card.id}`}>
       {revealed
         ? <CardReveal card={card} state={state} image={image} noMnemonic={t('card.noMnemonic')} />
         : image
@@ -111,6 +145,7 @@ export const BoardCardNode = memo(BoardCardNodeBase, (previous, next) => {
     && previous.focused === next.focused
     && previous.runMode === next.runMode
     && previous.runActive === next.runActive
+    && previous.speedCue === next.speedCue
     && previous.revealed === next.revealed
     && previous.cardOpacity === next.cardOpacity
     && previous.state.learning[cardId] === next.state.learning[cardId]

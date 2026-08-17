@@ -26,9 +26,10 @@ interface BoardCanvasProps {
   activeCardId: string | null
   runActive: boolean
   revealed: boolean
+  speedCueActive: boolean
 }
 
-export function BoardCanvas({ width, height, camera, stageRef, state, cards, focusedCardId, activeCardId, runActive, revealed }: BoardCanvasProps) {
+export function BoardCanvas({ width, height, camera, stageRef, state, cards, focusedCardId, activeCardId, runActive, revealed, speedCueActive }: BoardCanvasProps) {
   const groupLabelOpacity = Math.max(0, Math.min(1, (GROUP_LABEL_FADE_START - camera.zoom) / (GROUP_LABEL_FADE_START - GROUP_LABEL_FADE_END)))
   const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} />), [])
   const sceneTitleNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} showBackground={false} titleOpacity={groupLabelOpacity * 0.58} />), [groupLabelOpacity])
@@ -52,7 +53,7 @@ export function BoardCanvas({ width, height, camera, stageRef, state, cards, foc
        * only in the overview branch makes the current Card disappear.
       */}
       <Layer listening={false} imageSmoothingEnabled>
-        {importantCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} revealed={revealed && activeCardId === card.id} cardOpacity={1} />)}
+        {importantCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={focusedCardId === card.id} runMode={runActive} runActive={activeCardId === card.id} speedCue={speedCueActive && activeCardId === card.id} revealed={revealed && activeCardId === card.id} cardOpacity={1} />)}
       </Layer>
       <Layer listening={false} imageSmoothingEnabled>
         {sceneTitleNodes}

@@ -349,6 +349,18 @@ export function localeName(locale: SupportedLocale): string {
   return localeOptions.find((option) => option.code === locale)?.nativeLabel ?? locale
 }
 
+export function runSpeedUnit(locale: SupportedLocale): string {
+  if (locale === 'pt-BR') return 'PPM'
+  if (locale === 'de-DE') return 'Wörter/Min.'
+  return 'WPM'
+}
+
+export function runSpeedAriaLabel(locale: SupportedLocale): string {
+  if (locale === 'pt-BR') return 'Velocidade média atual da sessão'
+  if (locale === 'de-DE') return 'Aktuelle durchschnittliche Laufgeschwindigkeit'
+  return 'Current rolling progression speed'
+}
+
 export function runLabelForLocale(preset: 'scene' | 'due-nearby' | 'all' | 'custom', sceneName: string | null, locale: SupportedLocale): string {
   if (preset === 'scene' && sceneName) return translate(locale, 'run.routeLabel', { scene: sceneName })
   if (preset === 'due-nearby') return translate(locale, 'run.dueNearby')

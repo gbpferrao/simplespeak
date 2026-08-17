@@ -1,5 +1,5 @@
 import { memo, type FormEvent } from 'react'
-import { Check, Eye, EyeOff, Focus, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
+import { Check, Eye, EyeOff, Focus, Gauge, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import { statusLabel as formatStatusLabel } from '../../../core/presentation/formatters'
 import { learningFor, sceneFor } from '../../../core/presentation/selectors'
@@ -7,11 +7,13 @@ import { isAnswerCorrect } from '../../vocabulary/domain/answerMatcher'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { retrievability } from '../domain/scheduler'
 import type { RunSession } from '../domain/runSession'
-import { useI18n } from '../../../core/i18n/i18n'
+import { runSpeedAriaLabel, runSpeedUnit, useI18n } from '../../../core/i18n/i18n'
 
 interface BoardRunOverlayProps {
   session: RunSession
   state: PersistedState
+  runSpeedWpm: number
+  speedCueActive: boolean
   onReveal: () => void
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
   onTypedChange: (value: string) => void
@@ -25,7 +27,7 @@ interface BoardRunOverlayProps {
  * the thing being studied; this component only supplies the small amount of
  * interaction needed to produce a retrieval signal.
  */
-export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedChange, onOpenCard, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
+export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runSpeedWpm, speedCueActive, onReveal, onAnswer, onTypedChange, onOpenCard, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
   const { t, locale } = useI18n(state.settings.uiLocale)
   const statusLabel = (status: Parameters<typeof formatStatusLabel>[0]): string => formatStatusLabel(status, locale)
   const card = session.cards[session.currentIndex]
@@ -55,6 +57,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
           <span><Check size={13} /> {session.hits}</span>
           <span><X size={13} /> {session.misses}</span>
           <span><Eye size={13} /> {session.reveals}</span>
+          <span className={`run-overlay-speed ${speedCueActive ? 'is-fast' : ''}`} title={runSpeedAriaLabel(locale)}><Gauge size={13} /> {Math.round(runSpeedWpm)} {runSpeedUnit(locale)}</span>
           <span className="run-overlay-stability">{statusLabel(learning.status)} · {Math.round(retrievability(learning) * 100)}%</span>
         </div>
         <div className="run-overlay-actions-top">
