@@ -1,4 +1,4 @@
-import { Ellipsis, History, Search, Settings2, X } from 'lucide-react'
+import { ArrowLeft, Ellipsis, History, Search, Settings2, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { View, WordCard } from '../../core/contracts/types'
 
@@ -54,9 +54,12 @@ export function Header({ view, setView, searchCards, onSearchSelect }: Navigatio
   return (
     <header className="topbar">
       <div className="topbar-inner">
-        <button className="brand" type="button" onClick={() => selectView('board')} aria-label="Open SimpleSpeak board">
-          <span className="brand-word">SimpleSpeak</span>
-        </button>
+        <div className="header-leading">
+          {view !== 'board' && <button className="header-back-button" type="button" onClick={() => selectView('board')} aria-label="Back to board" title="Back to board"><ArrowLeft size={18} /></button>}
+          <button className="brand" type="button" onClick={() => selectView('board')} aria-label="Open SimpleSpeak board">
+            <span className="brand-word">SimpleSpeak</span>
+          </button>
+        </div>
         <div className="header-actions">
           <div className="header-search-wrap" ref={searchRef}>
             <button className={`header-search-button ${searchOpen ? 'active' : ''}`} type="button" onClick={() => setSearchOpen((current) => !current)} aria-expanded={searchOpen} aria-haspopup="true" aria-label="Search words" title="Search words"><Search size={18} /></button>

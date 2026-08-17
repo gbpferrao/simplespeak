@@ -60,6 +60,9 @@ h3 { font-size: 16px; }
 .topbar { position: relative; z-index: 40; height: 54px; flex: 0 0 54px; border-bottom: 1px solid rgba(200,211,225,.72); background: rgba(255,255,255,.82); }
 .topbar-inner { width: 100%; height: 100%; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; }
 .board-shell .topbar { position: absolute; inset: 0 0 auto; width: 100%; border-bottom: 0; background: transparent; }
+.header-leading { display: inline-flex; align-items: center; gap: 4px; }
+.header-back-button { width: 34px; height: 34px; display: inline-grid; place-items: center; border: 0; border-radius: 50%; color: var(--ink-soft); background: transparent; cursor: pointer; }
+.header-back-button:hover { color: var(--ink); background: var(--surface-soft); }
 .brand { padding: 0; display: inline-flex; align-items: center; border: 0; background: transparent; cursor: pointer; text-align: left; }
 .brand-word { font-family: var(--font-sans); font-size: 21px; line-height: 1; font-style: normal; font-weight: 760; letter-spacing: -.045em; }
 .header-actions { display: flex; align-items: center; gap: 3px; }
