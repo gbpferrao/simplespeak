@@ -1,4 +1,4 @@
-import { memo, type FormEvent } from 'react'
+import { memo, useEffect, useState, type CSSProperties, type FormEvent } from 'react'
 import { Check, Eye, EyeOff, Focus, Gauge, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import { statusLabel as formatStatusLabel } from '../../../core/presentation/formatters'
@@ -29,8 +29,35 @@ interface BoardRunOverlayProps {
  */
 export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, runSpeedWpm, speedCueActive, onReveal, onAnswer, onTypedChange, onOpenCard, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
   const { t, locale } = useI18n(state.settings.uiLocale)
+  const [keyboardOffset, setKeyboardOffset] = useState(0)
   const statusLabel = (status: Parameters<typeof formatStatusLabel>[0]): string => formatStatusLabel(status, locale)
   const card = session.cards[session.currentIndex]
+
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+
+    function updateKeyboardOffset(): void {
+      // With adjustResize, innerHeight and visualViewport.height shrink
+      // together, so the offset is zero and the HUD follows normal layout.
+      // When the WebView keeps the layout viewport fixed, this is the space
+      // that the keyboard covers and only the HUD moves into it.
+      const currentViewport = window.visualViewport
+      if (!currentViewport) return
+      setKeyboardOffset(Math.max(0, window.innerHeight - currentViewport.height - currentViewport.offsetTop))
+    }
+
+    updateKeyboardOffset()
+    window.addEventListener('resize', updateKeyboardOffset)
+    viewport.addEventListener('resize', updateKeyboardOffset)
+    viewport.addEventListener('scroll', updateKeyboardOffset)
+    return () => {
+      window.removeEventListener('resize', updateKeyboardOffset)
+      viewport.removeEventListener('resize', updateKeyboardOffset)
+      viewport.removeEventListener('scroll', updateKeyboardOffset)
+    }
+  }, [])
+
   if (!card) return null
 
   const learning = learningFor(state, card.id)
@@ -44,7 +71,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
   }
 
   return (
-    <section className="board-run-overlay" aria-label={t('run.activeAria')}>
+    <section className="board-run-overlay" style={{ '--run-keyboard-offset': `${keyboardOffset}px` } as CSSProperties} aria-label={t('run.activeAria')}>
       <div className="run-overlay-main">
         <div className="run-overlay-route">
           <span className="run-overlay-live"><Play size={12} fill="currentColor" /> {t('run.live')}</span>

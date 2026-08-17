@@ -13,6 +13,9 @@ import type { SupportedLocale } from '../../../core/i18n/i18n'
 import { useI18n } from '../../../core/i18n/i18n'
 
 const INITIAL_CAMERA: BoardCamera = { zoom: 0.63, x: -18, y: -10 }
+const RUN_FOCUS_ZOOM = 0.86
+const RUN_FOCUS_TOP_RATIO = 0.23
+const RUN_FOCUS_MARGIN = 24
 
 interface BoardPointer {
   x: number
@@ -60,6 +63,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const initialFitDoneRef = useRef(false)
   const stageRef = useRef<KonvaStage | null>(null)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
+  const [runCanvasSize, setRunCanvasSize] = useState<{ width: number; height: number } | null>(null)
   const [runClock, setRunClock] = useState(() => Date.now())
   const viewportRef = useRef<HTMLDivElement>(null)
   const animationFrameRef = useRef<number | null>(null)
@@ -76,6 +80,16 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const runSpeedWpm = runSession ? rollingCorrectHitSpeedWpm(runSession, runClock) : 0
   const speedCueActive = runSession ? runSpeedCueActive(runSession, runClock) : false
   const filteredCards = starterPack.cards
+  const canvasViewportSize = runSession && runCanvasSize ? runCanvasSize : viewportSize
+
+  useEffect(() => {
+    if (!activeRunId) {
+      setRunCanvasSize(null)
+      return
+    }
+    if (runCanvasSize || !viewportSize.width || !viewportSize.height) return
+    setRunCanvasSize(viewportSize)
+  }, [activeRunId, runCanvasSize, viewportSize])
 
   useEffect(() => {
     if (!activeRunId) return
@@ -87,14 +101,14 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   // Only mount cards near the viewport. The Stage remains one unified board;
   // this just avoids decoding and hit-testing distant cards on small phones.
   const canvasCards = useMemo(() => {
-    if (!viewportSize.width || !viewportSize.height) return filteredCards
-    const padding = Math.max(180, Math.min(280, Math.max(viewportSize.width, viewportSize.height) / camera.zoom * 0.18))
+    if (!canvasViewportSize.width || !canvasViewportSize.height) return filteredCards
+    const padding = Math.max(180, Math.min(280, Math.max(canvasViewportSize.width, canvasViewportSize.height) / camera.zoom * 0.18))
     const left = -camera.x / camera.zoom - padding
     const top = -camera.y / camera.zoom - padding
-    const right = (viewportSize.width - camera.x) / camera.zoom + padding
-    const bottom = (viewportSize.height - camera.y) / camera.zoom + padding
+    const right = (canvasViewportSize.width - camera.x) / camera.zoom + padding
+    const bottom = (canvasViewportSize.height - camera.y) / camera.zoom + padding
     return filteredCards.filter((card) => card.id === cameraFocusId || (card.x + CARD_SIZE >= left && card.x <= right && card.y + CARD_SIZE >= top && card.y <= bottom))
-  }, [camera, cameraFocusId, filteredCards, viewportSize])
+  }, [camera, cameraFocusId, filteredCards, canvasViewportSize])
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -232,8 +246,23 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     const card = starterPack.cards.find((candidate) => candidate.id === cardId)
     const bounds = viewportRef.current?.getBoundingClientRect()
     if (!card || !bounds) return
-    const nextZoom = Math.max(0.72, cameraRef.current.zoom)
-    animateCamera(nextZoom, { x: bounds.width / 2 - (card.x + CARD_SIZE / 2) * nextZoom, y: bounds.height / 2 - (card.y + CARD_SIZE / 2) * nextZoom })
+    if (!runSession) {
+      const nextZoom = Math.max(0.72, cameraRef.current.zoom)
+      animateCamera(nextZoom, { x: bounds.width / 2 - (card.x + CARD_SIZE / 2) * nextZoom, y: bounds.height / 2 - (card.y + CARD_SIZE / 2) * nextZoom })
+      return
+    }
+
+    const nextZoom = Math.min(MAX_ZOOM, Math.max(RUN_FOCUS_ZOOM, cameraRef.current.zoom))
+
+    // Keep the active Card in an upper safe band. The lower area belongs to
+    // the Run HUD and may later be covered by the phone keyboard.
+    const focusWidth = runCanvasSize?.width ?? bounds.width
+    const focusHeight = runCanvasSize?.height ?? bounds.height
+    const cardHalf = CARD_SIZE * nextZoom / 2
+    const minimumY = cardHalf + RUN_FOCUS_MARGIN
+    const maximumY = Math.max(minimumY, focusHeight - cardHalf - RUN_FOCUS_MARGIN)
+    const targetY = Math.min(maximumY, Math.max(minimumY, focusHeight * RUN_FOCUS_TOP_RATIO))
+    animateCamera(nextZoom, { x: focusWidth / 2 - (card.x + CARD_SIZE / 2) * nextZoom, y: targetY - (card.y + CARD_SIZE / 2) * nextZoom })
   }
 
   useEffect(() => {
@@ -344,7 +373,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
           <div className="board-canvas" role="application" aria-label={t('board.interactive')}>
-            <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} />
+            <BoardCanvas width={Math.max(1, canvasViewportSize.width)} height={Math.max(1, canvasViewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} />
           </div>
         </div>
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}

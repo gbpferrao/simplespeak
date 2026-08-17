@@ -201,7 +201,7 @@ h3 { font-size: 16px; }
 .run-bar-hint { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-muted); font-size: 9px; }
 
 /* Active run stays on the Board. This is a floating instrument panel, not a second study screen. */
-.board-run-overlay { position: absolute; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 20; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); pointer-events: none; }
+.board-run-overlay { position: absolute; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom) + var(--run-keyboard-offset, 0px)); z-index: 20; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-card); pointer-events: none; transition: bottom .16s ease; }
 .board-run-overlay > * { pointer-events: auto; }
 .run-overlay-main, .run-overlay-response { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .run-overlay-main { min-height: 42px; padding: 0; display: grid; grid-template-columns: minmax(205px, 1fr) auto auto; align-items: center; gap: 11px; }
@@ -505,7 +505,7 @@ h3 { font-size: 16px; }
   .run-bar-field, .run-bar-field select { width: 100%; }
   .run-bar-due { display: none; }
   .quiet-button, .run-bar-start { width: 100%; }
-  .board-run-overlay { left: 10px; right: 10px; bottom: calc(9px + env(safe-area-inset-bottom)); max-height: calc(100% - 136px); overflow: auto; }
+  .board-run-overlay { left: 10px; right: 10px; bottom: calc(9px + env(safe-area-inset-bottom) + var(--run-keyboard-offset, 0px)); max-height: calc(100% - 136px - var(--run-keyboard-offset, 0px)); overflow: auto; }
   .run-overlay-main { grid-template-columns: minmax(0, 1fr) auto; }
   .run-overlay-score { grid-column: 1; }
   .run-overlay-actions-top { grid-column: 2; }
