@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent } from 'react'
 import type { Stage as KonvaStage } from 'konva/lib/Stage'
-import { Focus } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import type { ProgressStats } from '../../history/domain/progressStats'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
@@ -318,9 +317,8 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
             <BoardCanvas width={Math.max(1, viewportSize.width)} height={Math.max(1, viewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} />
           </div>
         </div>
-        {runSession && <button className="run-focus-button" type="button" onClick={() => focusCard(activeCardId)} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={15} /></button>}
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
-        {runSession && <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onExitRun={onExitRun} />}
+        {runSession && <BoardRunOverlay session={runSession} state={state} onReveal={onReveal} onAnswer={onAnswer} onTypedChange={onTypedChange} onOpenCard={onSelectCard} onFocusCurrent={() => focusCard(activeCardId)} onExitRun={onExitRun} />}
       </div>
     </section>
   )

@@ -153,7 +153,8 @@ h3 { font-size: 16px; }
 .board-canvas { position: absolute; inset: 0; overflow: hidden; contain: strict; pointer-events: none; }
 .board-canvas > div { width: 100% !important; height: 100% !important; }
 .board-canvas canvas { display: block; }
-.run-focus-button { position: absolute; top: 16px; right: 16px; z-index: 10; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }
+.run-overlay-focus-row { display: flex; justify-content: flex-end; padding: 0 5px; }
+.run-focus-button { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--violet-dark); background: var(--surface); box-shadow: var(--shadow-card); cursor: pointer; }
 .run-focus-button:hover { border-color: #bcb0eb; background: var(--violet-soft); transform: translateY(-1px); }
 
 .run-launcher { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 14; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
@@ -481,7 +482,7 @@ h3 { font-size: 16px; }
   .icon-button { width: 34px; height: 34px; }
   .main-content { min-height: 0; }
   .board-page { height: 100%; min-height: 0; padding: 0; }
-  .run-focus-button { top: 10px; right: 10px; width: 30px; height: 30px; }
+  .run-focus-button { width: 30px; height: 30px; }
   .run-bar { left: 10px; right: 10px; bottom: 10px; max-height: calc(100% - 145px); overflow: auto; padding: 10px; gap: 10px; }
   .run-bar-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
   .run-bar-field, .run-bar-field select { width: 100%; }

@@ -1,5 +1,5 @@
 import { memo, type FormEvent } from 'react'
-import { Check, Eye, EyeOff, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
+import { Check, Eye, EyeOff, Focus, Keyboard, Map, PanelRight, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome } from '../../../core/contracts/types'
 import { statusLabel as formatStatusLabel } from '../../../core/presentation/formatters'
 import { learningFor, sceneFor } from '../../../core/presentation/selectors'
@@ -16,6 +16,7 @@ interface BoardRunOverlayProps {
   onAnswer: (outcome: ReviewOutcome, revealed: boolean) => void
   onTypedChange: (value: string) => void
   onOpenCard: (cardId: string) => void
+  onFocusCurrent: () => void
   onExitRun: () => void
 }
 
@@ -24,7 +25,7 @@ interface BoardRunOverlayProps {
  * the thing being studied; this component only supplies the small amount of
  * interaction needed to produce a retrieval signal.
  */
-export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedChange, onOpenCard, onExitRun }: BoardRunOverlayProps) {
+export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, onReveal, onAnswer, onTypedChange, onOpenCard, onFocusCurrent, onExitRun }: BoardRunOverlayProps) {
   const { t, locale } = useI18n(state.settings.uiLocale)
   const statusLabel = (status: Parameters<typeof formatStatusLabel>[0]): string => formatStatusLabel(status, locale)
   const card = session.cards[session.currentIndex]
@@ -42,6 +43,9 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, o
 
   return (
     <section className="board-run-overlay" aria-label={t('run.activeAria')}>
+      <div className="run-overlay-focus-row">
+        <button className="run-focus-button" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><Focus size={15} /></button>
+      </div>
       <div className="run-overlay-main">
         <div className="run-overlay-route">
           <span className="run-overlay-live"><Play size={12} fill="currentColor" /> {t('run.live')}</span>
