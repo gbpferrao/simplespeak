@@ -43,7 +43,7 @@ export function BoardCanvas({ width, height, camera, stageRef, state, cards, foc
         {sceneLabelNodes}
       </Layer>
       <Layer listening={false} imageSmoothingEnabled>
-        {detailLevel === 'overview' && <BoardCardOverviewLayer cards={backgroundCards} state={state} />}
+        {detailLevel === 'overview' && <BoardCardOverviewLayer cards={backgroundCards} state={state} focusedCardId={focusedCardId} activeCardId={activeCardId} runActive={runActive} />}
         {detailLevel === 'full' && backgroundCards.map((card) => <BoardCardNode key={card.id} card={card} state={state} focused={false} runMode={runActive} runActive={false} revealed={false} cardOpacity={cardOpacity} />)}
       </Layer>
       {/*

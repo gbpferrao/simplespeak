@@ -3,9 +3,11 @@ import { Group, Image as KonvaImage, Text } from 'react-konva/lib/ReactKonvaCore
 import 'konva/lib/shapes/Image'
 import 'konva/lib/shapes/Text'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
+import { learningFor } from '../../../core/presentation/selectors'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { CARD_SIZE } from './boardGeometry'
 import { useI18n } from '../../../core/i18n/i18n'
+import { boardCardOpacity } from '../domain/boardVisuals'
 
 interface BoardCardNodeProps {
   card: WordCard
@@ -73,14 +75,15 @@ function useBoardImage(source: string | undefined): HTMLImageElement | null {
   return image
 }
 
-function BoardCardNodeBase({ card, state, focused, runActive = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
+function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = false, revealed = false, cardOpacity = 0.94 }: BoardCardNodeProps) {
   const { t } = useI18n(state.settings.uiLocale)
   const scene = starterPack.scenes.find((candidate) => candidate.id === card.sceneId)
   const sceneColor = scene?.accent ?? '#7657d9'
   const image = useBoardImage(state.images[card.id] ?? card.imagePath)
+  const learning = learningFor(state, card.id)
   const rotation = card.id.split('').reduce((total, character) => total + character.charCodeAt(0), 0) % 5 - 2
   const visualScale = runActive ? 1.12 : focused ? 1.05 : 1
-  const opacity = runActive || focused ? 1 : cardOpacity
+  const opacity = boardCardOpacity({ learning, baseOpacity: cardOpacity, focused, active: runActive, runMode })
 
   return (
     <Group x={card.x + CARD_HALF} y={card.y + CARD_HALF - (runActive ? 7 : 0)} scaleX={visualScale} scaleY={visualScale} rotation={focused || runActive ? 0 : rotation} opacity={opacity} name={`illustration-${card.id}`}>

@@ -2,8 +2,10 @@ import { memo, useMemo } from 'react'
 import { Circle, Group, Shape } from 'react-konva/lib/ReactKonvaCore'
 import 'konva/lib/shapes/Circle'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
+import { createEmptyLearning } from '../../../core/persistence/localStateRepository'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { CARD_SIZE } from './boardGeometry'
+import { boardCardOpacity } from '../domain/boardVisuals'
 
 const sceneColors = new Map(starterPack.scenes.map((scene) => [scene.id, scene.accent]))
 const statusColors: Record<string, string> = {
@@ -41,6 +43,9 @@ export const BoardCardOverviewNode = memo(BoardCardOverviewNodeBase, (previous, 
 interface BoardCardOverviewLayerProps {
   cards: WordCard[]
   state: PersistedState
+  focusedCardId: string | null
+  activeCardId: string | null
+  runActive: boolean
 }
 
 interface OverviewMarker {
@@ -48,6 +53,7 @@ interface OverviewMarker {
   y: number
   sceneColor: string
   statusColor: string
+  opacity: number
 }
 
 /**
@@ -55,25 +61,35 @@ interface OverviewMarker {
  * stays in the same world coordinates, so the board still communicates its
  * density and scene structure while avoiding hundreds of React/Konva nodes.
  */
-export function BoardCardOverviewLayer({ cards, state }: BoardCardOverviewLayerProps) {
+export function BoardCardOverviewLayer({ cards, state, focusedCardId, activeCardId, runActive }: BoardCardOverviewLayerProps) {
   const learning = state.learning
-  const markers = useMemo<OverviewMarker[]>(() => cards.map((card) => ({
-    x: card.x + (CARD_SIZE / 2),
-    y: card.y + (CARD_SIZE / 2),
-    sceneColor: sceneColors.get(card.sceneId) ?? '#8b93a5',
-    statusColor: statusColors[learning[card.id]?.status ?? 'new'],
-  })), [cards, learning])
+  const markers = useMemo<OverviewMarker[]>(() => cards.map((card) => {
+    const isFocused = card.id === focusedCardId || card.id === activeCardId
+    return {
+      x: card.x + (CARD_SIZE / 2),
+      y: card.y + (CARD_SIZE / 2),
+      sceneColor: sceneColors.get(card.sceneId) ?? '#8b93a5',
+      statusColor: statusColors[learning[card.id]?.status ?? 'new'],
+      opacity: boardCardOpacity({
+        learning: learning[card.id] ?? createEmptyLearning(),
+        baseOpacity: 1,
+        focused: isFocused,
+        active: card.id === activeCardId,
+        runMode: runActive,
+      }),
+    }
+  }), [activeCardId, cards, focusedCardId, learning, runActive])
 
   return <Shape
     listening={false}
     sceneFunc={(context) => {
       for (const marker of markers) {
-        context.globalAlpha = 0.58
+        context.globalAlpha = 0.58 * marker.opacity
         context.fillStyle = marker.sceneColor
         context.beginPath()
         context.arc(marker.x, marker.y, 8, 0, Math.PI * 2)
         context.fill()
-        context.globalAlpha = 0.92
+        context.globalAlpha = 0.92 * marker.opacity
         context.strokeStyle = marker.statusColor
         context.lineWidth = 2
         context.beginPath()
