@@ -25,7 +25,7 @@ export const BoardRunBar = memo(function BoardRunBar({ state, stats, onStartRun 
   const [open, setOpen] = useState(false)
   const [preset, setPreset] = useState<RunConfig['preset']>('due-nearby')
   const [sceneId, setSceneId] = useState<string | null>(null)
-  const [limit, setLimit] = useState(Math.min(12, Math.max(4, state.settings.dailyTarget)))
+  const [limit, setLimit] = useState(12)
   const [criteria, setCriteria] = useState<RunCriterion[]>([])
 
   function updateCriterion(id: string, patch: Partial<RunCriterion>): void {

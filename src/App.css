@@ -438,9 +438,9 @@ h3 { font-size: 16px; }
 .local-card h3 { margin-top: 10px; }
 .local-card p { margin-top: 6px; color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
 .local-check { margin-top: 10px; display: flex; align-items: center; gap: 7px; color: var(--green-dark); font-size: 10px; font-weight: 750; }
-.danger-card { display: flex; align-items: flex-end; justify-content: space-between; gap: 13px; border-color: #f0b9b6; background: #fffafa; }
-.danger-card h3 { margin-top: 6px; }
-.danger-card p { margin-top: 5px; color: var(--ink-soft); font-size: 10px; line-height: 1.4; }
+.danger-card { display: grid; gap: 14px; border-color: #f0b9b6; background: #fffafa; }
+.danger-card h2 { font-size: 18px; }
+.settings-language-field { margin-top: 16px; }
 
 @media (max-width: 1180px) {
   .run-bar { align-items: flex-start; flex-direction: column; }

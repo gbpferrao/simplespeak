@@ -5,16 +5,12 @@ const STATE_KEY = 'simplespeak_state_v1'
 
 export const defaultSettings: Settings = {
   uiLocale: DEFAULT_LOCALE,
-  timeframeDays: 90,
-  dailyTarget: 12,
 }
 
 function normalizeSettings(value: Partial<Settings> | undefined): Settings {
   const candidate = value ?? {}
   return {
     uiLocale: normalizeLocale(candidate.uiLocale),
-    timeframeDays: Number.isFinite(candidate.timeframeDays) ? Math.max(1, Number(candidate.timeframeDays)) : defaultSettings.timeframeDays,
-    dailyTarget: Number.isFinite(candidate.dailyTarget) ? Math.max(1, Number(candidate.dailyTarget)) : defaultSettings.dailyTarget,
   }
 }
 

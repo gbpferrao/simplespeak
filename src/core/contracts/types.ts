@@ -96,8 +96,6 @@ export interface RunRecord {
 
 export interface Settings {
   uiLocale: SupportedLocale
-  timeframeDays: number
-  dailyTarget: number
 }
 
 export interface PersistedState {
