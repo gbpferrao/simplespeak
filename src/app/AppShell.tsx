@@ -25,7 +25,7 @@ export function AppShell() {
       <Header locale={locale} view={view} setView={setView} searchCards={starterPack.cards} onSearchSelect={(cardId) => { controller.setSelectedCardId(null); controller.setBoardFocusId(cardId); controller.setView('board') }} runActive={Boolean(activeRun)} onEndRun={controller.endRun} />
       <main className="main-content">
         {boardVisible && <BoardView locale={locale} state={data} stats={stats} focusId={controller.boardFocusId} setFocusId={controller.setBoardFocusId} onSelectCard={controller.setSelectedCardId} onStartRun={(config) => { controller.setRunConfig(config); controller.startRun(config) }} runSession={activeRun} onReveal={controller.revealRunCard} onAnswer={controller.answerRun} onTypedChange={controller.setTypedAnswer} onExitRun={controller.exitRun} />}
-        {view === 'history' && !activeRun && <HistoryView locale={locale} state={data} stats={stats} onOpenCard={controller.setSelectedCardId} onRerunRun={controller.startRun} />}
+        {view === 'history' && !activeRun && <HistoryView locale={locale} state={data} onOpenCard={controller.setSelectedCardId} onRerunRun={controller.startRun} />}
         {view === 'settings' && !activeRun && <SettingsView locale={locale} state={data} onUpdateSettings={controller.updateSettings} onResetLearning={controller.resetLearning} />}
       </main>
       {selectedCard && <CardDetail card={selectedCard} state={data} onClose={() => controller.setSelectedCardId(null)} onSaveNote={(note) => controller.saveNote(selectedCard.id, note)} />}
