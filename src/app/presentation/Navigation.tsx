@@ -34,7 +34,7 @@ function SecondaryHeader(props: NavigationProps) {
 
 function BrandButton({ locale, setView }: Pick<NavigationProps, 'locale' | 'setView'>) {
   const { t } = useI18n(locale)
-  return <button className="brand" type="button" onClick={() => setView('board')} aria-label={t('nav.openBoard')}><span className="brand-word">SimpleSpeak</span></button>
+  return <button className="brand" type="button" onClick={() => setView('board')} aria-label={t('nav.openBoard')}><span className="brand-word">memolingo</span></button>
 }
 
 function HeaderActions({ locale, view, setView, searchCards, onSearchSelect, showSearch, runActive, onEndRun }: NavigationProps & { showSearch: boolean }) {
