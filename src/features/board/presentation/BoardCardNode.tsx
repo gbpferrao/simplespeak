@@ -10,6 +10,13 @@ import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.
 import { CARD_SIZE } from './boardGeometry'
 import { useI18n } from '../../../core/i18n/i18n'
 import { boardCardOpacity } from '../domain/boardVisuals'
+import {
+  HPM_CUE_CORNER_DELTAS,
+  HPM_CUE_OUT_DURATION,
+  HPM_CUE_PAUSE_MS,
+  HPM_CUE_RETURN_DURATION,
+  nextRandomCornerIndex,
+} from '../domain/hpmCueMotion'
 
 interface BoardCardNodeProps {
   card: WordCard
@@ -23,16 +30,6 @@ interface BoardCardNodeProps {
 }
 
 const CARD_HALF = CARD_SIZE / 2
-const HPM_CUE_OFFSET = 2
-const HPM_CUE_OUT_DURATION = 0.09
-const HPM_CUE_RETURN_DURATION = 0.16
-const HPM_CUE_PAUSE_MS = 120
-const HPM_CUE_CORNER_DELTAS = [
-  { x: -HPM_CUE_OFFSET, y: -HPM_CUE_OFFSET },
-  { x: HPM_CUE_OFFSET, y: -HPM_CUE_OFFSET },
-  { x: -HPM_CUE_OFFSET, y: HPM_CUE_OFFSET },
-  { x: HPM_CUE_OFFSET, y: HPM_CUE_OFFSET },
-] as const
 const imageCache = new Map<string, HTMLImageElement>()
 const MAX_IMAGE_CACHE = 96
 
@@ -108,6 +105,7 @@ function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = 
     let activeTween: Tween | null = null
     let pulseTimer: number | null = null
     let cancelled = false
+    let previousCornerIndex = -1
 
     const resetPosition = (): void => {
       group.position({ x: baseX, y: baseY })
@@ -138,7 +136,8 @@ function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = 
       pulseTimer = null
       if (cancelled) return
 
-      const corner = HPM_CUE_CORNER_DELTAS[Math.floor(Math.random() * HPM_CUE_CORNER_DELTAS.length)]
+      previousCornerIndex = nextRandomCornerIndex(previousCornerIndex)
+      const corner = HPM_CUE_CORNER_DELTAS[previousCornerIndex]
       let outwardTween: Tween | null = null
       outwardTween = new Tween({
         node,

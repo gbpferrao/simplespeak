@@ -5,6 +5,8 @@ import type { ProgressStats } from '../../history/domain/progressStats'
 import starterPack from '../../language-packs/data/packs/ptbr-en/simplespeak-v1.json'
 import { rollingHitRatePerMinute, runHitRateCueActive, type RunConfig, type RunSession } from '../../study/domain/runSession'
 import { BoardCanvas } from './BoardCanvas'
+import { PixiBoardCanvas, type PixiBoardCanvasHandle } from './PixiBoardCanvas'
+import { requestedBoardRenderer } from './boardRenderer'
 import { CARD_SIZE, MAX_ZOOM, MIN_ZOOM, type BoardCamera } from './boardGeometry'
 import { fitBoardCamera } from '../domain/boardCamera'
 import { BoardRunBar } from './BoardRunBar'
@@ -69,6 +71,9 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const cameraRef = useRef<BoardCamera>(INITIAL_CAMERA)
   const initialFitDoneRef = useRef(false)
   const stageRef = useRef<KonvaStage | null>(null)
+  const pixiRendererRef = useRef<PixiBoardCanvasHandle | null>(null)
+  const requestedRenderer = useMemo(() => requestedBoardRenderer(), [])
+  const [pixiUnavailable, setPixiUnavailable] = useState(false)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   const [runCanvasSize, setRunCanvasSize] = useState<{ width: number; height: number } | null>(null)
   const [runClock, setRunClock] = useState(() => Date.now())
@@ -91,6 +96,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const speedCueActive = runSession ? runHitRateCueActive(runSession, runClock) : false
   const filteredCards = starterPack.cards
   const canvasViewportSize = runSession && runCanvasSize ? runCanvasSize : viewportSize
+  const activeRenderer = requestedRenderer === 'pixi' && !pixiUnavailable ? 'pixi' : 'konva'
 
   useEffect(() => {
     if (!activeRunId) {
@@ -161,10 +167,13 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
 
   function applyCameraToStage(): void {
     const stage = stageRef.current
-    if (!stage) return
     const nextCamera = cameraRef.current
-    stage.position({ x: nextCamera.x, y: nextCamera.y })
-    stage.scale({ x: nextCamera.zoom, y: nextCamera.zoom })
+    if (stage) {
+      stage.position({ x: nextCamera.x, y: nextCamera.y })
+      stage.scale({ x: nextCamera.zoom, y: nextCamera.zoom })
+      return
+    }
+    pixiRendererRef.current?.setCamera(nextCamera)
   }
 
   function scheduleStageCameraFrame(): void {
@@ -403,8 +412,10 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     <section className="view board-view board-page" aria-label={t('board.aria')}>
       <div className={`board-frame ${runSession ? 'is-run-active' : ''}`}>
         <div className="board-viewport" ref={viewportRef} onWheel={handleWheel} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerCancel}>
-          <div className="board-canvas" role="application" aria-label={t('board.interactive')}>
-            <BoardCanvas width={Math.max(1, canvasViewportSize.width)} height={Math.max(1, canvasViewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} />
+          <div className="board-canvas" data-renderer={activeRenderer} role="application" aria-label={t('board.interactive')}>
+            {activeRenderer === 'pixi'
+              ? <PixiBoardCanvas ref={pixiRendererRef} width={Math.max(1, canvasViewportSize.width)} height={Math.max(1, canvasViewportSize.height)} camera={camera} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} onUnavailable={() => setPixiUnavailable(true)} />
+              : <BoardCanvas width={Math.max(1, canvasViewportSize.width)} height={Math.max(1, canvasViewportSize.height)} camera={camera} stageRef={stageRef} state={state} cards={canvasCards} focusedCardId={cameraFocusId} activeCardId={activeCardId} runActive={Boolean(runSession)} revealed={runSession?.revealed === true} speedCueActive={speedCueActive} />}
           </div>
         </div>
         {!runSession && <BoardRunBar state={state} stats={stats} onStartRun={onStartRun} />}
