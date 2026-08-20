@@ -41,6 +41,12 @@ interface PinchGesture {
   anchorY: number
 }
 
+interface PendingWheelZoom {
+  delta: number
+  clientX: number
+  clientY: number
+}
+
 interface BoardViewProps {
   locale: SupportedLocale
   state: PersistedState
@@ -70,8 +76,11 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   const animationFrameRef = useRef<number | null>(null)
   const stageCameraFrameRef = useRef<number | null>(null)
   const cameraCommitTimeoutRef = useRef<number | null>(null)
+  const wheelFrameRef = useRef<number | null>(null)
+  const pendingWheelZoomRef = useRef<PendingWheelZoom | null>(null)
   const dragRef = useRef<PanGesture | null>(null)
   const pointersRef = useRef(new Map<number, BoardPointer>())
+  const gestureBoundsRef = useRef<DOMRect | null>(null)
   const pinchRef = useRef<PinchGesture | null>(null)
   const movedRef = useRef(false)
   const lastActivationRef = useRef<{ cardId: string; at: number } | null>(null)
@@ -156,7 +165,6 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     const nextCamera = cameraRef.current
     stage.position({ x: nextCamera.x, y: nextCamera.y })
     stage.scale({ x: nextCamera.zoom, y: nextCamera.zoom })
-    stage.batchDraw()
   }
 
   function scheduleStageCameraFrame(): void {
@@ -220,8 +228,10 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   }
 
   function pointerPair(): [BoardPointer, BoardPointer] | null {
-    const points = Array.from(pointersRef.current.values())
-    return points.length >= 2 ? [points[0], points[1]] : null
+    const points = pointersRef.current.values()
+    const first = points.next().value
+    const second = points.next().value
+    return first && second ? [first, second] : null
   }
 
   function pointerDistance([first, second]: [BoardPointer, BoardPointer]): number {
@@ -229,13 +239,12 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
   }
 
   function pointerCenter([first, second]: [BoardPointer, BoardPointer]): { x: number; y: number } {
-    const bounds = viewportRef.current?.getBoundingClientRect()
+    const bounds = gestureBoundsRef.current
     if (!bounds) return { x: 0, y: 0 }
     return { x: (first.x + second.x) / 2 - bounds.left, y: (first.y + second.y) / 2 - bounds.top }
   }
 
-  function cardAtPoint(clientX: number, clientY: number): string | null {
-    const bounds = viewportRef.current?.getBoundingClientRect()
+  function cardAtPoint(clientX: number, clientY: number, bounds: DOMRect | null): string | null {
     if (!bounds) return null
     const worldX = (clientX - bounds.left - cameraRef.current.x) / cameraRef.current.zoom
     const worldY = (clientY - bounds.top - cameraRef.current.y) / cameraRef.current.zoom
@@ -276,28 +285,48 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     cancelCameraAnimation()
     cancelCameraCommit()
     if (stageCameraFrameRef.current !== null) window.cancelAnimationFrame(stageCameraFrameRef.current)
+    if (wheelFrameRef.current !== null) window.cancelAnimationFrame(wheelFrameRef.current)
+    pendingWheelZoomRef.current = null
   }, [])
 
-  function handleWheel(event: WheelEvent<HTMLDivElement>): void {
-    event.preventDefault()
+  function applyPendingWheelZoom(): void {
+    wheelFrameRef.current = null
+    const pending = pendingWheelZoomRef.current
+    pendingWheelZoomRef.current = null
     const bounds = viewportRef.current?.getBoundingClientRect()
-    if (!bounds) return
-    const factor = event.deltaY > 0 ? 0.92 : 1.08
+    if (!pending || !bounds) return
+
     const currentCamera = cameraRef.current
+    const factor = Math.pow(1.08, -pending.delta / 100)
     const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentCamera.zoom * factor))
-    const cursorX = event.clientX - bounds.left
-    const cursorY = event.clientY - bounds.top
+    const cursorX = pending.clientX - bounds.left
+    const cursorY = pending.clientY - bounds.top
     updateCamera(nextZoom, { x: cursorX - (cursorX - currentCamera.x) * (nextZoom / currentCamera.zoom), y: cursorY - (cursorY - currentCamera.y) * (nextZoom / currentCamera.zoom) })
   }
 
+  function handleWheel(event: WheelEvent<HTMLDivElement>): void {
+    event.preventDefault()
+    const deltaMultiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1
+    const delta = event.deltaY * deltaMultiplier
+    if (!Number.isFinite(delta) || delta === 0) return
+    const pending = pendingWheelZoomRef.current ?? { delta: 0, clientX: event.clientX, clientY: event.clientY }
+    pending.delta = Math.max(-240, Math.min(240, pending.delta + delta))
+    pending.clientX = event.clientX
+    pending.clientY = event.clientY
+    pendingWheelZoomRef.current = pending
+    if (wheelFrameRef.current === null) wheelFrameRef.current = window.requestAnimationFrame(applyPendingWheelZoom)
+  }
+
   function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
-    const cardId = cardAtPoint(event.clientX, event.clientY)
+    const bounds = viewportRef.current?.getBoundingClientRect() ?? null
+    const cardId = cardAtPoint(event.clientX, event.clientY, bounds)
     // A pointer-down on an illustration is still a pan candidate. We decide
     // between pan and activation only after movement crosses the threshold.
     pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, panEligible: true, cardId })
     event.currentTarget.setPointerCapture(event.pointerId)
     movedRef.current = false
     if (pointersRef.current.size === 1) {
+      gestureBoundsRef.current = bounds
       dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cameraRef.current.x, originY: cameraRef.current.y }
       return
     }
@@ -319,7 +348,7 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     pointer.y = event.clientY
     if (pinchRef.current && pointersRef.current.size >= 2) {
       const pair = pointerPair()
-      if (!pair || !viewportRef.current) return
+      if (!pair || !gestureBoundsRef.current) return
       const center = pointerCenter(pair)
       const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchRef.current.startZoom * (pointerDistance(pair) / pinchRef.current.startDistance)))
       updateCamera(nextZoom, { x: center.x - pinchRef.current.anchorX * nextZoom, y: center.y - pinchRef.current.anchorY * nextZoom })
@@ -344,12 +373,13 @@ export function BoardView({ locale, state, stats, focusId, setFocusId, onSelectC
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
     pointersRef.current.delete(event.pointerId)
     if (pointersRef.current.size < 2) pinchRef.current = null
-    const remaining = Array.from(pointersRef.current.entries())[0]
-    if (remaining) {
-      const [pointerId, pointer] = remaining
+    const remaining = pointersRef.current.entries().next()
+    if (!remaining.done) {
+      const [pointerId, pointer] = remaining.value
       dragRef.current = pointer.panEligible ? { pointerId, startX: pointer.x, startY: pointer.y, originX: cameraRef.current.x, originY: cameraRef.current.y } : null
     } else {
       dragRef.current = null
+      gestureBoundsRef.current = null
       commitCameraState()
     }
     if (shouldActivate && activatedCardId) handleCardActivate(activatedCardId)

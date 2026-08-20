@@ -14,6 +14,7 @@ import { CARD_OVERVIEW_ZOOM, GROUP_LABEL_FADE_END, GROUP_LABEL_FADE_START, type 
 // the phone display without multiplying the large board's memory cost by 3x.
 const BOARD_PIXEL_RATIO = Math.min(2, Math.max(1, window.devicePixelRatio || 1))
 Konva.pixelRatio = BOARD_PIXEL_RATIO
+const GROUP_LABEL_OPACITY_STEPS = 24
 
 interface BoardCanvasProps {
   width: number
@@ -30,13 +31,25 @@ interface BoardCanvasProps {
 }
 
 export function BoardCanvas({ width, height, camera, stageRef, state, cards, focusedCardId, activeCardId, runActive, revealed, speedCueActive }: BoardCanvasProps) {
-  const groupLabelOpacity = Math.max(0, Math.min(1, (GROUP_LABEL_FADE_START - camera.zoom) / (GROUP_LABEL_FADE_START - GROUP_LABEL_FADE_END)))
+  const rawGroupLabelOpacity = Math.max(0, Math.min(1, (GROUP_LABEL_FADE_START - camera.zoom) / (GROUP_LABEL_FADE_START - GROUP_LABEL_FADE_END)))
+  // Camera commits are intentionally throttled, but a continuous fade value
+  // would still invalidate every mounted Card on each commit. The 24-step
+  // bucket is visually smooth at this zoom range while keeping memoized Card
+  // nodes stable between meaningful visual changes.
+  const groupLabelOpacity = Math.round(rawGroupLabelOpacity * GROUP_LABEL_OPACITY_STEPS) / GROUP_LABEL_OPACITY_STEPS
   const sceneLabelNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} />), [])
   const sceneTitleNodes = useMemo(() => starterPack.scenes.map((scene) => <BoardSceneLabel key={scene.id} scene={scene} showBackground={false} titleOpacity={groupLabelOpacity * 0.58} />), [groupLabelOpacity])
   const detailLevel = camera.zoom < CARD_OVERVIEW_ZOOM ? 'overview' : 'full'
   const cardOpacity = 0.94 - (groupLabelOpacity * 0.2)
-  const importantCards = useMemo(() => cards.filter((card) => card.id === focusedCardId || card.id === activeCardId), [activeCardId, cards, focusedCardId])
-  const backgroundCards = useMemo(() => cards.filter((card) => card.id !== focusedCardId && card.id !== activeCardId), [activeCardId, cards, focusedCardId])
+  const { importantCards, backgroundCards } = useMemo(() => {
+    const important: WordCard[] = []
+    const background: WordCard[] = []
+    for (const card of cards) {
+      if (card.id === focusedCardId || card.id === activeCardId) important.push(card)
+      else background.push(card)
+    }
+    return { importantCards: important, backgroundCards: background }
+  }, [activeCardId, cards, focusedCardId])
 
   return (
     <Stage ref={stageRef} width={width} height={height} x={camera.x} y={camera.y} scaleX={camera.zoom} scaleY={camera.zoom} pixelRatio={BOARD_PIXEL_RATIO} listening={false}>
