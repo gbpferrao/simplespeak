@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group, Image as KonvaImage, Text } from 'react-konva/lib/ReactKonvaCore'
 import type { Group as KonvaGroup } from 'konva/lib/Group'
+import { Easings, Tween } from 'konva/lib/Tween'
 import 'konva/lib/shapes/Image'
 import 'konva/lib/shapes/Text'
 import type { PersistedState, WordCard } from '../../../core/contracts/types'
@@ -22,6 +23,16 @@ interface BoardCardNodeProps {
 }
 
 const CARD_HALF = CARD_SIZE / 2
+const HPM_CUE_OFFSET = 2
+const HPM_CUE_OUT_DURATION = 0.09
+const HPM_CUE_RETURN_DURATION = 0.16
+const HPM_CUE_PAUSE_MS = 120
+const HPM_CUE_CORNER_DELTAS = [
+  { x: -HPM_CUE_OFFSET, y: -HPM_CUE_OFFSET },
+  { x: HPM_CUE_OFFSET, y: -HPM_CUE_OFFSET },
+  { x: -HPM_CUE_OFFSET, y: HPM_CUE_OFFSET },
+  { x: HPM_CUE_OFFSET, y: HPM_CUE_OFFSET },
+] as const
 const imageCache = new Map<string, HTMLImageElement>()
 const MAX_IMAGE_CACHE = 96
 
@@ -93,29 +104,78 @@ function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = 
   useEffect(() => {
     const group = groupRef.current
     if (!group) return
-    const reset = (): void => {
+    const node = group
+    let activeTween: Tween | null = null
+    let pulseTimer: number | null = null
+    let cancelled = false
+
+    const resetPosition = (): void => {
       group.position({ x: baseX, y: baseY })
       group.rotation(focused || runActive ? 0 : rotation)
       group.getLayer()?.batchDraw()
     }
+
+    const cleanup = (): void => {
+      cancelled = true
+      if (pulseTimer !== null) window.clearTimeout(pulseTimer)
+      pulseTimer = null
+      activeTween?.destroy()
+      activeTween = null
+      resetPosition()
+    }
+
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
     if (!speedCue || reducedMotion) {
-      reset()
+      cleanup()
       return
     }
 
-    let tick = 0
-    const interval = window.setInterval(() => {
-      tick += 1
-      const offset = tick % 2 === 0 ? -1.4 : 1.4
-      group.position({ x: baseX + offset, y: baseY + (tick % 3 === 0 ? 0.8 : 0) })
-      group.getLayer()?.batchDraw()
-    }, 140)
-
-    return () => {
-      window.clearInterval(interval)
-      reset()
+    function schedulePulse(delayMs: number): void {
+      pulseTimer = window.setTimeout(runPulse, delayMs)
     }
+
+    function runPulse(): void {
+      pulseTimer = null
+      if (cancelled) return
+
+      const corner = HPM_CUE_CORNER_DELTAS[Math.floor(Math.random() * HPM_CUE_CORNER_DELTAS.length)]
+      let outwardTween: Tween | null = null
+      outwardTween = new Tween({
+        node,
+        x: baseX + corner.x,
+        y: baseY + corner.y,
+        duration: HPM_CUE_OUT_DURATION,
+        easing: Easings.EaseOut,
+        onFinish: () => {
+          outwardTween?.destroy()
+          outwardTween = null
+          if (cancelled) return
+
+          let returnTween: Tween | null = null
+          returnTween = new Tween({
+            node,
+            x: baseX,
+            y: baseY,
+            duration: HPM_CUE_RETURN_DURATION,
+            easing: Easings.EaseInOut,
+            onFinish: () => {
+              returnTween?.destroy()
+              returnTween = null
+              activeTween = null
+              if (!cancelled) schedulePulse(HPM_CUE_PAUSE_MS)
+            },
+          })
+          activeTween = returnTween
+          returnTween.play()
+        },
+      })
+      activeTween = outwardTween
+      outwardTween.play()
+    }
+
+    runPulse()
+
+    return cleanup
   }, [baseX, baseY, focused, rotation, runActive, speedCue])
 
   return (
