@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState, type CSSProperties, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react'
-import { ArrowRight, Check, Eye, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
+import { ArrowRight, Check, Eye, Flame, Gauge, Keyboard, LocateFixed, Play, RotateCcw, X } from 'lucide-react'
 import type { PersistedState, ReviewOutcome, RunCriterion } from '../../../core/contracts/types'
-import type { RunSession } from '../domain/runSession'
+import { isRunStreakMilestone, type RunSession } from '../domain/runSession'
 import { runHitRateAriaLabel, runHitRateUnit, useI18n } from '../../../core/i18n/i18n'
 
 interface BoardRunOverlayProps {
@@ -121,10 +121,8 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
           <div className="run-overlay-filter-tags">{filterTags.map((tag, index) => <span className="run-overlay-tag" key={`${tag}-${index}`}>{tag}</span>)}</div>
         </div>
         <div className="run-overlay-score" aria-label={t('run.score')}>
-          <span><Check size={13} /> {session.hits}</span>
-          <span><X size={13} /> {session.misses}</span>
-          <span><Eye size={13} /> {session.reveals}</span>
           <span className={`run-overlay-speed ${speedCueActive ? 'is-fast' : ''}`} title={runHitRateAriaLabel(locale)}><Gauge size={13} /> {Math.round(runHitRate)} {runHitRateUnit()}</span>
+          <span className={`run-overlay-streak ${isRunStreakMilestone(session.hitStreak) ? 'is-milestone' : ''}`} aria-label={`${t('run.streak')}: ${session.hitStreak}`} title={`${t('run.streak')}: ${session.hitStreak}`}><Flame size={13} /> {session.hitStreak} <small>{t('run.streak')}</small></span>
         </div>
         <div className="run-overlay-actions-top">
           <button className="run-overlay-icon-action" type="button" onClick={onFocusCurrent} aria-label={t('board.focusCurrent')} title={t('board.focusCurrent')}><LocateFixed size={14} /></button>
@@ -139,7 +137,7 @@ export const BoardRunOverlay = memo(function BoardRunOverlay({ session, state, r
           </div>
         ) : (
           <form className="run-overlay-form" onSubmit={handleSubmit}>
-            <div className="answer-actions"><button className="hit-button" type="button" onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('hit')}><Check size={16} /> {t('run.iKnewIt')}</button><button className="miss-button" type="button" onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('miss')}><X size={16} /> {t('run.missed')}</button><button className="reveal-button" type="button" onClick={onOpenCard}><Eye size={16} /> {t('run.reveal')}</button></div>
+            <div className="answer-actions"><button className="hit-button" type="button" aria-label={`${t('run.hit')}: ${session.hits}`} onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('hit')}><Check size={16} /> <span className="answer-action-label">{t('run.hit')}</span><small className="answer-action-count" aria-hidden="true">({session.hits})</small></button><button className="miss-button" type="button" aria-label={`${t('run.miss')}: ${session.misses}`} onPointerDown={preserveAnswerFocus} onClick={() => reviewAnswer('miss')}><X size={16} /> <span className="answer-action-label">{t('run.miss')}</span><small className="answer-action-count" aria-hidden="true">({session.misses})</small></button><button className="reveal-button" type="button" aria-label={`${t('run.review')}: ${session.reveals}`} onClick={onOpenCard}><Eye size={16} /> <span className="answer-action-label">{t('run.review')}</span><small className="answer-action-count" aria-hidden="true">({session.reveals})</small></button></div>
             <div className="answer-input-wrap"><Keyboard size={16} /><input ref={answerInputRef} name="typed-answer" value={session.typedAnswer} onChange={(event) => onTypedChange(event.target.value)} placeholder={t('run.typeTarget')} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="send" aria-label={t('run.typeTargetAria')} /><button className="send-answer-button" type="submit" onPointerDown={preserveAnswerFocus} disabled={!session.typedAnswer.trim()} aria-label={t('run.send')} title={t('run.send')}><ArrowRight size={17} /></button></div>
           </form>
         )}

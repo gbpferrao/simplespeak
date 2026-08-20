@@ -10,12 +10,14 @@ interface ToneStep {
 
 const HIT_SOUND_ASSET_URLS = Array.from({ length: 11 }, (_, index) => `/audio/hits/hit-${String(index + 1).padStart(2, '0')}.mp3`)
 const MISS_SOUND_ASSET_URL = '/audio/hits/miss.mp3'
+const HIT_STREAK_MILESTONE_SOUND_ASSET_URL = '/audio/hits/milestone-trumpet.ogg'
 const HIT_SOUND_MAX_STREAK = 8
 const HIT_SOUND_MAX_DETUNE_SEMITONES = 2
 
 let audioContext: AudioContext | null = null
 let hitSoundBuffersPromise: Promise<AudioBuffer[]> | null = null
 let missSoundBufferPromise: Promise<AudioBuffer> | null = null
+let hitStreakMilestoneSoundBufferPromise: Promise<AudioBuffer> | null = null
 let hitSoundStreak = 0
 let hitSoundStreakEpoch = 0
 // The first Miss in a consecutive run is the cue; later Misses remain silent
@@ -65,6 +67,17 @@ function getMissSoundBuffer(context: AudioContext): Promise<AudioBuffer> {
   return missSoundBufferPromise
 }
 
+function getHitStreakMilestoneSoundBuffer(context: AudioContext): Promise<AudioBuffer> {
+  if (!hitStreakMilestoneSoundBufferPromise) {
+    hitStreakMilestoneSoundBufferPromise = loadAudioBuffer(context, HIT_STREAK_MILESTONE_SOUND_ASSET_URL)
+      .catch((error) => {
+        hitStreakMilestoneSoundBufferPromise = null
+        throw error
+      })
+  }
+  return hitStreakMilestoneSoundBufferPromise
+}
+
 function hitDetuneForStreak(streak: number): number {
   const normalized = Math.max(0, Math.min(1, (Math.max(1, streak) - 1) / (HIT_SOUND_MAX_STREAK - 1)))
   return normalized * HIT_SOUND_MAX_DETUNE_SEMITONES
@@ -109,13 +122,27 @@ function scheduleReviewSound(context: AudioContext, kind: ReviewSoundKind): void
   }
 }
 
-function scheduleHitSound(context: AudioContext, streak: number, epoch: number): void {
+function scheduleBundledHitSound(context: AudioContext, streak: number, epoch: number): void {
   getHitSoundBuffers(context).then((buffers) => {
     if (epoch !== hitSoundStreakEpoch || context.state === 'closed' || buffers.length === 0) return
     const buffer = buffers[Math.floor(Math.random() * buffers.length)]
     if (buffer) playBuffer(context, buffer, hitDetuneForStreak(streak))
   }).catch(() => {
     scheduleReviewSound(context, 'hit')
+  })
+}
+
+function scheduleHitSound(context: AudioContext, streak: number, epoch: number, milestone: boolean): void {
+  if (!milestone) {
+    scheduleBundledHitSound(context, streak, epoch)
+    return
+  }
+
+  getHitStreakMilestoneSoundBuffer(context).then((buffer) => {
+    if (epoch !== hitSoundStreakEpoch || streak !== hitSoundStreak || context.state === 'closed') return
+    playBuffer(context, buffer)
+  }).catch(() => {
+    scheduleBundledHitSound(context, streak, epoch)
   })
 }
 
@@ -147,7 +174,7 @@ export function resetHitSoundStreak(): void {
  * unavailable, suspended, or blocked Web Audio environment must never block a
  * review event.
  */
-export function playReviewSound(kind: ReviewSoundKind): void {
+export function playReviewSound(kind: ReviewSoundKind, options: { milestone?: boolean } = {}): void {
   const isDuplicateMiss = kind === 'miss' && lastReviewSoundKind === 'miss'
   if (isDuplicateMiss) return
 
@@ -164,7 +191,7 @@ export function playReviewSound(kind: ReviewSoundKind): void {
     const epoch = hitSoundStreakEpoch
     runWhenAudioReady(context, () => {
       if (kind === 'hit') {
-        scheduleHitSound(context, streak, epoch)
+        scheduleHitSound(context, streak, epoch, options.milestone === true)
       } else {
         scheduleMissSound(context)
       }

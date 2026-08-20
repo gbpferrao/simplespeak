@@ -17,6 +17,7 @@ export interface RunSession {
   responseStartedAt: number
   hitTimestamps: number[]
   hitRateStartedAt: number
+  hitStreak: number
   hits: number
   misses: number
   reveals: number
@@ -26,8 +27,13 @@ export interface RunSession {
 
 export const RUN_SPEED_WINDOW_SIZE = 5
 export const RUN_HIT_RATE_JITTER_THRESHOLD = 20
+export const RUN_STREAK_MILESTONE = 50
 export const RUN_GOOD_ACCURACY = 0.6
 export const RUN_EXCELLENT_ACCURACY = 0.9
+
+export function isRunStreakMilestone(streak: number): boolean {
+  return streak > 0 && streak % RUN_STREAK_MILESTONE === 0
+}
 
 export function rollingHitRatePerMinute(session: Pick<RunSession, 'hitRateStartedAt' | 'hitTimestamps'>, now = Date.now()): number {
   const timestamps = session.hitTimestamps.slice(-RUN_SPEED_WINDOW_SIZE)

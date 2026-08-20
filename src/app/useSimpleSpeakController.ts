@@ -3,7 +3,7 @@ import starterPack from '../features/language-packs/data/packs/ptbr-en/simplespe
 import { applyReview } from '../features/study/domain/scheduler'
 import { materializeRunConfig, selectCardsForRun, UNLIMITED_RUN_LIMIT } from '../features/study/domain/runSelector'
 import { progressStats, type ProgressStats } from '../features/history/domain/progressStats'
-import { isRemembered, makeRunRecord, runFinishTier, type RunConfig, type RunSession } from '../features/study/domain/runSession'
+import { isRemembered, isRunStreakMilestone, makeRunRecord, runFinishTier, type RunConfig, type RunSession } from '../features/study/domain/runSession'
 import { isAnswerCorrect } from '../features/vocabulary/domain/answerMatcher'
 import { cardFor, learningFor, sceneFor } from '../core/presentation/selectors'
 import { runLabelForLocale, translate } from '../core/i18n/i18n'
@@ -131,6 +131,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       responseStartedAt: now,
       hitTimestamps: [],
       hitRateStartedAt: now,
+      hitStreak: 0,
       hits: 0,
       misses: 0,
       reveals: 0,
@@ -174,7 +175,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     }
 
     const nextCard = session.cards[session.currentIndex + 1]
-    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, hitTimestamps: session.hitTimestamps, hitRateStartedAt: session.hitRateStartedAt, completedIds: session.completedIds } : current)
+    setRunSession((current) => current ? { ...current, currentIndex: current.currentIndex + 1, revealed: false, typedAnswer: '', responseStartedAt: Date.now(), hits: session.hits, misses: session.misses, reveals: session.reveals, hitTimestamps: session.hitTimestamps, hitRateStartedAt: session.hitRateStartedAt, hitStreak: session.hitStreak, completedIds: session.completedIds } : current)
     setBoardFocusId(nextCard?.id ?? null)
   }
 
@@ -199,6 +200,7 @@ export function useSimpleSpeakController(): SimpleSpeakController {
     const nextHits = runSession.hits + (acceptedHit ? 1 : 0)
     const nextMisses = runSession.misses + (acceptedHit ? 0 : 1)
     const nextReveals = runSession.reveals + (revealed ? 1 : 0)
+    const nextHitStreak = remembered ? runSession.hitStreak + 1 : 0
     const nextHitTimestamps = remembered ? [...runSession.hitTimestamps, completedAt] : []
     const nextHitRateStartedAt = remembered
       ? (runSession.hitTimestamps.length ? runSession.hitRateStartedAt : runSession.responseStartedAt)
@@ -210,11 +212,11 @@ export function useSimpleSpeakController(): SimpleSpeakController {
       learning: { ...current.learning, [card.id]: applyReview(learningFor(current, card.id), card.id, runSession.id, outcome, revealed, responseMs) },
     }))
     setFeedback(remembered ? 'hit' : 'miss')
-    playReviewSound(remembered ? 'hit' : 'miss')
+    playReviewSound(remembered ? 'hit' : 'miss', { milestone: remembered && isRunStreakMilestone(nextHitStreak) })
     if (remembered) playHitHaptic()
     window.setTimeout(() => setFeedback(null), 650)
 
-    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, hitTimestamps: nextHitTimestamps, hitRateStartedAt: nextHitRateStartedAt, completedIds, revealed })
+    continueRun({ ...runSession, hits: nextHits, misses: nextMisses, reveals: nextReveals, hitTimestamps: nextHitTimestamps, hitRateStartedAt: nextHitRateStartedAt, hitStreak: nextHitStreak, completedIds, revealed })
   }
 
   function submitTypedAnswer(answer: string): void {

@@ -205,6 +205,10 @@ const english: MessageCatalog = {
 
 english['run.routePresets'] = 'Route presets'
 english['run.send'] = 'Send answer'
+english['run.hit'] = 'Hit'
+english['run.miss'] = 'Miss'
+english['run.review'] = 'Review'
+english['run.streak'] = 'Streak'
 english['run.addMode'] = 'Filter to matches'
 english['notification.title'] = 'Notifications'
 english['notification.dismiss'] = 'Dismiss notification'
@@ -261,9 +265,17 @@ const german: MessageCatalog = {
 
 portuguese['run.routePresets'] = 'Predefinições de rota'
 portuguese['run.send'] = 'Enviar resposta'
+portuguese['run.hit'] = 'Acerto'
+portuguese['run.miss'] = 'Erro'
+portuguese['run.review'] = 'Revisar'
+portuguese['run.streak'] = 'Sequência'
 portuguese['run.addMode'] = 'Filtrar correspondências'
 german['run.routePresets'] = 'Routenvorlagen'
 german['run.send'] = 'Antwort senden'
+german['run.hit'] = 'Treffer'
+german['run.miss'] = 'Fehler'
+german['run.review'] = 'Review'
+german['run.streak'] = 'Serie'
 german['run.addMode'] = 'Treffer filtern'
 
 portuguese['notification.title'] = 'Notificacoes'
