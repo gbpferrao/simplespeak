@@ -109,7 +109,6 @@ function BoardCardNodeBase({ card, state, focused, runMode = false, runActive = 
       tick += 1
       const offset = tick % 2 === 0 ? -1.4 : 1.4
       group.position({ x: baseX + offset, y: baseY + (tick % 3 === 0 ? 0.8 : 0) })
-      group.rotation((focused || runActive ? 0 : rotation) + (tick % 2 === 0 ? -0.7 : 0.7))
       group.getLayer()?.batchDraw()
     }, 140)
 
